@@ -1,0 +1,50 @@
+<svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A bright sunny sky with clear blue and a smiling sun">
+  <!-- Sky gradient -->
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#60a5fa"/>
+      <stop offset="100%" stop-color="#bbe6ff"/>
+    </linearGradient>
+  </defs>
+  <rect width="220" height="220" fill="url(#sky)"/>
+  <!-- Sun rays -->
+  <g stroke="#fbbf24" stroke-width="6" stroke-linecap="round">
+    <line x1="110" y1="20" x2="110" y2="45"/>
+    <line x1="110" y1="175" x2="110" y2="200"/>
+    <line x1="20" y1="110" x2="45" y2="110"/>
+    <line x1="175" y1="110" x2="200" y2="110"/>
+    <line x1="42" y1="42" x2="60" y2="60"/>
+    <line x1="160" y1="60" x2="178" y2="42"/>
+    <line x1="42" y1="178" x2="60" y2="160"/>
+    <line x1="160" y1="160" x2="178" y2="178"/>
+  </g>
+  <!-- Shorter rays between -->
+  <g stroke="#fbbf24" stroke-width="4" stroke-linecap="round" opacity="0.7">
+    <line x1="73" y1="25" x2="77" y2="40"/>
+    <line x1="147" y1="25" x2="143" y2="40"/>
+    <line x1="73" y1="195" x2="77" y2="180"/>
+    <line x1="147" y1="195" x2="143" y2="180"/>
+  </g>
+  <!-- Sun body -->
+  <circle cx="110" cy="110" r="50" fill="#fcd34d" stroke="#f59e0b" stroke-width="3"/>
+  <!-- Sun face — eyes -->
+  <circle cx="92" cy="100" r="5" fill="#92400e"/>
+  <circle cx="128" cy="100" r="5" fill="#92400e"/>
+  <circle cx="94" cy="98" r="1.5" fill="#ffffff"/>
+  <circle cx="130" cy="98" r="1.5" fill="#ffffff"/>
+  <!-- Cheeks -->
+  <circle cx="80" cy="118" r="5" fill="#fca5a5" opacity="0.7"/>
+  <circle cx="140" cy="118" r="5" fill="#fca5a5" opacity="0.7"/>
+  <!-- Smile -->
+  <path d="M 87 122 Q 110 140 133 122" stroke="#92400e" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <!-- Cloud -->
+  <g fill="#ffffff">
+    <ellipse cx="35" cy="55" rx="14" ry="7"/>
+    <ellipse cx="50" cy="50" rx="17" ry="9"/>
+    <ellipse cx="46" cy="60" rx="18" ry="7"/>
+  </g>
+  <g fill="#ffffff">
+    <ellipse cx="175" cy="170" rx="12" ry="6"/>
+    <ellipse cx="188" cy="166" rx="14" ry="7"/>
+  </g>
+</svg>

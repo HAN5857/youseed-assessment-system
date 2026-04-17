@@ -1,0 +1,48 @@
+<svg viewBox="0 0 320 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A cozy dining room with a wooden table, chairs and plates">
+  <!-- Wall -->
+  <rect width="320" height="160" fill="#fff4e6"/>
+  <!-- Floor -->
+  <rect y="155" width="320" height="65" fill="#d4a574"/>
+  <!-- Floor stripes -->
+  <line x1="0" y1="180" x2="320" y2="180" stroke="#a67c3f" stroke-width="1" opacity="0.4"/>
+  <!-- Window -->
+  <rect x="20" y="25" width="70" height="58" fill="#bbe6ff" stroke="#8b5a2b" stroke-width="4" rx="3"/>
+  <line x1="55" y1="25" x2="55" y2="83" stroke="#8b5a2b" stroke-width="3"/>
+  <line x1="20" y1="54" x2="90" y2="54" stroke="#8b5a2b" stroke-width="3"/>
+  <!-- Curtain -->
+  <path d="M 12 20 L 12 95 L 22 95 L 22 20 Z" fill="#f472b6" opacity="0.9"/>
+  <path d="M 88 20 L 88 95 L 98 95 L 98 20 Z" fill="#f472b6" opacity="0.9"/>
+  <!-- Wall picture -->
+  <rect x="220" y="28" width="70" height="50" fill="#ffffff" stroke="#8b5a2b" stroke-width="4"/>
+  <circle cx="245" cy="48" r="6" fill="#fbbf24"/>
+  <path d="M 228 70 L 245 55 L 260 65 L 285 50 L 285 70 Z" fill="#10b981"/>
+  <!-- Table -->
+  <rect x="60" y="118" width="200" height="18" fill="#a0682e" rx="3"/>
+  <rect x="60" y="118" width="200" height="6" fill="#c48a4e" rx="3"/>
+  <rect x="82" y="136" width="10" height="45" fill="#7a4a1f"/>
+  <rect x="228" y="136" width="10" height="45" fill="#7a4a1f"/>
+  <!-- Plates on table -->
+  <ellipse cx="95" cy="112" rx="16" ry="5" fill="#ffffff" stroke="#d4a574" stroke-width="2"/>
+  <ellipse cx="160" cy="112" rx="16" ry="5" fill="#ffffff" stroke="#d4a574" stroke-width="2"/>
+  <ellipse cx="225" cy="112" rx="16" ry="5" fill="#ffffff" stroke="#d4a574" stroke-width="2"/>
+  <!-- Fruit bowl center -->
+  <ellipse cx="160" cy="108" rx="18" ry="6" fill="#8b5a2b"/>
+  <circle cx="152" cy="101" r="5" fill="#ef4444"/>
+  <circle cx="162" cy="98" r="5" fill="#fcd34d"/>
+  <circle cx="170" cy="101" r="5" fill="#10b981"/>
+  <!-- Chair (left) -->
+  <rect x="35" y="100" width="10" height="60" fill="#7a4a1f" rx="2"/>
+  <rect x="35" y="100" width="35" height="9" fill="#8b5a2b" rx="2"/>
+  <rect x="35" y="135" width="35" height="8" fill="#8b5a2b"/>
+  <rect x="35" y="143" width="8" height="18" fill="#7a4a1f"/>
+  <rect x="62" y="143" width="8" height="18" fill="#7a4a1f"/>
+  <!-- Chair (right) -->
+  <rect x="275" y="100" width="10" height="60" fill="#7a4a1f" rx="2"/>
+  <rect x="250" y="100" width="35" height="9" fill="#8b5a2b" rx="2"/>
+  <rect x="250" y="135" width="35" height="8" fill="#8b5a2b"/>
+  <rect x="250" y="143" width="8" height="18" fill="#7a4a1f"/>
+  <rect x="277" y="143" width="8" height="18" fill="#7a4a1f"/>
+  <!-- Hanging lamp -->
+  <line x1="160" y1="0" x2="160" y2="30" stroke="#64748b" stroke-width="2"/>
+  <ellipse cx="160" cy="38" rx="22" ry="10" fill="#fcd34d" stroke="#f59e0b" stroke-width="2"/>
+</svg>

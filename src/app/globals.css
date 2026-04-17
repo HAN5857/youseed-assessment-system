@@ -95,6 +95,89 @@ html, body {
 .kid-pulse     { animation: kid-pulse 1.6s ease-in-out infinite; }
 .kid-sparkle   { animation: kid-sparkle 1.2s ease-in-out infinite; }
 
+/* ─── Additional entrance animations ──────────────────────────────────── */
+@keyframes kid-pop-in {
+  0%   { transform: scale(0.5) rotate(-5deg); opacity: 0; }
+  60%  { transform: scale(1.08) rotate(2deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); }
+}
+@keyframes kid-zoom-in {
+  0%   { transform: scale(0.85); opacity: 0; filter: blur(4px); }
+  100% { transform: scale(1); opacity: 1; filter: blur(0); }
+}
+@keyframes kid-star-pop {
+  0%   { transform: scale(0) rotate(-180deg); }
+  60%  { transform: scale(1.4) rotate(20deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+@keyframes kid-rainbow-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50%      { background-position: 100% 50%; }
+}
+@keyframes kid-burst {
+  0%   { transform: scale(0); opacity: 1; }
+  100% { transform: scale(1.5); opacity: 0; }
+}
+@keyframes kid-ribbon-shine {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+@keyframes kid-swoop-in {
+  0%   { transform: translateY(-40px) scale(0.8); opacity: 0; }
+  60%  { transform: translateY(6px) scale(1.05); opacity: 1; }
+  100% { transform: translateY(0) scale(1); }
+}
+
+.kid-pop-in    { animation: kid-pop-in 0.45s cubic-bezier(.34,1.56,.64,1); }
+.kid-zoom-in   { animation: kid-zoom-in 0.35s ease-out; }
+.kid-star-pop  { animation: kid-star-pop 0.5s cubic-bezier(.34,1.56,.64,1); }
+.kid-swoop-in  { animation: kid-swoop-in 0.5s cubic-bezier(.34,1.56,.64,1); }
+.kid-burst     { animation: kid-burst 0.6s ease-out forwards; }
+
+.kid-rainbow-text {
+  background: linear-gradient(90deg, #ec4899, #f59e0b, #10b981, #3b82f6, #a855f7, #ec4899);
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: kid-rainbow-shift 3s linear infinite;
+}
+
+.kid-ribbon-shine {
+  position: relative;
+  overflow: hidden;
+}
+.kid-ribbon-shine::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.5) 50%, transparent 70%);
+  background-size: 200% 100%;
+  animation: kid-ribbon-shine 3s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* Sparkle burst container — radiating dots when an option is selected */
+.kid-sparkle-burst {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: visible;
+}
+.kid-sparkle-burst span {
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  opacity: 0;
+  animation: kid-spark-out 0.7s ease-out forwards;
+}
+@keyframes kid-spark-out {
+  0%   { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+  70%  { opacity: 1; }
+  100% { transform: translate(var(--dx, 0), var(--dy, 0)) scale(0.2); opacity: 0; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .kid-bounce-in, .kid-slide-in, .kid-wiggle, .kid-bounce,
   .kid-float, .kid-pulse, .kid-sparkle {

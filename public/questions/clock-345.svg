@@ -1,0 +1,45 @@
+<svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A round clock showing 3:45">
+  <!-- Background -->
+  <rect width="220" height="220" fill="#fef3c7"/>
+  <!-- Clock outer frame -->
+  <circle cx="110" cy="110" r="92" fill="#1f2937"/>
+  <circle cx="110" cy="110" r="85" fill="#ffffff"/>
+  <!-- Inner ring -->
+  <circle cx="110" cy="110" r="78" fill="none" stroke="#e5e7eb" stroke-width="2"/>
+  <!-- Hour tick marks -->
+  <g stroke="#1f2937" stroke-width="3" stroke-linecap="round">
+    <line x1="110" y1="32" x2="110" y2="42"/>
+    <line x1="188" y1="110" x2="178" y2="110"/>
+    <line x1="110" y1="188" x2="110" y2="178"/>
+    <line x1="32" y1="110" x2="42" y2="110"/>
+  </g>
+  <!-- Minor tick marks -->
+  <g stroke="#6b7280" stroke-width="2" stroke-linecap="round">
+    <line x1="149" y1="42" x2="146" y2="48"/>
+    <line x1="178" y1="71" x2="172" y2="74"/>
+    <line x1="178" y1="149" x2="172" y2="146"/>
+    <line x1="149" y1="178" x2="146" y2="172"/>
+    <line x1="71" y1="178" x2="74" y2="172"/>
+    <line x1="42" y1="149" x2="48" y2="146"/>
+    <line x1="42" y1="71" x2="48" y2="74"/>
+    <line x1="71" y1="42" x2="74" y2="48"/>
+  </g>
+  <!-- Numbers (hour positions) -->
+  <g font-family="system-ui, sans-serif" font-size="22" font-weight="700" fill="#1f2937" text-anchor="middle">
+    <text x="110" y="60">12</text>
+    <text x="165" y="118">3</text>
+    <text x="110" y="170">6</text>
+    <text x="55" y="118">9</text>
+  </g>
+  <!-- Hour hand: at 3:45 hour hand is 3/4 way between 3 and 4 -->
+  <!-- Angle from 12 clockwise: 3.75 * 30° = 112.5° -->
+  <!-- End point: center + length*(sin θ, -cos θ) ; length=40 -->
+  <!-- sin(112.5)=0.924, cos(112.5)=-0.383 → (110+37, 110+15) = (147, 125) -->
+  <line x1="110" y1="110" x2="147" y2="125" stroke="#1f2937" stroke-width="7" stroke-linecap="round"/>
+  <!-- Minute hand: 45 min = 270° from 12 (pointing to 9) -->
+  <!-- End point: center + 60*(sin 270°, -cos 270°) = (110-60, 110) = (50, 110) -->
+  <line x1="110" y1="110" x2="50" y2="110" stroke="#ef4444" stroke-width="5" stroke-linecap="round"/>
+  <!-- Center cap -->
+  <circle cx="110" cy="110" r="7" fill="#1f2937"/>
+  <circle cx="110" cy="110" r="3" fill="#ef4444"/>
+</svg>

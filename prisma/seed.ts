@@ -73,10 +73,11 @@ async function main() {
   const questions = await Promise.all([
     // ── MODULE A — VOCABULARY & PHONICS ──────────────────────────────────
 
-    // Q1 — Dining room
+    // Q1 — Dining room (with illustration)
     prisma.question.create({ data: Q({
       type: "SINGLE", dimension: "VOCAB", score: 4,
-      prompt: "Look at the picture. A dining room. Where is this place?",
+      prompt: "Look at the picture. Where is this place?",
+      mediaUrl: "/questions/dining-room.svg",
       content: { options: [
         { key: "A", text: "kitchen" },
         { key: "B", text: "dining room" },
@@ -86,10 +87,11 @@ async function main() {
       answer: { key: "B" },
     })}),
 
-    // Q2 — Girl jumping rope
+    // Q2 — Girl jumping rope (with illustration)
     prisma.question.create({ data: Q({
       type: "SINGLE", dimension: "VOCAB", score: 4,
-      prompt: "Look at the picture. A girl is jumping over a rope. What is she doing?",
+      prompt: "Look at the picture. What is she doing?",
+      mediaUrl: "/questions/skipping.svg",
       content: { options: [
         { key: "A", text: "swimming" },
         { key: "B", text: "running" },
@@ -99,10 +101,11 @@ async function main() {
       answer: { key: "C" },
     })}),
 
-    // Q3 — Weather (sunny)
+    // Q3 — Weather (sunny) (with illustration)
     prisma.question.create({ data: Q({
       type: "SINGLE", dimension: "VOCAB", score: 4,
-      prompt: "Look at the picture. The sun is shining and the sky is clear and blue. What is the weather like?",
+      prompt: "Look at the picture. What is the weather like?",
+      mediaUrl: "/questions/sunny.svg",
       content: { options: [
         { key: "A", text: "rainy" },
         { key: "B", text: "snowy" },
@@ -112,10 +115,11 @@ async function main() {
       answer: { key: "D" },
     })}),
 
-    // Q4 — Clock 3:45
+    // Q4 — Clock 3:45 (with illustration)
     prisma.question.create({ data: Q({
       type: "SINGLE", dimension: "VOCAB", score: 4,
-      prompt: "Look at the picture. The clock shows 3:45. What is the time now?",
+      prompt: "Look at the picture. What is the time now?",
+      mediaUrl: "/questions/clock-345.svg",
       content: { options: [
         { key: "A", text: "a quarter to three" },
         { key: "B", text: "a quarter to four" },
@@ -164,31 +168,28 @@ async function main() {
       answer: { key: "B" },
     })}),
 
-    // Q8 — Fill missing letter: h_t (hat)
+    // Q8 — Listen & fill: h _ t
     prisma.question.create({ data: Q({
-      type: "FILL", dimension: "VOCAB", score: 4,
-      prompt: "Listen to the sound and fill in the missing letter:\n\nh _ t  (hat)",
-      content: { caseSensitive: false },
+      type: "LISTEN_FILL", dimension: "VOCAB", score: 4,
+      prompt: "🎧 Click the button to listen. Then fill in the missing letter:\n\nh _ t",
+      content: { speakText: "hat", caseSensitive: false, maxPlays: 3, lang: "en-US" },
       answer: { accepted: ["a", "hat"] },
-      explanation: "The missing letter is 'a' — h + a + t = hat.",
     })}),
 
-    // Q9 — Fill missing letter: j_g (jog)
+    // Q9 — Listen & fill: j _ g
     prisma.question.create({ data: Q({
-      type: "FILL", dimension: "VOCAB", score: 4,
-      prompt: "Listen to the sound and fill in the missing letter:\n\nj _ g  (jog)",
-      content: { caseSensitive: false },
+      type: "LISTEN_FILL", dimension: "VOCAB", score: 4,
+      prompt: "🎧 Click the button to listen. Then fill in the missing letter:\n\nj _ g",
+      content: { speakText: "jog", caseSensitive: false, maxPlays: 3, lang: "en-US" },
       answer: { accepted: ["o", "jog"] },
-      explanation: "The missing letter is 'o' — j + o + g = jog.",
     })}),
 
-    // Q10 — Fill missing letters: M_s__m (museum)
+    // Q10 — Listen & fill: M _ s _ _ m
     prisma.question.create({ data: Q({
-      type: "FILL", dimension: "VOCAB", score: 4,
-      prompt: "Listen to the sound and type the whole word:\n\nM _ s _ _ m  (museum)",
-      content: { caseSensitive: false },
+      type: "LISTEN_FILL", dimension: "VOCAB", score: 4,
+      prompt: "🎧 Click the button to listen. Then type the whole word:\n\nM _ s _ _ m",
+      content: { speakText: "museum", caseSensitive: false, maxPlays: 3, lang: "en-US" },
       answer: { accepted: ["museum"] },
-      explanation: "Museum is spelled M-U-S-E-U-M.",
     })}),
 
     // ── MODULE B — GRAMMAR ───────────────────────────────────────────────

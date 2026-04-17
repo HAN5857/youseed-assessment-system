@@ -12,6 +12,7 @@ import { matchingPlugin } from "./plugins/matching";
 import { orderingPlugin } from "./plugins/ordering";
 import { listeningPlugin } from "./plugins/listening";
 import { readingPlugin } from "./plugins/reading";
+import { listenFillPlugin } from "./plugins/listen-fill";
 
 const registry = new Map<string, QuestionTypePlugin>();
 
@@ -33,6 +34,7 @@ function register(p: QuestionTypePlugin) {
   orderingPlugin,
   listeningPlugin,
   readingPlugin,
+  listenFillPlugin,
 ].forEach(register);
 
 export function getPlugin(type: string): QuestionTypePlugin | undefined {

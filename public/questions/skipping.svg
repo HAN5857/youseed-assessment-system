@@ -1,0 +1,70 @@
+<svg viewBox="0 0 220 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A girl jumping over a skipping rope">
+  <!-- Sky -->
+  <rect width="220" height="210" fill="#e0f4ff"/>
+  <!-- Ground -->
+  <rect y="210" width="220" height="50" fill="#a5d96a"/>
+  <!-- Grass blades -->
+  <g stroke="#6ba832" stroke-width="2" stroke-linecap="round">
+    <line x1="15" y1="225" x2="20" y2="215"/>
+    <line x1="45" y1="225" x2="48" y2="215"/>
+    <line x1="180" y1="225" x2="185" y2="215"/>
+    <line x1="200" y1="225" x2="203" y2="215"/>
+  </g>
+  <!-- Sun -->
+  <circle cx="195" cy="35" r="18" fill="#fcd34d"/>
+  <g stroke="#fbbf24" stroke-width="3" stroke-linecap="round">
+    <line x1="195" y1="10" x2="195" y2="18"/>
+    <line x1="195" y1="52" x2="195" y2="60"/>
+    <line x1="168" y1="35" x2="176" y2="35"/>
+    <line x1="214" y1="35" x2="222" y2="35"/>
+  </g>
+  <!-- Cloud -->
+  <g fill="#ffffff" opacity="0.9">
+    <ellipse cx="40" cy="55" rx="18" ry="9"/>
+    <ellipse cx="55" cy="50" rx="20" ry="11"/>
+    <ellipse cx="50" cy="62" rx="22" ry="9"/>
+  </g>
+  <!-- Rope (arc above) -->
+  <path d="M 55 155 Q 110 40 165 155" stroke="#ef4444" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <!-- Rope (arc below feet) -->
+  <path d="M 70 185 Q 110 210 150 185" stroke="#ef4444" stroke-width="3" fill="none" stroke-linecap="round" stroke-dasharray="4 3" opacity="0.6"/>
+  <!-- Hair back -->
+  <path d="M 85 85 Q 95 65 125 65 Q 133 75 130 95 Q 110 90 95 95 Q 85 92 85 85 Z" fill="#78350f"/>
+  <!-- Ponytail -->
+  <ellipse cx="130" cy="92" rx="9" ry="16" fill="#78350f" transform="rotate(15 130 92)"/>
+  <!-- Head -->
+  <circle cx="110" cy="95" r="24" fill="#fde3c4"/>
+  <!-- Hair front -->
+  <path d="M 88 85 Q 95 70 110 72 Q 120 74 132 85 Q 130 92 120 90 Q 110 88 100 92 Q 90 90 88 85 Z" fill="#78350f"/>
+  <!-- Eyes -->
+  <circle cx="102" cy="96" r="2.5" fill="#1f2937"/>
+  <circle cx="118" cy="96" r="2.5" fill="#1f2937"/>
+  <!-- Cheeks -->
+  <circle cx="97" cy="103" r="3" fill="#fca5a5" opacity="0.7"/>
+  <circle cx="123" cy="103" r="3" fill="#fca5a5" opacity="0.7"/>
+  <!-- Smile -->
+  <path d="M 103 107 Q 110 114 117 107" stroke="#1f2937" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <!-- Neck -->
+  <rect x="104" y="117" width="12" height="8" fill="#fde3c4"/>
+  <!-- T-shirt -->
+  <path d="M 88 125 L 132 125 L 138 175 L 82 175 Z" fill="#60a5fa"/>
+  <!-- Shirt detail (star) -->
+  <path d="M 110 148 L 113 154 L 119 155 L 115 159 L 116 165 L 110 162 L 104 165 L 105 159 L 101 155 L 107 154 Z" fill="#fcd34d"/>
+  <!-- Arms (holding rope up/out) -->
+  <path d="M 86 130 Q 70 140 55 155" stroke="#fde3c4" stroke-width="9" fill="none" stroke-linecap="round"/>
+  <path d="M 134 130 Q 150 140 165 155" stroke="#fde3c4" stroke-width="9" fill="none" stroke-linecap="round"/>
+  <!-- Hands -->
+  <circle cx="55" cy="155" r="6" fill="#fde3c4"/>
+  <circle cx="165" cy="155" r="6" fill="#fde3c4"/>
+  <!-- Legs (bent, jumping) -->
+  <path d="M 95 175 Q 85 185 90 200" stroke="#8b5cf6" stroke-width="11" fill="none" stroke-linecap="round"/>
+  <path d="M 125 175 Q 135 185 130 200" stroke="#8b5cf6" stroke-width="11" fill="none" stroke-linecap="round"/>
+  <!-- Shoes -->
+  <ellipse cx="88" cy="203" rx="10" ry="5" fill="#ef4444"/>
+  <ellipse cx="132" cy="203" rx="10" ry="5" fill="#ef4444"/>
+  <!-- Motion lines -->
+  <g stroke="#94a3b8" stroke-width="2" stroke-linecap="round" opacity="0.6">
+    <line x1="75" y1="200" x2="70" y2="208"/>
+    <line x1="145" y1="200" x2="150" y2="208"/>
+  </g>
+</svg>

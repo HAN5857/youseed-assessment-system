@@ -8,6 +8,7 @@ import { Mascot } from "@/components/kids/Mascot";
 import { SoundToggle } from "@/components/kids/SoundToggle";
 import { StarProgress } from "@/components/kids/StarProgress";
 import { FinishDialog } from "@/components/kids/FinishDialog";
+import { dimensionTheme, milestoneForProgress } from "@/lib/dimension-theme";
 
 type Q = {
   id: string; type: string; dimension: string; score: number;
@@ -16,8 +17,11 @@ type Q = {
 
 const ENCOURAGE = [
   "You're doing great!", "Keep it up!", "Awesome!", "You're a star!",
-  "Nice one!", "Superb!", "Fantastic!", "Way to go!",
+  "Nice one!", "Superb!", "Fantastic!", "Way to go!", "Brilliant!", "Smart move!",
 ];
+
+// Random decorative stickers per question (picked by question index so stable within a session)
+const STICKERS = ["⭐", "🌈", "🎈", "🎀", "🌟", "✨", "💫", "🎊", "🪄", "🍭"];
 
 export function ExamRunner({
   leadId, title, remainingSec, questions, initialResponses,
@@ -34,18 +38,20 @@ export function ExamRunner({
   const [secondsLeft, setSecondsLeft] = useState(remainingSec);
   const [submitting, setSubmitting] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+  const [milestone, setMilestone] = useState<string | null>(null);
   const [animKey, setAnimKey] = useState(0);
   const [showFinish, setShowFinish] = useState(false);
   const blurDelta = useRef(0);
   const submittedRef = useRef(false);
+  const prevAnsweredRef = useRef(0);
 
-  // On mount: unlock audio + auto-start background music (unless user previously muted)
+  // Unlock audio + auto-start BGM on mount
   useEffect(() => {
     (async () => {
       const e = sound();
       await e.unlock();
       const muted = sessionStorage.getItem("snd_muted") === "1";
-      const musicOff = sessionStorage.getItem("snd_music") === "0"; // explicit off
+      const musicOff = sessionStorage.getItem("snd_music") === "0";
       if (!muted && !musicOff) {
         sessionStorage.setItem("snd_music", "1");
         e.startMusic();
@@ -154,6 +160,7 @@ export function ExamRunner({
 
   const q = questions[idx];
   const Renderer = q ? getRenderer(q.type) ?? FallbackRenderer : FallbackRenderer;
+  const theme = dimensionTheme(q?.dimension ?? "");
 
   const answeredSet = useMemo(() => {
     const s = new Set<number>();
@@ -162,9 +169,26 @@ export function ExamRunner({
   }, [responses, questions]);
   const answeredCount = answeredSet.size;
 
+  // Milestone detection — fires when answered count crosses a threshold
+  useEffect(() => {
+    if (answeredCount > prevAnsweredRef.current) {
+      const m = milestoneForProgress(answeredCount, questions.length);
+      if (m) {
+        setMilestone(m);
+        sound().play("success");
+        setTimeout(() => setMilestone(null), 2400);
+      }
+    }
+    prevAnsweredRef.current = answeredCount;
+  }, [answeredCount, questions.length]);
+
   const mm = Math.floor(secondsLeft / 60).toString().padStart(2, "0");
   const ss = (secondsLeft % 60).toString().padStart(2, "0");
   const timeLow = secondsLeft < 60;
+
+  // Stable random sticker pair per question
+  const sticker1 = STICKERS[idx % STICKERS.length];
+  const sticker2 = STICKERS[(idx * 7 + 3) % STICKERS.length];
 
   return (
     <div className="kid-bg relative flex min-h-screen flex-col">
@@ -196,13 +220,40 @@ export function ExamRunner({
 
       {/* Body */}
       <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-6">
-        <div key={animKey} className="kid-card p-5 sm:p-8 kid-slide-in">
-          <div className="mb-3 flex flex-wrap items-center gap-2">
-            <span className="rounded-full bg-gradient-to-r from-pink-500 to-violet-500 px-3 py-1 text-xs font-black uppercase tracking-wider text-white shadow">
-              {q.dimension}
+        <div
+          key={animKey}
+          className={`relative overflow-visible rounded-[28px] border-4 border-white bg-gradient-to-br ${theme.bg} p-5 shadow-[0_10px_0_rgba(0,0,0,0.04),0_20px_50px_rgba(15,23,42,0.1)] sm:p-8 ${theme.entryAnim}`}
+        >
+          {/* Top coloured ribbon with shimmer */}
+          <div className={`kid-ribbon-shine absolute -top-1 left-6 right-6 h-2 rounded-b-full bg-gradient-to-r ${theme.gradient}`} />
+
+          {/* Corner stickers */}
+          <span
+            className="pointer-events-none absolute -right-2 -top-4 select-none text-3xl kid-float"
+            style={{ animationDelay: "0.2s" }}
+            aria-hidden
+          >
+            {sticker1}
+          </span>
+          <span
+            className="pointer-events-none absolute -left-2 bottom-6 select-none text-3xl kid-float"
+            style={{ animationDelay: "0.9s" }}
+            aria-hidden
+          >
+            {sticker2}
+          </span>
+
+          {/* Dimension chip + points */}
+          <div className="mb-4 flex flex-wrap items-center gap-2">
+            <span className={`inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r ${theme.gradient} px-3 py-1 text-xs font-black uppercase tracking-wider text-white shadow`}>
+              <span className="text-base">{theme.emoji}</span>
+              {theme.label}
             </span>
-            <span className="text-xs font-bold text-slate-500">{q.score} ⭐ points</span>
+            <span className={`rounded-full border-2 border-current bg-white px-2.5 py-0.5 text-xs font-bold ${theme.accent}`}>
+              {q.score} ⭐ points
+            </span>
           </div>
+
           <Renderer
             prompt={q.prompt}
             mediaUrl={q.mediaUrl ?? null}
@@ -239,6 +290,15 @@ export function ExamRunner({
       {toast && (
         <div className="pointer-events-none fixed left-1/2 top-28 z-50 -translate-x-1/2 rounded-full bg-gradient-to-r from-pink-500 to-violet-500 px-6 py-2 text-sm font-black text-white shadow-xl kid-bounce-in">
           {toast} ✨
+        </div>
+      )}
+
+      {/* Milestone banner */}
+      {milestone && (
+        <div className="pointer-events-none fixed left-1/2 top-40 z-50 -translate-x-1/2 kid-swoop-in">
+          <div className="rounded-3xl bg-gradient-to-r from-amber-400 via-pink-500 to-violet-500 px-6 py-3 text-center text-base font-black text-white shadow-2xl sm:text-lg">
+            {milestone}
+          </div>
         </div>
       )}
 
