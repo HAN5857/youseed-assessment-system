@@ -1,0 +1,11 @@
+[build]
+  command = "npm run build:prod"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "20"
+  # Prisma on Netlify needs these binaries
+  PRISMA_SKIP_POSTINSTALL_GENERATE = "true"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"

@@ -1,0 +1,123 @@
+// Production Prisma schema — Postgres (Neon).
+// Used by Netlify build via: prisma generate/migrate --schema=prisma/schema.production.prisma
+// Keep in sync with prisma/schema.prisma (same models, only datasource provider differs).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  role         String
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+
+  passkeys     Passkey[]
+  leads        Lead[]
+}
+
+model Test {
+  id           String   @id @default(cuid())
+  title        String
+  subject      String
+  duration     Int
+  scope        String
+  passingScore Int      @default(60)
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+
+  questions QuestionLink[]
+  passkeys  Passkey[]
+  leads     Lead[]
+}
+
+model Question {
+  id          String   @id @default(cuid())
+  type        String
+  dimension   String
+  level       Int      @default(1)
+  score       Int      @default(4)
+  prompt      String
+  mediaUrl    String?
+  content     String
+  answer      String
+  explanation String?
+  createdAt   DateTime @default(now())
+
+  links QuestionLink[]
+}
+
+model QuestionLink {
+  testId     String
+  questionId String
+  order      Int
+
+  test     Test     @relation(fields: [testId], references: [id], onDelete: Cascade)
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@id([testId, questionId])
+  @@index([testId, order])
+}
+
+model Passkey {
+  id        String    @id @default(cuid())
+  code      String    @unique
+  testId    String
+  tutorId   String
+  maxUses   Int       @default(1)
+  usedCount Int       @default(0)
+  expiresAt DateTime?
+  active    Boolean   @default(true)
+  note      String?
+  createdAt DateTime  @default(now())
+
+  test  Test  @relation(fields: [testId], references: [id])
+  tutor User  @relation(fields: [tutorId], references: [id])
+  leads Lead[]
+}
+
+model Lead {
+  id        String @id @default(cuid())
+  passkeyId String
+  tutorId   String
+  testId    String
+
+  name     String
+  age      Int
+  email    String
+  phone    String
+  location String
+  subject  String
+  grade    String?
+
+  startedAt    DateTime  @default(now())
+  submittedAt  DateTime?
+  status       String    @default("IN_PROGRESS")
+  totalScore   Float?
+  maxScore     Int?
+  percentage   Float?
+  level        String?
+  dimScores    String?
+  answers      String?
+  tabBlurCount Int       @default(0)
+  ipAddress    String?
+  userAgent    String?
+
+  contactStatus String  @default("NEW")
+  notes         String?
+
+  passkey Passkey @relation(fields: [passkeyId], references: [id])
+  tutor   User    @relation(fields: [tutorId], references: [id])
+  test    Test    @relation(fields: [testId], references: [id])
+
+  @@index([tutorId, status])
+  @@index([submittedAt])
+}

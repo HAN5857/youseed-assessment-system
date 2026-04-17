@@ -1,0 +1,130 @@
+// Assessment System — Prisma schema
+// Extensibility: Question.type is a string + content/answer are JSON.
+// Add new question types via the plugin registry in src/lib/question-types — no migration needed.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Auth (tutors + admins only; students don't log in) ─────────────────────
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  role         String   // "TUTOR" | "ADMIN"
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+
+  passkeys     Passkey[]
+  leads        Lead[]
+}
+
+// ─── Test content ───────────────────────────────────────────────────────────
+model Test {
+  id           String   @id @default(cuid())
+  title        String
+  subject      String   // "English" | "Chinese" | "Math" | ...
+  duration     Int      // minutes
+  scope        String   // markdown shown on instructions page
+  passingScore Int      @default(60)
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+
+  questions QuestionLink[]
+  passkeys  Passkey[]
+  leads     Lead[]
+}
+
+model Question {
+  id          String   @id @default(cuid())
+  type        String   // SINGLE | MULTI | FILL | TRUE_FALSE | MATCHING | ORDERING | CLOZE | READING | LISTENING | SHORT | ... (extensible — see src/lib/question-types)
+  dimension   String   // VOCAB | GRAMMAR | READING | LISTENING | WRITING | ...
+  level       Int      @default(1) // 1–6 difficulty
+  score       Int      @default(4) // max points
+  prompt      String   // main question text / passage / instruction
+  mediaUrl    String?  // audio/image url
+  content     String   // JSON: type-specific data (options, pairs, blanks, sub-questions, etc.)
+  answer      String   // JSON: correct answer (shape depends on type)
+  explanation String?
+  createdAt   DateTime @default(now())
+
+  links QuestionLink[]
+}
+
+model QuestionLink {
+  testId     String
+  questionId String
+  order      Int
+
+  test     Test     @relation(fields: [testId], references: [id], onDelete: Cascade)
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@id([testId, questionId])
+  @@index([testId, order])
+}
+
+// ─── Lead generation ────────────────────────────────────────────────────────
+model Passkey {
+  id        String    @id @default(cuid())
+  code      String    @unique
+  testId    String
+  tutorId   String
+  maxUses   Int       @default(1)
+  usedCount Int       @default(0)
+  expiresAt DateTime?
+  active    Boolean   @default(true)
+  note      String?
+  createdAt DateTime  @default(now())
+
+  test  Test  @relation(fields: [testId], references: [id])
+  tutor User  @relation(fields: [tutorId], references: [id])
+  leads Lead[]
+}
+
+// One row per prospective student attempt (profile + attempt merged for simplicity)
+model Lead {
+  id        String @id @default(cuid())
+  passkeyId String
+  tutorId   String
+  testId    String
+
+  // Profile
+  name     String
+  age      Int
+  email    String
+  phone    String
+  location String
+  subject  String
+  grade    String?
+
+  // Attempt
+  startedAt    DateTime  @default(now())
+  submittedAt  DateTime?
+  status       String    @default("IN_PROGRESS") // IN_PROGRESS | COMPLETED | TIMEOUT | ABANDONED
+  totalScore   Float?
+  maxScore     Int?
+  percentage   Float?
+  level        String?
+  dimScores    String?   // JSON: { VOCAB: 80, GRAMMAR: 65, ... }
+  answers      String?   // JSON: [{ questionId, response, score, correct }]
+  tabBlurCount Int       @default(0)
+  ipAddress    String?
+  userAgent    String?
+
+  // Internal CRM
+  contactStatus String  @default("NEW") // NEW | CONTACTED | ENROLLED | LOST
+  notes         String?
+
+  passkey Passkey @relation(fields: [passkeyId], references: [id])
+  tutor   User    @relation(fields: [tutorId], references: [id])
+  test    Test    @relation(fields: [testId], references: [id])
+
+  @@index([tutorId, status])
+  @@index([submittedAt])
+}
