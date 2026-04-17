@@ -28,7 +28,7 @@ async function main() {
 
   const test = await prisma.test.create({
     data: {
-      title: "English Proficiency – Teen Placement",
+      title: "English Proficiency Online Assessment",
       subject: "English",
       duration: 20, // minutes
       passingScore: 60,
