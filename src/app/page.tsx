@@ -1,21 +1,12 @@
 import Link from "next/link";
-import Image from "next/image";
+import { Mascot } from "@/components/kids/Mascot";
 
 export default function Home() {
   return (
     <main className="kid-bg relative flex min-h-screen flex-col items-center justify-center px-6 py-12 text-center">
       <div className="relative z-10 flex flex-col items-center">
-        {/* Youseed logo — same bounce motion as the previous mascot */}
-        <div className="kid-bounce">
-          <Image
-            src="/brand/youseed-logo.png"
-            alt="YouSeed"
-            width={200}
-            height={200}
-            priority
-            className="h-auto w-36 object-contain drop-shadow-lg sm:w-44"
-          />
-        </div>
+        {/* YouSeed logo with bounce motion */}
+        <Mascot mood="wave" size={160} />
 
         {/* Biggest, most-emphasized banner — now the primary visual anchor */}
         <div className="relative mt-4">
