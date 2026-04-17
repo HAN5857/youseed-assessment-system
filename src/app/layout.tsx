@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Fredoka } from "next/font/google";
 import "./globals.css";
+import { AudioAutoplay } from "@/components/kids/AudioAutoplay";
 
 const fredoka = Fredoka({
   subsets: ["latin"],
@@ -18,6 +19,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en" className={fredoka.variable}>
       <body className="min-h-screen bg-slate-50 text-slate-900 antialiased">
+        <AudioAutoplay />
         {children}
       </body>
     </html>

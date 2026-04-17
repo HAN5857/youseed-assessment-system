@@ -8,14 +8,16 @@ export function SoundToggle({ showMusic = true }: { showMusic?: boolean }) {
   const [music, setMusic] = useState(false);
 
   useEffect(() => {
-    // Persist across the session
+    // Persist across the session. Music defaults to ON (only off if explicitly opted out).
     const m = sessionStorage.getItem("snd_muted") === "1";
-    const bg = sessionStorage.getItem("snd_music") === "1";
+    const musicPref = sessionStorage.getItem("snd_music");
+    const bg = musicPref !== "0"; // default true, only false if user turned it off
     setMuted(m);
     setMusic(bg);
     const e = sound();
     e.setMuted(m);
-    if (bg && !m) { void e.unlock().then(() => e.startMusic()); }
+    // Note: music auto-start is handled by <AudioAutoplay> on first user gesture;
+    // we don't try to start here because browsers block audio before any gesture.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

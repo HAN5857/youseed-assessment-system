@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { sound } from "@/lib/sounds";
+import { safeFetch } from "@/lib/safe-fetch";
 import { Mascot } from "@/components/kids/Mascot";
 import { SoundToggle } from "@/components/kids/SoundToggle";
 
@@ -32,13 +33,15 @@ export default function TestEntry() {
     try {
       await sound().unlock();
       sound().play("click");
-      const r = await fetch("/api/passkey/check", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code }),
-      });
-      const data = await r.json();
-      if (!r.ok) throw new Error(data.error || "Oops! That passkey didn't work 😅");
+      const { ok, data } = await safeFetch<{ ok: boolean; test: TestMeta; error?: string }>(
+        "/api/passkey/check",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ code }),
+        }
+      );
+      if (!ok) throw new Error(data.error || "Oops! That passkey didn't work 😅");
       sound().play("success");
       setTest(data.test);
       setForm((f) => ({ ...f, subject: data.test.subject }));
@@ -56,13 +59,15 @@ export default function TestEntry() {
     setError(null);
     try {
       sound().play("click");
-      const r = await fetch("/api/lead/start", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ passkeyCode: code, ...form }),
-      });
-      const data = await r.json();
-      if (!r.ok) throw new Error(data.error || "Submission failed");
+      const { ok, data } = await safeFetch<{ ok: boolean; leadId: string; error?: string }>(
+        "/api/lead/start",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ passkeyCode: code, ...form }),
+        }
+      );
+      if (!ok) throw new Error(data.error || "Submission failed");
       sound().play("success");
       router.push(`/test/${data.leadId}/instructions`);
     } catch (err: any) {
