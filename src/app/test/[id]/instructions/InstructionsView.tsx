@@ -18,6 +18,18 @@ type Props = {
   dimensionCounts: [string, number][];
 };
 
+// Shared level ladder (same for all languages; only labels translate).
+// Growth metaphor: 🌱 seed → 👑 crown. Colours rise from soft to vibrant.
+const LEVELS = [
+  { code: "Pre-A1", emoji: "🌱", bg: "bg-slate-100",   text: "text-slate-700",   border: "border-slate-200" },
+  { code: "A1",     emoji: "🌿", bg: "bg-rose-100",    text: "text-rose-700",    border: "border-rose-200" },
+  { code: "A2",     emoji: "🌸", bg: "bg-orange-100",  text: "text-orange-700",  border: "border-orange-200" },
+  { code: "B1",     emoji: "🌻", bg: "bg-amber-100",   text: "text-amber-700",   border: "border-amber-200" },
+  { code: "B2",     emoji: "🌳", bg: "bg-emerald-100", text: "text-emerald-700", border: "border-emerald-200" },
+  { code: "C1",     emoji: "🚀", bg: "bg-sky-100",     text: "text-sky-700",     border: "border-sky-200" },
+  { code: "C2",     emoji: "👑", bg: "bg-violet-100",  text: "text-violet-700",  border: "border-violet-200" },
+] as const;
+
 const COPY: Record<Lang, {
   brand: string;
   titleLead: string;
@@ -25,6 +37,8 @@ const COPY: Record<Lang, {
   greeting: (name: string) => string;
   statsLabels: { q: string; t: string; p: string };
   sectionSkills: string;
+  sectionLevels: string;
+  sectionLevelsIntro: string;
   sectionReminders: string;
   timeUnit: string;
   remindersList: string[];
@@ -32,6 +46,7 @@ const COPY: Record<Lang, {
   cancel: string;
   start: string;
   dimensionNames: Record<string, { emoji: string; name: string }>;
+  levelNames: Record<string, string>;
   questionsWord: (n: number) => string;
 }> = {
   en: {
@@ -41,6 +56,8 @@ const COPY: Record<Lang, {
     greeting: (n) => `Hi ${n}!`,
     statsLabels: { q: "Questions", t: "Time Limit", p: "To Pass" },
     sectionSkills: "What we'll test",
+    sectionLevels: "Levels you can reach",
+    sectionLevelsIntro: "From first steps to total mastery — every level is a win! 🎖",
     sectionReminders: "Remember these",
     timeUnit: " min",
     remindersList: [
@@ -61,6 +78,15 @@ const COPY: Record<Lang, {
       WRITING:   { emoji: "✍️", name: "Writing" },
       SPEAKING:  { emoji: "🎤", name: "Speaking" },
     },
+    levelNames: {
+      "Pre-A1": "Foundation",
+      "A1":     "Beginner",
+      "A2":     "Elementary",
+      "B1":     "Intermediate",
+      "B2":     "Upper-Int.",
+      "C1":     "Advanced",
+      "C2":     "Mastery",
+    },
     questionsWord: (n) => `${n} question${n === 1 ? "" : "s"}`,
   },
   bm: {
@@ -70,6 +96,8 @@ const COPY: Record<Lang, {
     greeting: (n) => `Hai ${n}!`,
     statsLabels: { q: "Soalan", t: "Masa", p: "Untuk Lulus" },
     sectionSkills: "Apa yang kami uji",
+    sectionLevels: "Tahap yang kamu boleh capai",
+    sectionLevelsIntro: "Dari langkah pertama hingga pakar sepenuhnya — setiap tahap adalah kemenangan! 🎖",
     sectionReminders: "Perkara untuk diingat",
     timeUnit: " min",
     remindersList: [
@@ -90,6 +118,15 @@ const COPY: Record<Lang, {
       WRITING:   { emoji: "✍️", name: "Penulisan" },
       SPEAKING:  { emoji: "🎤", name: "Lisan" },
     },
+    levelNames: {
+      "Pre-A1": "Asas",
+      "A1":     "Permulaan",
+      "A2":     "Dasar",
+      "B1":     "Pertengahan",
+      "B2":     "Menengah",
+      "C1":     "Mahir",
+      "C2":     "Pakar",
+    },
     questionsWord: (n) => `${n} soalan`,
   },
   zh: {
@@ -99,6 +136,8 @@ const COPY: Record<Lang, {
     greeting: (n) => `嗨，${n}！`,
     statsLabels: { q: "道题目", t: "答题时间", p: "通过分数" },
     sectionSkills: "我们会测试这些",
+    sectionLevels: "你可以达到的等级",
+    sectionLevelsIntro: "从第一步到完全掌握 —— 每个等级都是胜利！🎖",
     sectionReminders: "温馨小提醒",
     timeUnit: "分钟",
     remindersList: [
@@ -118,6 +157,15 @@ const COPY: Record<Lang, {
       LISTENING: { emoji: "👂", name: "听力" },
       WRITING:   { emoji: "✍️", name: "写作" },
       SPEAKING:  { emoji: "🎤", name: "口语" },
+    },
+    levelNames: {
+      "Pre-A1": "基础",
+      "A1":     "入门",
+      "A2":     "初级",
+      "B1":     "中级",
+      "B2":     "中高级",
+      "C1":     "高级",
+      "C2":     "精通",
     },
     questionsWord: (n) => `${n} 道题`,
   },
@@ -204,6 +252,31 @@ export function InstructionsView({
                   </div>
                 );
               })}
+            </div>
+          </div>
+
+          {/* Level ladder */}
+          <div className="section">
+            <div className="section-title">
+              <span className="emoji">🎖</span> {t.sectionLevels}
+            </div>
+            <p className="mb-3 text-sm font-semibold text-[color:var(--ab-ink-soft)]">
+              {t.sectionLevelsIntro}
+            </p>
+            <div className="grid grid-cols-4 gap-2 sm:grid-cols-7">
+              {LEVELS.map((lvl) => (
+                <div
+                  key={lvl.code}
+                  className={`flex flex-col items-center gap-1 rounded-2xl border-2 ${lvl.bg} ${lvl.border} px-2 py-3 text-center transition-transform hover:-translate-y-1`}
+                  title={t.levelNames[lvl.code]}
+                >
+                  <span className="text-2xl leading-none">{lvl.emoji}</span>
+                  <span className={`font-black text-sm ${lvl.text}`}>{lvl.code}</span>
+                  <span className={`text-[10px] font-semibold uppercase tracking-wide ${lvl.text} opacity-80`}>
+                    {t.levelNames[lvl.code]}
+                  </span>
+                </div>
+              ))}
             </div>
           </div>
 
