@@ -1,13 +1,20 @@
 "use client";
 import type { RendererProps } from "./index";
 import { OptionCard } from "@/components/kids/OptionCard";
+import { PassageCard } from "@/components/kids/PassageCard";
 
 export function SingleRenderer({ prompt, mediaUrl, content, value, onChange }: RendererProps) {
   const options: { key: string; text: string }[] = content?.options ?? [];
   const selected = value?.key as string | undefined;
   const hasImage = typeof mediaUrl === "string" && mediaUrl.length > 0;
+  const passage: string | undefined = content?.passage;
   return (
     <div>
+      {passage && (
+        <div className="mb-5">
+          <PassageCard text={passage} />
+        </div>
+      )}
       <p className="mb-4 whitespace-pre-wrap text-2xl font-bold leading-snug text-slate-800 sm:text-3xl">
         {prompt}
       </p>

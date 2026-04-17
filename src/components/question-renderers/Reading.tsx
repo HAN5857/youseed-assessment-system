@@ -2,8 +2,9 @@
 import type { RendererProps } from "./index";
 import { sound } from "@/lib/sounds";
 import clsx from "clsx";
+import { PassageCard } from "@/components/kids/PassageCard";
 
-const BADGE_COLORS = ["bg-pink-500","bg-sky-500","bg-yellow-500","bg-emerald-500"];
+const BADGE_COLORS = ["bg-pink-500", "bg-sky-500", "bg-yellow-500", "bg-emerald-500"];
 
 export function ReadingRenderer({ prompt, content, value, onChange }: RendererProps) {
   const passage: string = content?.passage ?? "";
@@ -19,12 +20,17 @@ export function ReadingRenderer({ prompt, content, value, onChange }: RendererPr
 
   return (
     <div className="grid gap-6 lg:grid-cols-2">
-      <div>
-        {prompt && <p className="mb-3 text-lg font-bold text-violet-600">📖 {prompt}</p>}
-        <div className="rounded-3xl border-4 border-amber-200 bg-amber-50 p-5 text-base font-semibold leading-relaxed text-slate-800 sm:text-lg sm:leading-loose whitespace-pre-wrap">
-          {passage}
-        </div>
+      {/* Passage — notebook-paper style */}
+      <div className="lg:sticky lg:top-28 lg:self-start">
+        {prompt && (
+          <p className="mb-3 flex items-center gap-2 text-base font-black text-amber-700">
+            <span className="text-xl">📖</span> {prompt}
+          </p>
+        )}
+        <PassageCard text={passage} />
       </div>
+
+      {/* Questions column */}
       <div className="space-y-5">
         {subs.map((s, i) => (
           <div key={i} className="rounded-2xl border-2 border-slate-100 bg-white p-4 shadow-sm">

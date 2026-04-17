@@ -285,32 +285,32 @@ async function main() {
 
     // ── MODULE C — COMPREHENSION & WRITING ──────────────────────────────
 
-    // Q16 — Sam's father (SINGLE, passage in prompt)
+    // Q16 — Sam's father (SINGLE, passage shown in notebook card)
     prisma.question.create({ data: Q({
       type: "SINGLE", dimension: "READING", score: 4,
-      prompt:
-        "Read the passage:\n\n" +
-        "My name is Sam. I am eight years old and I live with my family in a big house. My father is a pilot. He flies airplanes to many countries around the world. He wears a smart uniform and a cap when he goes to work.\n\n" +
-        "My mother is a nurse. She works at a hospital near our house. Every day, she helps sick people and makes sure they feel better. She always wears a white uniform to work.\n\n" +
-        "My older sister loves sports. She can play tennis and she is very good at swimming. On weekends, she trains at the sports centre with her friends. I want to be a chef one day because I love to cook delicious food for my family.\n\n" +
-        "Question: What does Sam’s father do at work? Choose the best answer with TWO pieces of information.",
-      content: { options: [
-        { key: "A", text: "He drives buses and wears a uniform." },
-        { key: "B", text: "He flies airplanes and travels to many countries." },
-        { key: "C", text: "He helps sick people and works at a hospital." },
-        { key: "D", text: "He plays tennis and trains at the sports centre." },
-      ]},
+      prompt: "What does Sam’s father do at work? Choose the best answer with TWO pieces of information.",
+      content: {
+        passage:
+          "My name is Sam. I am eight years old and I live with my family in a big house. My father is a pilot. He flies airplanes to many countries around the world. He wears a smart uniform and a cap when he goes to work.\n\n" +
+          "My mother is a nurse. She works at a hospital near our house. Every day, she helps sick people and makes sure they feel better. She always wears a white uniform to work.\n\n" +
+          "My older sister loves sports. She can play tennis and she is very good at swimming. On weekends, she trains at the sports centre with her friends. I want to be a chef one day because I love to cook delicious food for my family.",
+        options: [
+          { key: "A", text: "He drives buses and wears a uniform." },
+          { key: "B", text: "He flies airplanes and travels to many countries." },
+          { key: "C", text: "He helps sick people and works at a hospital." },
+          { key: "D", text: "He plays tennis and trains at the sports centre." },
+        ],
+      },
       answer: { key: "B" },
     })}),
 
     // Q17 — Sam's mother (MULTI, picks TWO correct)
     prisma.question.create({ data: Q({
       type: "MULTI", dimension: "READING", score: 4,
-      prompt:
-        "Based on the passage about Sam’s family:\n\n" +
-        "My mother is a nurse. She works at a hospital near our house. Every day, she helps sick people and makes sure they feel better. She always wears a white uniform to work.\n\n" +
-        "Question: Which TWO sentences about Sam’s mother are correct?",
+      prompt: "Which TWO sentences about Sam’s mother are correct?",
       content: {
+        passage:
+          "My mother is a nurse. She works at a hospital near our house. Every day, she helps sick people and makes sure they feel better. She always wears a white uniform to work.",
         options: [
           { key: "A", text: "She works at a hospital and helps sick people." },
           { key: "B", text: "She works at a school and teaches children." },
@@ -325,16 +325,17 @@ async function main() {
     // Q18 — Sam's sister (SINGLE)
     prisma.question.create({ data: Q({
       type: "SINGLE", dimension: "READING", score: 4,
-      prompt:
-        "Based on the passage about Sam’s family:\n\n" +
-        "My older sister loves sports. She can play tennis and she is very good at swimming. On weekends, she trains at the sports centre with her friends.\n\n" +
-        "Question: Which sentence is TRUE based on the passage?",
-      content: { options: [
-        { key: "A", text: "Sam’s sister cannot swim, but she can play tennis." },
-        { key: "B", text: "Sam’s sister trains on weekdays and wants to be a chef." },
-        { key: "C", text: "Sam’s sister is good at swimming and trains at the sports centre on weekends." },
-        { key: "D", text: "Sam’s sister works at a hospital and wears a white uniform." },
-      ]},
+      prompt: "Which sentence is TRUE based on the passage?",
+      content: {
+        passage:
+          "My older sister loves sports. She can play tennis and she is very good at swimming. On weekends, she trains at the sports centre with her friends.",
+        options: [
+          { key: "A", text: "Sam’s sister cannot swim, but she can play tennis." },
+          { key: "B", text: "Sam’s sister trains on weekdays and wants to be a chef." },
+          { key: "C", text: "Sam’s sister is good at swimming and trains at the sports centre on weekends." },
+          { key: "D", text: "Sam’s sister works at a hospital and wears a white uniform." },
+        ],
+      },
       answer: { key: "C" },
     })}),
 
