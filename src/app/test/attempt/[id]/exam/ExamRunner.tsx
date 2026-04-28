@@ -129,7 +129,7 @@ export function ExamRunner({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ responses, timedOut }),
       });
-      router.push(`/test/${leadId}/result`);
+      router.push(`/test/attempt/${leadId}/result`);
     } catch {
       submittedRef.current = false;
       setSubmitting(false);

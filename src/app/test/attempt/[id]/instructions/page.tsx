@@ -23,7 +23,7 @@ export default async function InstructionsPage({
     },
   });
   if (!lead) notFound();
-  if (lead.status !== "IN_PROGRESS") redirect(`/test/${id}/result`);
+  if (lead.status !== "IN_PROGRESS") redirect(`/test/attempt/${id}/result`);
 
   // Aggregate dimension counts
   const dimensionCounts = new Map<string, number>();

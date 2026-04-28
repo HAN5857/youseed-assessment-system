@@ -3,7 +3,13 @@ import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { withApi } from "@/lib/api";
 
-const schema = z.object({ code: z.string().min(3).max(64) });
+const schema = z.object({
+  code: z.string().min(3).max(64),
+  // Optional scoping — sent by the new /test/[subject]/[level] flow.
+  // If present, the passkey's test must match the requested subject + level.
+  subject: z.string().min(1).max(40).optional(),
+  level: z.string().min(1).max(40).optional(),
+});
 
 export async function POST(req: Request) {
   return withApi(async () => {
@@ -13,12 +19,17 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: false, error: "Invalid passkey format" }, { status: 400 });
     }
     const code = parsed.data.code.trim().toUpperCase();
+    const expectedSubject = parsed.data.subject?.toLowerCase();
+    const expectedLevel = parsed.data.level?.toLowerCase();
 
     const passkey = await prisma.passkey.findUnique({
       where: { code },
       include: {
         test: {
-          select: { id: true, title: true, subject: true, duration: true, scope: true, active: true },
+          select: {
+            id: true, title: true, subject: true, level: true,
+            duration: true, scope: true, active: true,
+          },
         },
       },
     });
@@ -33,6 +44,29 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: false, error: "Passkey has reached its usage limit" }, { status: 410 });
     }
 
+    // Scope check: passkey must match the subject+level the student is on.
+    if (expectedSubject && passkey.test.subject !== expectedSubject) {
+      return NextResponse.json(
+        {
+          ok: false,
+          error: `This passkey is for ${capitalize(passkey.test.subject)}, not ${capitalize(expectedSubject)}. Please use the right passkey or pick the right subject.`,
+        },
+        { status: 409 }
+      );
+    }
+    if (expectedLevel && passkey.test.level !== expectedLevel) {
+      return NextResponse.json(
+        {
+          ok: false,
+          error: `This passkey is for ${formatLevel(passkey.test.level)}, not ${formatLevel(expectedLevel)}. Please pick the right level.`,
+        },
+        { status: 409 }
+      );
+    }
+
     return NextResponse.json({ ok: true, test: passkey.test, passkeyId: passkey.id });
   });
 }
+
+function capitalize(s: string) { return s.charAt(0).toUpperCase() + s.slice(1); }
+function formatLevel(s: string) { return s.replace("standard-", "Standard "); }

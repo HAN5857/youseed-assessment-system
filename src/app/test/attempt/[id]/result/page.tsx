@@ -18,7 +18,7 @@ export default async function StudentResultPage({
   });
   if (!lead) notFound();
   if (lead.status === "IN_PROGRESS") {
-    redirect(`/test/${id}/exam`);
+    redirect(`/test/attempt/${id}/exam`);
   }
 
   return <ResultView lead={lead} test={lead.test} mode="student" />;

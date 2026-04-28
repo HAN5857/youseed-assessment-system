@@ -29,7 +29,8 @@ model User {
 model Test {
   id           String   @id @default(cuid())
   title        String
-  subject      String   // "English" | "Chinese" | "Math" | ...
+  subject      String   // "english" | "bahasa-melayu" | "chinese" (lowercase config IDs)
+  level        String   @default("standard-3") // "standard-1" .. "standard-6"
   duration     Int      // minutes
   scope        String   // markdown shown on instructions page
   passingScore Int      @default(60)
@@ -39,6 +40,9 @@ model Test {
   questions QuestionLink[]
   passkeys  Passkey[]
   leads     Lead[]
+
+  @@unique([subject, level])
+  @@index([subject, level, active])
 }
 
 model Question {

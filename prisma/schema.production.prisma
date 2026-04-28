@@ -28,6 +28,7 @@ model Test {
   id           String   @id @default(cuid())
   title        String
   subject      String
+  level        String   @default("standard-3")
   duration     Int
   scope        String
   passingScore Int      @default(60)
@@ -37,6 +38,9 @@ model Test {
   questions QuestionLink[]
   passkeys  Passkey[]
   leads     Lead[]
+
+  @@unique([subject, level])
+  @@index([subject, level, active])
 }
 
 model Question {

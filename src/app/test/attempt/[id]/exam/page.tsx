@@ -27,7 +27,7 @@ export default async function ExamPage({
   });
   if (!lead) notFound();
   if (lead.status !== "IN_PROGRESS") {
-    redirect(`/test/${id}/result`);
+    redirect(`/test/attempt/${id}/result`);
   }
 
   // Strip the answer key before sending to client!

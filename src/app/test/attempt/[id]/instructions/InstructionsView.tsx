@@ -309,7 +309,7 @@ export function InstructionsView({
           <div className="actions">
             <Link href="/test" className="btn btn-cancel">{t.cancel}</Link>
             <Link
-              href={`/test/${leadId}/exam`}
+              href={`/test/attempt/${leadId}/exam`}
               className="btn btn-start"
               onClick={() => sound().play("whoosh")}
             >
