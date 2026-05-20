@@ -11,6 +11,7 @@ import { OrderingRenderer } from "./Ordering";
 import { ListeningRenderer } from "./Listening";
 import { ReadingRenderer } from "./Reading";
 import { ListenFillRenderer } from "./ListenFill";
+import { ShortRenderer } from "./Short";
 
 export type RendererProps = {
   prompt: string;
@@ -33,6 +34,8 @@ const map: Record<string, Renderer> = {
   LISTENING: ListeningRenderer,
   READING: ReadingRenderer,
   LISTEN_FILL: ListenFillRenderer,
+  SHORT: ShortRenderer,
+  WRITING: ShortRenderer,
 };
 
 export function getRenderer(type: string): Renderer | undefined {

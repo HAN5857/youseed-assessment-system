@@ -44,6 +44,14 @@ const THEMES: Record<string, DimensionTheme> = {
     sticker: "🎵",
     entryAnim: "kid-slide-in",
   },
+  PHONICS: {
+    emoji: "🔊", label: "Phonics",
+    gradient: "from-cyan-500 to-blue-500",
+    accent: "text-cyan-700",
+    bg: "from-cyan-50 via-white to-blue-50",
+    sticker: "🎧",
+    entryAnim: "kid-pop-in",
+  },
   WRITING: {
     emoji: "✍️", label: "Writing",
     gradient: "from-emerald-500 to-teal-500",
@@ -73,6 +81,81 @@ const FALLBACK: DimensionTheme = {
 
 export function dimensionTheme(dimension: string): DimensionTheme {
   return THEMES[dimension] ?? FALLBACK;
+}
+
+// ─── Calm (YouSeed green) palettes ──────────────────────────────────────
+// Same structure as THEMES, just retinted to green-family shades so every
+// dimension still feels visually fresh while staying on-brand.
+const THEMES_CALM: Record<string, DimensionTheme> = {
+  VOCAB: {
+    emoji: "🔤", label: "Vocabulary",
+    gradient: "from-emerald-500 to-green-500",
+    accent: "text-emerald-600",
+    bg: "from-emerald-50 via-white to-green-50",
+    sticker: "📚",
+    entryAnim: "kid-slide-in",
+  },
+  GRAMMAR: {
+    emoji: "📝", label: "Grammar",
+    gradient: "from-teal-500 to-cyan-500",
+    accent: "text-teal-600",
+    bg: "from-teal-50 via-white to-cyan-50",
+    sticker: "🧩",
+    entryAnim: "kid-pop-in",
+  },
+  READING: {
+    emoji: "📖", label: "Reading",
+    gradient: "from-lime-500 to-green-500",
+    accent: "text-lime-700",
+    bg: "from-lime-50 via-white to-green-50",
+    sticker: "🦉",
+    entryAnim: "kid-zoom-in",
+  },
+  LISTENING: {
+    emoji: "👂", label: "Listening",
+    gradient: "from-emerald-500 to-teal-500",
+    accent: "text-emerald-600",
+    bg: "from-emerald-50 via-white to-teal-50",
+    sticker: "🎵",
+    entryAnim: "kid-slide-in",
+  },
+  PHONICS: {
+    emoji: "🔊", label: "Phonics",
+    gradient: "from-teal-500 to-emerald-500",
+    accent: "text-teal-700",
+    bg: "from-teal-50 via-white to-emerald-50",
+    sticker: "🎧",
+    entryAnim: "kid-pop-in",
+  },
+  WRITING: {
+    emoji: "✍️", label: "Writing",
+    gradient: "from-green-500 to-emerald-500",
+    accent: "text-green-700",
+    bg: "from-green-50 via-white to-emerald-50",
+    sticker: "🖍",
+    entryAnim: "kid-pop-in",
+  },
+  SPEAKING: {
+    emoji: "🎤", label: "Speaking",
+    gradient: "from-lime-500 to-emerald-500",
+    accent: "text-emerald-600",
+    bg: "from-lime-50 via-white to-emerald-50",
+    sticker: "💬",
+    entryAnim: "kid-bounce-in",
+  },
+};
+
+const FALLBACK_CALM: DimensionTheme = {
+  emoji: "✨", label: "Question",
+  gradient: "from-emerald-500 to-green-500",
+  accent: "text-emerald-600",
+  bg: "from-emerald-50 via-white to-green-50",
+  sticker: "⭐",
+  entryAnim: "kid-slide-in",
+};
+
+export function dimensionThemeCalm(dimension: string): DimensionTheme {
+  return THEMES_CALM[dimension] ?? FALLBACK_CALM;
 }
 
 // Milestone messages keyed by the question NUMBER the student just finished.

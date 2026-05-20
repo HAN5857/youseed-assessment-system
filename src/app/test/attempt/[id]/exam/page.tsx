@@ -2,6 +2,8 @@ import { prisma } from "@/lib/db";
 import { readAttemptCookie } from "@/lib/attempt-guard";
 import { redirect, notFound } from "next/navigation";
 import { ExamRunner } from "./ExamRunner";
+import { CalmExamRunner } from "./CalmExamRunner";
+import { isS1Calm, levelTier } from "@/lib/s1-calm-flag";
 
 export default async function ExamPage({
   params,
@@ -52,13 +54,21 @@ export default async function ExamPage({
   // Restore any prior autosaved responses (when status=IN_PROGRESS, lead.answers stores responses map)
   const savedResponses = lead.answers ? safeJson(lead.answers) : {};
 
+  const isCalm = isS1Calm(lead.test.subject, lead.test.level);
+  const Runner = isCalm ? CalmExamRunner : ExamRunner;
+  const tier = isCalm ? levelTier(lead.test.level) : "primary";
+
   return (
-    <ExamRunner
+    <Runner
       leadId={lead.id}
       title={lead.test.title}
+      subject={lead.test.subject}
+      level={lead.test.level}
+      studentName={lead.name}
       remainingSec={remainingSec}
       questions={questions}
       initialResponses={savedResponses ?? {}}
+      tier={tier}
     />
   );
 }

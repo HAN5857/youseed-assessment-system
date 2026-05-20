@@ -2,8 +2,10 @@
 import type { RendererProps } from "./index";
 import { OptionCard } from "@/components/kids/OptionCard";
 import { PassageCard } from "@/components/kids/PassageCard";
+import { useUiTheme } from "@/lib/ui-theme";
 
 export function MultiRenderer({ prompt, content, value, onChange }: RendererProps) {
+  const theme = useUiTheme();
   const options: { key: string; text: string }[] = content?.options ?? [];
   const chosen: string[] = value?.keys ?? [];
   const passage: string | undefined = content?.passage;
@@ -21,7 +23,15 @@ export function MultiRenderer({ prompt, content, value, onChange }: RendererProp
       <p className="mb-2 whitespace-pre-wrap text-2xl font-bold leading-snug text-slate-800 sm:text-3xl">
         {prompt}
       </p>
-      <p className="mb-5 text-sm font-semibold text-violet-600">👉 Pick all that are correct!</p>
+      <p
+        className={
+          theme === "calm"
+            ? "mb-5 text-sm font-semibold text-emerald-600"
+            : "mb-5 text-sm font-semibold text-violet-600"
+        }
+      >
+        👉 Pick all that are correct!
+      </p>
       <div className="grid gap-3 sm:grid-cols-2">
         {options.map((o, i) => (
           <OptionCard

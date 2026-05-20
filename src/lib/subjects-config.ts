@@ -49,12 +49,12 @@ export const SUBJECTS: SubjectDef[] = [
     bgGradient: "from-pink-400 via-orange-400 to-amber-400",
     enabled: true,
     levels: [
-      { ...STANDARD_LEVELS[0], unit: "Supermind Year 1 · Unit 0–4", ageHint: "Year 1 · Age 7", enabled: true },
-      { ...STANDARD_LEVELS[1], unit: "Supermind Year 2 · Unit 5–9", ageHint: "Year 2 · Age 8", enabled: true },
-      { ...STANDARD_LEVELS[2], unit: "Year 3 · Placement",          ageHint: "Year 3 · Age 9", enabled: true },
-      { ...STANDARD_LEVELS[3], unit: "Coming soon",                 ageHint: "Year 4 · Age 10", enabled: false },
-      { ...STANDARD_LEVELS[4], unit: "Coming soon",                 ageHint: "Year 5 · Age 11", enabled: false },
-      { ...STANDARD_LEVELS[5], unit: "Coming soon",                 ageHint: "Year 6 · Age 12", enabled: false },
+      { ...STANDARD_LEVELS[0], unit: "Supermind Year 1 · Unit 0–4",            ageHint: "Year 1 · Age 7",  enabled: true },
+      { ...STANDARD_LEVELS[1], unit: "Supermind Year 2 · Unit 5–9",            ageHint: "Year 2 · Age 8",  enabled: true },
+      { ...STANDARD_LEVELS[2], unit: "Year 3 · Placement",                     ageHint: "Year 3 · Age 9",  enabled: true },
+      { ...STANDARD_LEVELS[3], unit: "Get Smart Plus 4 · Module 1–10",         ageHint: "Year 4 · Age 10", enabled: true },
+      { ...STANDARD_LEVELS[4], unit: "English Plus 1 · Starter Unit – Unit 8", ageHint: "Year 5 · Age 11", enabled: true },
+      { ...STANDARD_LEVELS[5], unit: "Academy Stars Year 6 · Welcome – Unit 10", ageHint: "Year 6 · Age 12", enabled: true },
     ],
   },
   {

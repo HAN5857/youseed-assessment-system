@@ -6,6 +6,25 @@ html, body {
   font-family: var(--font-fredoka), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 
+/* ─── Calm (YouSeed green) theme tokens ──────────────────────────────────
+   Scoped via `.calm-ui` so the playful S2/S3 runners are unaffected.
+   Centralising the palette here keeps future calm screens (result, landing)
+   on a single source of truth — change a hex once, every calm surface follows. */
+.calm-ui {
+  --c-primary: #18A65B;
+  --c-primary-strong: #138a4a;
+  --c-primary-soft: #EAF8F0;
+  --c-text: #1F2937;
+  --c-text-muted: #6B7280;
+  --c-bg: #F7FBF8;
+  --c-card: #FFFFFF;
+  --c-border: #E5E7EB;
+  --c-border-soft: #F1F5F4;
+  --c-amber-soft: #FEF3C7;
+  --c-amber-text: #92400E;
+}
+.calm-ui ::selection { background: var(--c-primary-soft); color: var(--c-text); }
+
 @layer utilities {
   .text-balance { text-wrap: balance; }
 }
@@ -43,6 +62,41 @@ html, body {
   width: 320px; height: 320px;
   bottom: -80px; right: -80px;
   background: #f9a8d4;
+  animation: kid-drift 18s ease-in-out infinite reverse;
+}
+
+/* Green variant — same structure, YouSeed palette. Applied inside .calm-ui. */
+.kid-bg-green {
+  background:
+    radial-gradient(circle at 15% 10%, rgba(132, 225, 169, 0.45), transparent 45%),
+    radial-gradient(circle at 85% 15%, rgba(174, 240, 200, 0.45), transparent 50%),
+    radial-gradient(circle at 75% 85%, rgba(24, 166, 91, 0.25), transparent 55%),
+    radial-gradient(circle at 20% 90%, rgba(208, 248, 224, 0.50), transparent 50%),
+    linear-gradient(135deg, #EAF8F0 0%, #ffffff 50%, #EAF8F0 100%);
+  background-attachment: fixed;
+  position: relative;
+  overflow: hidden;
+}
+.kid-bg-green::before,
+.kid-bg-green::after {
+  content: "";
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(40px);
+  opacity: 0.5;
+  pointer-events: none;
+  z-index: 0;
+}
+.kid-bg-green::before {
+  width: 240px; height: 240px;
+  top: -60px; left: -60px;
+  background: #86efac;
+  animation: kid-drift 14s ease-in-out infinite;
+}
+.kid-bg-green::after {
+  width: 320px; height: 320px;
+  bottom: -80px; right: -80px;
+  background: #6ee7b7;
   animation: kid-drift 18s ease-in-out infinite reverse;
 }
 
@@ -133,6 +187,13 @@ html, body {
 .kid-star-pop  { animation: kid-star-pop 0.5s cubic-bezier(.34,1.56,.64,1); }
 .kid-swoop-in  { animation: kid-swoop-in 0.5s cubic-bezier(.34,1.56,.64,1); }
 .kid-burst     { animation: kid-burst 0.6s ease-out forwards; }
+
+/* Fill-in-the-blank underline pulse — subtle attention cue for upper-primary */
+@keyframes kid-blank-pulse {
+  0%, 100% { border-color: #18A65B; box-shadow: 0 1px 0 rgba(24, 166, 91, 0.0); }
+  50%      { border-color: #138a4a; box-shadow: 0 1px 0 rgba(24, 166, 91, 0.45); }
+}
+.kid-blank { animation: kid-blank-pulse 2.4s ease-in-out infinite; }
 
 .kid-rainbow-text {
   background: linear-gradient(90deg, #ec4899, #f59e0b, #10b981, #3b82f6, #a855f7, #ec4899);

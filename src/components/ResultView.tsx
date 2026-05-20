@@ -2,10 +2,14 @@
 
 import { getLevel, DEFAULT_BANDS } from "@/lib/level";
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { celebrate } from "@/components/kids/Confetti";
 import { Mascot } from "@/components/kids/Mascot";
 import { sound } from "@/lib/sounds";
+import { useS1Edu } from "@/lib/s1-edu-flag";
+import { getStickerPool } from "@/lib/s1-stickers";
+import { EndOfQuestScene } from "@/components/edu-s1/EndOfQuestScene";
+import { StickerAlbum } from "@/components/edu-s1/StickerAlbum";
 
 type LeadLite = {
   id: string;
@@ -27,7 +31,7 @@ type LeadLite = {
   answers: string | null;
 };
 
-type TestLite = { title: string; subject: string; duration: number };
+type TestLite = { title: string; subject: string; level?: string | null; duration: number };
 
 const KID_LABELS: Record<string, { label: string; blurb: string }> = {
   "C2": { label: "SUPER SUPERSTAR!", blurb: "You're like a real-life language master. Amazing work!" },
@@ -56,19 +60,58 @@ export function ResultView({
   const kidCopy = KID_LABELS[band.code] ?? KID_LABELS["A1"];
   const firstName = lead.name.split(/\s+/)[0] || lead.name;
 
-  // Celebrate on mount (student mode only) — confetti + big applause + fanfare
-  useEffect(() => {
-    if (mode === "student") {
-      celebrate();
-      void sound().unlock().then(() => {
-        sound().play("celebrate");
-        setTimeout(() => celebrate(), 600);
-      });
+  // S1 Edutainment flags + themed sticker pool
+  const edu = useS1Edu({ test: { subject: test.subject, level: test.level ?? null } });
+  const stickerPool = getStickerPool(test.subject, test.level ?? null);
+
+  // Sticker count = number of completed answers (max = pool length)
+  const stickersEarned = (() => {
+    if (!lead.answers) return 0;
+    try {
+      const breakdown = JSON.parse(lead.answers) as Array<{ response: unknown }>;
+      return breakdown.filter((a) => a?.response != null).length;
+    } catch {
+      return 0;
     }
-  }, [mode]);
+  })();
+
+  // Cinematic gate (S1 edu only). Once dismissed, doesn't re-show on this lead.
+  const sceneStorageKey = `s1edu_endscene_${lead.id}`;
+  const [showScene, setShowScene] = useState<boolean>(() => {
+    if (mode !== "student" || !edu.endOfQuestScene) return false;
+    if (typeof window === "undefined") return true;
+    return sessionStorage.getItem(sceneStorageKey) !== "1";
+  });
+  const dismissScene = () => {
+    setShowScene(false);
+    if (typeof window !== "undefined") sessionStorage.setItem(sceneStorageKey, "1");
+  };
+
+  // Legacy celebration — fires immediately for non-edu (S2/S3) or once the
+  // scene dismisses for edu mode. The cinematic plays its own celebrate sound
+  // at the climax, so we suppress the duplicate when edu is active.
+  useEffect(() => {
+    if (mode !== "student") return;
+    if (edu.endOfQuestScene) return; // scene handles its own celebration
+    celebrate();
+    void sound().unlock().then(() => {
+      sound().play("celebrate");
+      setTimeout(() => celebrate(), 600);
+    });
+  }, [mode, edu.endOfQuestScene]);
 
   return (
     <main className={mode === "student" ? "kid-bg relative min-h-screen px-4 py-10" : "min-h-screen bg-slate-50 px-4 py-10"}>
+      {/* End-of-quest cinematic — S1 edu only, plays once on mount */}
+      {mode === "student" && edu.endOfQuestScene && (
+        <EndOfQuestScene
+          show={showScene}
+          firstName={firstName}
+          voice={edu.voiceMascot}
+          onDismiss={dismissScene}
+        />
+      )}
+
       <div className="relative z-10 mx-auto max-w-3xl">
         {mode === "student" && (
           <div className="mb-4 flex justify-center">
@@ -122,6 +165,11 @@ export function ResultView({
 
             <p className="max-w-md text-base font-semibold opacity-95">{kidCopy.blurb}</p>
           </div>
+
+          {/* Sticker album — S1 edu only */}
+          {mode === "student" && edu.stickerAlbum && (
+            <StickerAlbum earned={stickersEarned} pool={stickerPool} />
+          )}
 
           {/* Your snapshot */}
           {Object.keys(dims).length > 0 && (
@@ -208,24 +256,26 @@ export function ResultView({
                 </ul>
               </div>
 
-              <p className="mt-4 text-center text-sm font-semibold text-violet-800">
-                No pressure. No hard sell. Just clarity and a clear next step for your child. 💛
-              </p>
-
-              <div className="mt-5 flex flex-col gap-2 sm:flex-row sm:justify-center">
-                <a
-                  href={`https://wa.me/?text=Hi!%20I%27m%20${encodeURIComponent(firstName)}%27s%20parent.%20We%20just%20finished%20the%20free%20language%20assessment%20and%20would%20love%20to%20book%20the%20complimentary%2030-min%20face-to-face%20session.`}
-                  className="kid-btn kid-btn-green inline-flex"
-                >
-                  💬 WhatsApp a Tutor
-                </a>
-                <a
-                  href={`mailto:hello@example.com?subject=${encodeURIComponent("30-min session booking — " + firstName)}&body=${encodeURIComponent("Hi! We just completed the free language assessment and would like to book the complimentary 30-min face-to-face session.")}`}
-                  className="inline-flex items-center justify-center rounded-full border-2 border-violet-300 bg-white px-5 py-3 text-sm font-bold text-violet-700 hover:bg-violet-50"
-                >
-                  📧 Email Us
-                </a>
+              {/* Tutor-will-be-reaching-out message — replaces the prior
+                  WhatsApp + Email CTA buttons. Soft, reassuring; the door is
+                  open if the parent wants to initiate contact themselves. */}
+              <div className="mt-5 rounded-2xl border-2 border-violet-200 bg-white/80 p-5 sm:p-6">
+                <h4 className="text-base font-black tracking-tight text-violet-900 sm:text-lg">
+                  Your tutor in charge will be reaching out
+                </h4>
+                <p className="mt-2 text-sm font-medium leading-relaxed text-slate-700 sm:text-[15px]">
+                  We&apos;ll be in touch shortly to confirm your{" "}
+                  <b className="text-violet-700">free face-to-face language assessment and review session</b>
+                  {" "}— at a time that works for your family. No pressure, no hard sell. Just a
+                  clear next step for your child&apos;s learning journey. <span aria-hidden>🌟</span>
+                </p>
               </div>
+
+              <p className="mt-4 text-center text-sm font-semibold leading-relaxed text-violet-800">
+                Prefer to move things along?{" "}
+                <b>Reach out to your tutor in charge directly</b> — we&apos;re happy to confirm
+                your free session right away.
+              </p>
             </div>
           )}
 

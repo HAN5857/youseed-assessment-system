@@ -14,7 +14,7 @@ export default async function StudentResultPage({
 
   const lead = await prisma.lead.findUnique({
     where: { id },
-    include: { test: { select: { title: true, subject: true, duration: true } } },
+    include: { test: { select: { title: true, subject: true, level: true, duration: true } } },
   });
   if (!lead) notFound();
   if (lead.status === "IN_PROGRESS") {
