@@ -1,26 +1,55 @@
 import { prisma } from "@/lib/db";
 import { requireSession } from "@/lib/auth";
+import type { Prisma } from "@prisma/client";
 
-export async function GET() {
+export async function GET(req: Request) {
   let session;
   try { session = await requireSession(); } catch {
     return new Response("Unauthorized", { status: 401 });
   }
-  const where = session.role === "ADMIN" ? {} : { tutorId: session.uid };
+  const url = new URL(req.url);
+  const sp = url.searchParams;
+  const isAdmin = session.role === "ADMIN";
+
+  // Mirror the same filter logic as /admin/page.tsx so the export reflects
+  // exactly what the user is looking at on screen.
+  const where: Prisma.LeadWhereInput = {};
+  if (!isAdmin) where.tutorId = session.uid;
+  const status  = sp.get("status");  if (status)  where.status = status;
+  const contact = sp.get("contact"); if (contact) where.contactStatus = contact;
+  const level   = sp.get("level");   if (level)   where.level = level;
+  const test    = sp.get("test");    if (test)    where.testId = test;
+  const tutor   = sp.get("tutor");   if (tutor && isAdmin) where.tutorId = tutor;
+  const q = sp.get("q");
+  if (q && q.trim()) {
+    const t = q.trim();
+    where.OR = [
+      { name:     { contains: t } },
+      { email:    { contains: t } },
+      { phone:    { contains: t } },
+      { location: { contains: t } },
+    ];
+  }
+
   const leads = await prisma.lead.findMany({
     where,
-    include: { test: { select: { title: true, subject: true } } },
+    include: {
+      test: { select: { title: true, subject: true } },
+      tutor: { select: { name: true, email: true } },
+    },
     orderBy: { startedAt: "desc" },
   });
 
   const header = [
     "id","name","age","email","phone","location","subject","grade",
-    "test","status","level","percentage","totalScore","maxScore",
+    "test","tutorName","tutorEmail",
+    "status","level","percentage","totalScore","maxScore",
     "tabBlurCount","contactStatus","startedAt","submittedAt",
   ];
   const rows = leads.map((l) => [
     l.id, l.name, l.age, l.email, l.phone, l.location, l.subject, l.grade ?? "",
-    l.test.title, l.status, l.level ?? "", l.percentage ?? "", l.totalScore ?? "", l.maxScore ?? "",
+    l.test.title, l.tutor.name, l.tutor.email,
+    l.status, l.level ?? "", l.percentage ?? "", l.totalScore ?? "", l.maxScore ?? "",
     l.tabBlurCount, l.contactStatus,
     l.startedAt.toISOString(), l.submittedAt?.toISOString() ?? "",
   ]);
