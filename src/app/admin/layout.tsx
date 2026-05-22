@@ -31,6 +31,9 @@ async function AuthGate({ children }: { children: React.ReactNode }) {
                 <Link href="/admin" className="hover:text-indigo-600">Leads</Link>
                 <Link href="/admin/passkeys" className="hover:text-indigo-600">Passkeys</Link>
                 <Link href="/admin/tests" className="hover:text-indigo-600">Tests</Link>
+                {session.role === "ADMIN" && (
+                  <Link href="/admin/users" className="hover:text-indigo-600">Users</Link>
+                )}
                 <span className="hidden sm:inline text-xs text-slate-400">
                   {session.name} · {session.role}
                 </span>
