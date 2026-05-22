@@ -1,9 +1,21 @@
 import Link from "next/link";
+import { cookies } from "next/headers";
 import { getSession } from "@/lib/auth";
 import { LogoutButton } from "./LogoutButton";
 
+// CRITICAL: the admin layout MUST be dynamic on every request.
+// Without this, Netlify's adapter pre-renders the layout HTML once (with no
+// cookies) and serves that cached HTML to all users — so the nav links
+// (which depend on a valid session) never appear in the page chrome even
+// after the user logs in. The individual page components inside this layout
+// are already force-dynamic, but the layout chrome wraps every one of them.
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  // Skip auth gate for /admin/login itself — handled in that page
+  // Touch cookies() here so Next.js definitely treats this layout as
+  // request-scoped (belt + braces alongside the force-dynamic flag).
+  await cookies();
   return (
     <div className="min-h-screen bg-slate-50">
       <AuthGate>{children}</AuthGate>
