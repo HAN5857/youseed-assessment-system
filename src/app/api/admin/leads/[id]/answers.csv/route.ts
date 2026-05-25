@@ -32,7 +32,7 @@ export async function GET(req: Request, ctx: { params: Promise<{ id: string }> }
     },
   });
   if (!lead) return new Response("Not found", { status: 404 });
-  if (session.role !== "ADMIN" && lead.tutorId !== session.uid) {
+  if (session.role !== "SUPERADMIN" && lead.tutorId !== session.uid) {
     return new Response("Forbidden", { status: 403 });
   }
 

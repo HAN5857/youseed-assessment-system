@@ -16,7 +16,7 @@ export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }>
   const { id } = await ctx.params;
   const lead = await prisma.lead.findUnique({ where: { id } });
   if (!lead) return NextResponse.json({ ok: false, error: "NOT_FOUND" }, { status: 404 });
-  if (session.role !== "ADMIN" && lead.tutorId !== session.uid) {
+  if (session.role !== "SUPERADMIN" && lead.tutorId !== session.uid) {
     return NextResponse.json({ ok: false, error: "FORBIDDEN" }, { status: 403 });
   }
   const body = await req.json().catch(() => ({}));

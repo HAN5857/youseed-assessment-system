@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 export default async function UsersPage() {
   const session = await getSession();
   if (!session) redirect("/admin/login");
-  if (session.role !== "ADMIN") {
+  if (session.role !== "SUPERADMIN") {
     // Non-admins (TUTORs) bounce back to their dashboard — this page is admin-only.
     redirect("/admin");
   }

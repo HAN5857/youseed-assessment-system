@@ -5,11 +5,25 @@ import { cookies } from "next/headers";
 const SECRET = process.env.JWT_SECRET || "dev-secret-change-me";
 const COOKIE_NAME = "assess_session";
 
+// Role model:
+//   SUPERADMIN — sees ALL tutors' leads / passkeys / users (system owner).
+//   ADMIN      — tenant-scoped, identical privileges to TUTOR. The label
+//                exists only so a customer can distinguish "agency admin"
+//                from "individual tutor" in their own org chart — there is
+//                no extra capability.
+//   TUTOR      — tenant-scoped: own leads / own passkeys only.
+export type Role = "TUTOR" | "ADMIN" | "SUPERADMIN";
+
 export type SessionPayload = {
   uid: string;
-  role: "TUTOR" | "ADMIN";
+  role: Role;
   name: string;
 };
+
+// True only for SUPERADMIN. All other roles see only their own data.
+export function isSuper(role: Role | undefined | null): boolean {
+  return role === "SUPERADMIN";
+}
 
 export type AttemptToken = {
   leadId: string;
@@ -69,8 +83,15 @@ export async function requireSession(): Promise<SessionPayload> {
   return s;
 }
 
-export async function requireAdmin(): Promise<SessionPayload> {
+export async function requireSuperAdmin(): Promise<SessionPayload> {
   const s = await requireSession();
-  if (s.role !== "ADMIN") throw new Error("FORBIDDEN");
+  if (s.role !== "SUPERADMIN") throw new Error("FORBIDDEN");
   return s;
+}
+
+// DEPRECATED — kept temporarily so older imports don't break during the
+// refactor. Now behaves identically to requireSuperAdmin. Once all call
+// sites are updated, this can be removed.
+export async function requireAdmin(): Promise<SessionPayload> {
+  return requireSuperAdmin();
 }

@@ -37,6 +37,8 @@ export function UsersManager({
   const [formName, setFormName] = useState("");
   const [formEmail, setFormEmail] = useState("");
   const [formRole, setFormRole] = useState<"TUTOR" | "ADMIN">("TUTOR");
+  // Note: SUPERADMIN can only be assigned via direct DB edit, never via this
+  // form — by design, to prevent accidental privilege escalation.
   const [formBusy, setFormBusy] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
 
@@ -178,7 +180,7 @@ export function UsersManager({
                 className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
               >
                 <option value="TUTOR">Tutor — sees only their own students</option>
-                <option value="ADMIN">Admin — sees ALL students + manages users</option>
+                <option value="ADMIN">Admin — sees only their own students (same scope as Tutor; label only)</option>
               </select>
             </label>
             {formError && (
@@ -234,9 +236,11 @@ export function UsersManager({
                   <td className="px-4 py-3">
                     <span
                       className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-                        u.role === "ADMIN"
-                          ? "bg-purple-100 text-purple-800"
-                          : "bg-blue-100 text-blue-800"
+                        u.role === "SUPERADMIN"
+                          ? "bg-rose-100 text-rose-800"
+                          : u.role === "ADMIN"
+                            ? "bg-purple-100 text-purple-800"
+                            : "bg-blue-100 text-blue-800"
                       }`}
                     >
                       {u.role}

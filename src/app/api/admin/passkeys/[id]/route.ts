@@ -11,7 +11,7 @@ export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }>
   const body = await req.json().catch(() => ({}));
   const pk = await prisma.passkey.findUnique({ where: { id } });
   if (!pk) return NextResponse.json({ ok: false, error: "NOT_FOUND" }, { status: 404 });
-  if (session.role !== "ADMIN" && pk.tutorId !== session.uid) {
+  if (session.role !== "SUPERADMIN" && pk.tutorId !== session.uid) {
     return NextResponse.json({ ok: false, error: "FORBIDDEN" }, { status: 403 });
   }
   const updated = await prisma.passkey.update({

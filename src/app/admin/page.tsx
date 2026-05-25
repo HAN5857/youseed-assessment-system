@@ -42,16 +42,16 @@ export default async function LeadsListPage({
   if (!session) redirect("/admin/login");
 
   const sp = await searchParams;
-  const isAdmin = session.role === "ADMIN";
+  const isSuper = session.role === "SUPERADMIN";
 
   // Build the Prisma where clause from URL params.
   const where: Prisma.LeadWhereInput = {};
-  if (!isAdmin) where.tutorId = session.uid;
+  if (!isSuper) where.tutorId = session.uid;
   if (sp.status) where.status = sp.status;
   if (sp.contact) where.contactStatus = sp.contact;
   if (sp.level) where.level = sp.level;
   if (sp.test) where.testId = sp.test;
-  if (sp.tutor && isAdmin) where.tutorId = sp.tutor;
+  if (sp.tutor && isSuper) where.tutorId = sp.tutor;
   if (sp.q && sp.q.trim()) {
     const q = sp.q.trim();
     where.OR = [
@@ -65,7 +65,7 @@ export default async function LeadsListPage({
   // Fetch filtered leads + the full set of summary counts (counts always
   // reflect tutor scope, not the active filter — they answer "how many
   // total" not "how many match my filter").
-  const baseScope: Prisma.LeadWhereInput = isAdmin ? {} : { tutorId: session.uid };
+  const baseScope: Prisma.LeadWhereInput = isSuper ? {} : { tutorId: session.uid };
   const [leads, totals, tutors, tests] = await Promise.all([
     prisma.lead.findMany({
       where,
@@ -77,7 +77,7 @@ export default async function LeadsListPage({
       take: 500,
     }),
     prisma.lead.groupBy({ by: ["status"], where: baseScope, _count: true }),
-    isAdmin
+    isSuper
       ? prisma.user.findMany({
           where: { active: true, role: { in: ["TUTOR", "ADMIN"] } },
           select: { id: true, name: true, email: true },
@@ -101,8 +101,8 @@ export default async function LeadsListPage({
           <h1 className="text-2xl font-bold tracking-tight">Leads</h1>
           <p className="text-sm text-slate-600">
             {hasActiveFilter
-              ? `${leads.length} matching ${isAdmin ? "across all prospects" : "of your prospects"}.`
-              : `${leads.length} most recent ${isAdmin ? "across all prospects" : "of your prospects"}.`}
+              ? `${leads.length} matching ${isSuper ? "across all prospects" : "of your prospects"}.`
+              : `${leads.length} most recent ${isSuper ? "across all prospects" : "of your prospects"}.`}
           </p>
         </div>
         <a
@@ -122,7 +122,7 @@ export default async function LeadsListPage({
         ))}
       </div>
 
-      <LeadsFilters showTutor={isAdmin} tutors={tutors} tests={tests} />
+      <LeadsFilters showTutor={isSuper} tutors={tutors} tests={tests} />
 
       <div className="mt-6 overflow-hidden rounded-xl border border-slate-200 bg-white">
         <div className="overflow-x-auto">
@@ -131,7 +131,7 @@ export default async function LeadsListPage({
               <tr>
                 <th className="px-4 py-3">Name</th>
                 <th className="px-4 py-3">Test</th>
-                {isAdmin && <th className="px-4 py-3">Tutor</th>}
+                {isSuper && <th className="px-4 py-3">Tutor</th>}
                 <th className="px-4 py-3">Status</th>
                 <th className="px-4 py-3">Score</th>
                 <th className="px-4 py-3">Level</th>
@@ -151,7 +151,7 @@ export default async function LeadsListPage({
                     <div className="text-slate-800">{l.test.title}</div>
                     <div className="text-xs text-slate-500">{l.test.subject}</div>
                   </td>
-                  {isAdmin && (
+                  {isSuper && (
                     <td className="px-4 py-3">
                       <div className="text-slate-800">{l.tutor.name}</div>
                       <div className="text-xs text-slate-500">{l.tutor.email}</div>
@@ -183,7 +183,7 @@ export default async function LeadsListPage({
               ))}
               {leads.length === 0 && (
                 <tr>
-                  <td colSpan={isAdmin ? 9 : 8} className="px-4 py-12 text-center text-sm text-slate-500">
+                  <td colSpan={isSuper ? 9 : 8} className="px-4 py-12 text-center text-sm text-slate-500">
                     {hasActiveFilter
                       ? "No leads match the current filters. Try clearing them above."
                       : "No leads yet. Generate a passkey and share the test link."}

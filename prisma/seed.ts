@@ -79,8 +79,10 @@ async function main() {
   const tutorPwd = await bcrypt.hash("tutor123", 10);
   const admin = await prisma.user.upsert({
     where: { email: "admin@example.com" },
-    create: { email: "admin@example.com", passwordHash: adminPwd, name: "Admin", role: "ADMIN" },
-    update: { passwordHash: adminPwd },
+    create: { email: "admin@example.com", passwordHash: adminPwd, name: "Super Admin", role: "SUPERADMIN" },
+    // Re-promote on every re-seed so a previously-created ADMIN row is
+    // upgraded to SUPERADMIN to match the new role model.
+    update: { passwordHash: adminPwd, role: "SUPERADMIN" },
   });
   const tutor = await prisma.user.upsert({
     where: { email: "tutor@example.com" },

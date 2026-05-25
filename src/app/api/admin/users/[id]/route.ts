@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
-import { requireAdmin, hashPassword } from "@/lib/auth";
+import { requireSuperAdmin, hashPassword } from "@/lib/auth";
 import { customAlphabet } from "nanoid";
 
 const generatePassword = customAlphabet(
@@ -18,7 +18,7 @@ const patchSchema = z.object({
 export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }> }) {
   let session;
   try {
-    session = await requireAdmin();
+    session = await requireSuperAdmin();
   } catch (e: any) {
     const code = e?.message === "FORBIDDEN" ? 403 : 401;
     return NextResponse.json({ ok: false, error: e?.message ?? "UNAUTHORIZED" }, { status: code });

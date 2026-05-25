@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
-import { requireAdmin, hashPassword } from "@/lib/auth";
+import { requireSuperAdmin, hashPassword } from "@/lib/auth";
 import { customAlphabet } from "nanoid";
 
 // Initial-password generator: ambiguity-free alphabet, 14 chars ≈ 70+ bits entropy.
@@ -19,7 +19,7 @@ const createSchema = z.object({
 
 export async function GET() {
   try {
-    await requireAdmin();
+    await requireSuperAdmin();
   } catch (e: any) {
     const code = e?.message === "FORBIDDEN" ? 403 : 401;
     return NextResponse.json({ ok: false, error: e?.message ?? "UNAUTHORIZED" }, { status: code });
@@ -43,7 +43,7 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
-    await requireAdmin();
+    await requireSuperAdmin();
   } catch (e: any) {
     const code = e?.message === "FORBIDDEN" ? 403 : 401;
     return NextResponse.json({ ok: false, error: e?.message ?? "UNAUTHORIZED" }, { status: code });

@@ -22,7 +22,7 @@ export async function GET() {
   } catch {
     return NextResponse.json({ ok: false, error: "UNAUTHORIZED" }, { status: 401 });
   }
-  const where = session.role === "ADMIN" ? {} : { tutorId: session.uid };
+  const where = session.role === "SUPERADMIN" ? {} : { tutorId: session.uid };
   const items = await prisma.passkey.findMany({
     where,
     include: { test: { select: { title: true, subject: true } }, tutor: { select: { name: true, email: true } } },

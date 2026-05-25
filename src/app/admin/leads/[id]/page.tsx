@@ -33,7 +33,7 @@ export default async function LeadDetailPage({
     },
   });
   if (!lead) notFound();
-  if (session.role !== "ADMIN" && lead.tutorId !== session.uid) {
+  if (session.role !== "SUPERADMIN" && lead.tutorId !== session.uid) {
     return <div className="p-10 text-center text-sm text-red-600">Forbidden.</div>;
   }
 
@@ -94,6 +94,41 @@ export default async function LeadDetailPage({
         </div>
       </div>
 
+      {/* At-a-glance header — the test title was previously only visible
+          inside ResultView's generic "subject · Language Proficiency
+          Assessment" badge. Surface it explicitly here alongside the
+          student name + final score so the user knows immediately which
+          test this report belongs to. */}
+      <div className="mt-4 rounded-xl border border-slate-200 bg-white p-5">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+              {lead.test.subject} · {lead.test.level ?? ""}
+            </p>
+            <h1 className="mt-1 text-xl font-bold text-slate-900 sm:text-2xl">
+              {lead.test.title}
+            </h1>
+            <p className="mt-1 text-sm text-slate-600">
+              Student: <b className="text-slate-900">{lead.name}</b> · {lead.email}
+            </p>
+          </div>
+          <div className="text-right">
+            <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">Result</div>
+            <div className="text-3xl font-bold text-slate-900 tabular-nums">
+              {lead.percentage != null ? `${lead.percentage}%` : "—"}
+            </div>
+            <div className="text-xs text-slate-500 tabular-nums">
+              {lead.totalScore ?? 0} / {lead.maxScore ?? 0} marks
+              {lead.level && <> · band <b className="text-slate-700">{lead.level}</b></>}
+            </div>
+            <div className="mt-1 text-[11px] text-slate-500">
+              Status: <span className="font-semibold">{lead.status}</span>
+              {lead.submittedAt && <> · submitted {new Date(lead.submittedAt).toLocaleString()}</>}
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="mt-4">
         <ResultView lead={lead as any} test={lead.test} mode="internal" />
       </div>
@@ -102,7 +137,7 @@ export default async function LeadDetailPage({
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-base font-semibold text-slate-800">CRM</h2>
-            {session.role === "ADMIN" && (
+            {session.role === "SUPERADMIN" && (
               <p className="mt-1 text-xs text-slate-500">
                 Owned by tutor <b>{lead.tutor.name}</b> ({lead.tutor.email})
               </p>

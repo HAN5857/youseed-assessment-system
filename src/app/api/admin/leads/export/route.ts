@@ -9,17 +9,17 @@ export async function GET(req: Request) {
   }
   const url = new URL(req.url);
   const sp = url.searchParams;
-  const isAdmin = session.role === "ADMIN";
+  const isSuper = session.role === "SUPERADMIN";
 
   // Mirror the same filter logic as /admin/page.tsx so the export reflects
   // exactly what the user is looking at on screen.
   const where: Prisma.LeadWhereInput = {};
-  if (!isAdmin) where.tutorId = session.uid;
+  if (!isSuper) where.tutorId = session.uid;
   const status  = sp.get("status");  if (status)  where.status = status;
   const contact = sp.get("contact"); if (contact) where.contactStatus = contact;
   const level   = sp.get("level");   if (level)   where.level = level;
   const test    = sp.get("test");    if (test)    where.testId = test;
-  const tutor   = sp.get("tutor");   if (tutor && isAdmin) where.tutorId = tutor;
+  const tutor   = sp.get("tutor");   if (tutor && isSuper) where.tutorId = tutor;
   const q = sp.get("q");
   if (q && q.trim()) {
     const t = q.trim();

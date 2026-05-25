@@ -7,7 +7,7 @@ export default async function PasskeysPage() {
   const session = await getSession();
   if (!session) redirect("/admin/login");
 
-  const where = session.role === "ADMIN" ? {} : { tutorId: session.uid };
+  const where = session.role === "SUPERADMIN" ? {} : { tutorId: session.uid };
   const [passkeys, tests] = await Promise.all([
     prisma.passkey.findMany({
       where,
