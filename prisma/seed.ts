@@ -8,6 +8,10 @@ import {
   standard6Questions,
   type QData,
 } from "./banks-s4-s6";
+import {
+  SCOPE_TEMPLATE_CN_LOWER,
+  chineseStandard1Questions,
+} from "./banks-cn";
 
 const prisma = new PrismaClient();
 
@@ -174,6 +178,18 @@ async function main() {
     questionsBuilder: () => standard6Questions(),
   });
 
+  // ─── CHINESE STANDARD 1 (华文一年级) ─────────────────────────────────
+  const cn1 = await upsertTest({
+    subject: "chinese",
+    level: "standard-1",
+    title: "华文一年级 · 程度评估测试",
+    duration: 20,
+    passingScore: 60,
+    scope: SCOPE_TEMPLATE_CN_LOWER("一年级", "华小华文 KSSR Semakan"),
+    active: true,
+    questionsBuilder: () => chineseStandard1Questions(),
+  });
+
   // ─── Demo passkeys (one per active level) ─────────────────────────────
   const demoKeys: { code: string; testId: string; note: string }[] = [
     { code: "ENG-S1-DEMO", testId: s1.id, note: "Demo passkey — English Standard 1" },
@@ -182,6 +198,7 @@ async function main() {
     { code: "ENG-S4-DEMO", testId: s4.id, note: "Demo passkey — English Standard 4" },
     { code: "ENG-S5-DEMO", testId: s5.id, note: "Demo passkey — English Standard 5" },
     { code: "ENG-S6-DEMO", testId: s6.id, note: "Demo passkey — English Standard 6" },
+    { code: "CHI-S1-DEMO", testId: cn1.id, note: "Demo passkey — 华文一年级 (Chinese Standard 1)" },
     // Backward-compat: original passkey points to Standard 3 (current default)
     { code: "DEMO-2026-START", testId: s3.id, note: "Legacy demo passkey (S3)" },
   ];
@@ -204,6 +221,7 @@ async function main() {
   console.log("     ENG-S4-DEMO    → English Standard 4");
   console.log("     ENG-S5-DEMO    → English Standard 5");
   console.log("     ENG-S6-DEMO    → English Standard 6");
+  console.log("     CHI-S1-DEMO    → 华文一年级 (Chinese Standard 1)");
   console.log("     DEMO-2026-START → English Standard 3 (legacy)");
   console.log("");
   console.log("   Users tested → admin: " + admin.email + ", tutor: " + tutor.email);

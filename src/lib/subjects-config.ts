@@ -69,11 +69,18 @@ export const SUBJECTS: SubjectDef[] = [
   {
     id: "chinese",
     name: "Chinese · 中文",
-    tagline: "词汇、语法、阅读与听力",
+    tagline: "字词、拼音、语法、阅读与写作 · KSSR Semakan",
     emoji: "🐼",
     bgGradient: "from-rose-400 via-red-400 to-orange-400",
-    enabled: false,
-    levels: STANDARD_LEVELS.map((l) => ({ ...l, unit: "Coming soon", enabled: false })),
+    enabled: true,
+    levels: [
+      { ...STANDARD_LEVELS[0], unit: "华文一年级 · KSSR Semakan",   ageHint: "Year 1 · Age 7",  enabled: true },
+      { ...STANDARD_LEVELS[1], unit: "华文二年级 · KSSR Semakan",   ageHint: "Year 2 · Age 8",  enabled: true },
+      { ...STANDARD_LEVELS[2], unit: "华文三年级 · KSSR Semakan",   ageHint: "Year 3 · Age 9",  enabled: true },
+      { ...STANDARD_LEVELS[3], unit: "华文四年级 · UASA 格式",      ageHint: "Year 4 · Age 10", enabled: true },
+      { ...STANDARD_LEVELS[4], unit: "华文五年级 · UASA 格式",      ageHint: "Year 5 · Age 11", enabled: true },
+      { ...STANDARD_LEVELS[5], unit: "华文六年级 · UASA 格式",      ageHint: "Year 6 · Age 12", enabled: true },
+    ],
   },
 ];
 

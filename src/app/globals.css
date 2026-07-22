@@ -6,6 +6,19 @@ html, body {
   font-family: var(--font-fredoka), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 
+/* Chinese pages: switch to Noto Sans SC first, keep Fredoka as fallback
+   for any Latin fragments (Pinyin diacritics, "Standard 1" chrome, etc.).
+   Applied via lang="zh" on <html> from the Mandarin subject routes and
+   via the .zh-cn scope for individual Chinese question cards inside a
+   mixed page. */
+html[lang="zh"], html[lang="zh-CN"], html[lang="zh-Hans"], .zh-cn {
+  font-family:
+    var(--font-noto-sc),
+    "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB",
+    var(--font-fredoka),
+    system-ui, sans-serif;
+}
+
 /* ─── Calm (YouSeed green) theme tokens ──────────────────────────────────
    Scoped via `.calm-ui` so the playful S2/S3 runners are unaffected.
    Centralising the palette here keeps future calm screens (result, landing)

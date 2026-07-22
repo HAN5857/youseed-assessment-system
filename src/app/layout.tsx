@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Fredoka } from "next/font/google";
+import { Fredoka, Noto_Sans_SC } from "next/font/google";
 import "./globals.css";
 import { AudioAutoplay } from "@/components/kids/AudioAutoplay";
 
@@ -7,6 +7,18 @@ const fredoka = Fredoka({
   subsets: ["latin"],
   variable: "--font-fredoka",
   weight: ["400", "500", "600", "700"],
+  display: "swap",
+});
+
+// CJK fallback for Mandarin content — Noto Sans SC (Simplified Chinese)
+// is Google's high-legibility Chinese typeface. Fredoka doesn't cover
+// CJK glyphs, so Chinese characters silently fall through to browser
+// default. Loading Noto SC into a CSS variable lets the Mandarin subject
+// route render Chinese cleanly while English routes stay on Fredoka.
+const notoSC = Noto_Sans_SC({
+  subsets: ["latin"],
+  variable: "--font-noto-sc",
+  weight: ["400", "500", "700"],
   display: "swap",
 });
 
@@ -25,7 +37,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={fredoka.variable}>
+    <html lang="en" className={`${fredoka.variable} ${notoSC.variable}`}>
       <body className="min-h-screen bg-slate-50 text-slate-900 antialiased">
         <AudioAutoplay />
         {children}

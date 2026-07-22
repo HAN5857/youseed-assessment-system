@@ -37,12 +37,18 @@ const UPPER_PRIMARY_LEVELS = new Set<string>([
 
 export type LevelTier = "primary" | "upper-primary";
 
+// Subjects that use the calm green + white theme. Adding a subject here
+// automatically extends every calm-tier UI decision (renderers, theming,
+// nav copy) to that subject's levels.
+const CALM_SUBJECTS = new Set(["english", "chinese"]);
+
 export function isS1Calm(
   subject?: string | null,
   level?: string | null,
 ): boolean {
   if (!S1_CALM_FLAG_ON) return false;
-  if (subject?.toLowerCase() !== "english") return false;
+  const subj = subject?.toLowerCase() ?? "";
+  if (!CALM_SUBJECTS.has(subj)) return false;
   const lvl = level?.toLowerCase() ?? "";
   return PRIMARY_LEVELS.has(lvl) || UPPER_PRIMARY_LEVELS.has(lvl);
 }
