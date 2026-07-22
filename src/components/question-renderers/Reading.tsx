@@ -7,6 +7,7 @@ import { useUiTheme, useUiTier } from "@/lib/ui-theme";
 import { splitPrompt } from "@/lib/prompt-format";
 import { InstructionHint } from "@/components/kids/InstructionHint";
 import { QuestionBody } from "@/components/kids/QuestionBody";
+import { hasCJK } from "@/lib/cjk";
 
 const BADGE_COLORS_PLAYFUL = ["bg-pink-500", "bg-sky-500", "bg-yellow-500", "bg-emerald-500"];
 const BADGE_COLORS_CALM = ["bg-emerald-500", "bg-teal-500", "bg-lime-500", "bg-green-500"];
@@ -27,6 +28,8 @@ export function ReadingRenderer({ prompt, content, value, onChange }: RendererPr
   const { instruction, body } = upper ? splitPrompt(prompt) : { instruction: undefined as string | undefined, body: prompt };
   const passage: string = content?.passage ?? "";
   const subs: Sub[] = content?.subs ?? [];
+  const isCJK = hasCJK(prompt) || hasCJK(passage) || subs.some((s) => hasCJK(s.stem));
+  const qLabel = isCJK ? "题" : "Q";
   const keys: string[] = value?.keys ?? Array(subs.length).fill("");
 
   const setKey = (idx: number, key: string) => {
@@ -72,7 +75,7 @@ export function ReadingRenderer({ prompt, content, value, onChange }: RendererPr
           <div key={i} className="rounded-2xl border-2 border-slate-100 bg-white p-4 shadow-sm">
             <p className="mb-3 flex items-start gap-2 text-base font-bold text-slate-800 sm:text-lg">
               <span className={qBadge} aria-hidden>
-                Q{i + 1}
+                {qLabel}{i + 1}
               </span>
               {!s.image && s.icon && (
                 <span

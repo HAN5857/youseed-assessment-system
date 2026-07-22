@@ -13,6 +13,7 @@
 import type { RendererProps } from "./index";
 import { useUiTheme, useUiTier } from "@/lib/ui-theme";
 import { PassageCard } from "@/components/kids/PassageCard";
+import { hasCJK, countWordsSmart } from "@/lib/cjk";
 
 export function ShortRenderer({ prompt, content, value, onChange }: RendererProps) {
   const theme = useUiTheme();
@@ -206,10 +207,12 @@ function StructuredPrompt({ prompt }: { prompt: string }) {
   for (const raw of lines) {
     const line = raw.trim();
     if (!line) continue;
-    // Skip the "Write about N-M words" line — the counter UI below the
-    // textarea already shows this, and rendering it twice made the live
+    // Skip lines that duplicate what the live counter chip already shows.
+    // Match both English ("Write about 30-50 words") and Chinese variants
+    // (写 30–50 字 / 目标 30–50 字 / 4–30 字). Rendering it twice made the
     // counter look like it wasn't updating.
     if (/^Write about\s+[\d\-–]+\s+words\.?$/i.test(line)) continue;
+    if (/^(?:写|目标[:：]?\s*|请写)?\s*[\d]+\s*[-–]\s*[\d]+\s*字\.?$/.test(line)) continue;
     if (/^Include:?$/i.test(line)) {
       blocks.push({ kind: "include", text: line.replace(/:$/, "") });
       continue;

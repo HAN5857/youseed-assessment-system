@@ -1,0 +1,47 @@
+<svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A cheerful green frog sitting on a lily pad">
+  <defs>
+    <radialGradient id="pondbg" cx="0.5" cy="0.5" r="0.7">
+      <stop offset="0%" stop-color="#e0f2fe"/>
+      <stop offset="100%" stop-color="#bfdbfe"/>
+    </radialGradient>
+    <linearGradient id="frogBody" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#86efac"/>
+      <stop offset="100%" stop-color="#22c55e"/>
+    </linearGradient>
+  </defs>
+  <rect width="220" height="220" fill="url(#pondbg)"/>
+  <!-- Lily pad -->
+  <ellipse cx="110" cy="180" rx="80" ry="14" fill="#16a34a" opacity="0.35"/>
+  <ellipse cx="110" cy="175" rx="72" ry="10" fill="#22c55e"/>
+  <path d="M 110 175 L 110 168" stroke="#166534" stroke-width="2"/>
+  <!-- Frog body -->
+  <ellipse cx="110" cy="140" rx="55" ry="42" fill="url(#frogBody)" stroke="#166534" stroke-width="2.5"/>
+  <!-- Belly -->
+  <ellipse cx="110" cy="152" rx="34" ry="22" fill="#fef9c3" opacity="0.9"/>
+  <!-- Legs -->
+  <ellipse cx="65" cy="170" rx="18" ry="10" fill="#22c55e" stroke="#166534" stroke-width="2"/>
+  <ellipse cx="155" cy="170" rx="18" ry="10" fill="#22c55e" stroke="#166534" stroke-width="2"/>
+  <!-- Feet -->
+  <path d="M 50 172 Q 45 178 50 182 M 55 172 Q 50 178 55 182 M 60 172 Q 55 178 60 182" stroke="#166534" stroke-width="2" fill="none"/>
+  <path d="M 160 172 Q 165 178 160 182 M 165 172 Q 170 178 165 182 M 170 172 Q 175 178 170 182" stroke="#166534" stroke-width="2" fill="none"/>
+  <!-- Eyes (bulging) -->
+  <circle cx="88" cy="92" r="18" fill="#86efac" stroke="#166534" stroke-width="2.5"/>
+  <circle cx="132" cy="92" r="18" fill="#86efac" stroke="#166534" stroke-width="2.5"/>
+  <circle cx="88" cy="92" r="10" fill="#ffffff"/>
+  <circle cx="132" cy="92" r="10" fill="#ffffff"/>
+  <circle cx="90" cy="94" r="6" fill="#1f2937"/>
+  <circle cx="134" cy="94" r="6" fill="#1f2937"/>
+  <circle cx="92" cy="92" r="2" fill="#ffffff"/>
+  <circle cx="136" cy="92" r="2" fill="#ffffff"/>
+  <!-- Nostrils -->
+  <circle cx="102" cy="132" r="2" fill="#166534"/>
+  <circle cx="118" cy="132" r="2" fill="#166534"/>
+  <!-- Smile -->
+  <path d="M 80 148 Q 110 168 140 148" stroke="#166534" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+  <!-- Cheek blush -->
+  <circle cx="70" cy="146" r="6" fill="#fda4af" opacity="0.6"/>
+  <circle cx="150" cy="146" r="6" fill="#fda4af" opacity="0.6"/>
+  <!-- Water ripples -->
+  <ellipse cx="55" cy="195" rx="18" ry="3" fill="none" stroke="#60a5fa" stroke-width="1.5" opacity="0.6"/>
+  <ellipse cx="170" cy="200" rx="14" ry="2" fill="none" stroke="#60a5fa" stroke-width="1.5" opacity="0.6"/>
+</svg>

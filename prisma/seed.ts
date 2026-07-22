@@ -304,6 +304,7 @@ function standard1Questions(): QData[] {
     // Q10 — f__g (frog), pick two letters
     { type: "SINGLE", dimension: "VOCAB", score: 4,
       prompt: "Look at the picture of a frog. Two letters are missing. Choose the correct answer:\n\nf _ _ g",
+      mediaUrl: "/questions/standard-1/frog.svg",
       content: { options: [
         { key: "A", text: "ra" }, { key: "B", text: "ro" },
         { key: "C", text: "ru" }, { key: "D", text: "re" },
@@ -502,6 +503,7 @@ function standard2Questions(): QData[] {
     // Q10 — sw__ter (sweater) — pick two letters
     { type: "SINGLE", dimension: "VOCAB", score: 4,
       prompt: "Look at the picture of a sweater. Two letters are missing. Choose the correct answer:\n\nsw _ _ ter",
+      mediaUrl: "/questions/standard-2/sweater.svg",
       content: { options: [
         { key: "A", text: "ee" }, { key: "B", text: "ea" },
         { key: "C", text: "oo" }, { key: "D", text: "ie" },
@@ -680,6 +682,7 @@ function standard3Questions(): QData[] {
     // Q7 — c__t coat
     { type: "SINGLE", dimension: "VOCAB", score: 4,
       prompt: "Look at the picture of a coat. Choose the missing letters to complete the word:\n\nc _ _ t",
+      mediaUrl: "/questions/standard-3/coat.svg",
       content: { options: [
         { key: "A", text: "uu" }, { key: "B", text: "oa" },
         { key: "C", text: "oo" }, { key: "D", text: "ou" },

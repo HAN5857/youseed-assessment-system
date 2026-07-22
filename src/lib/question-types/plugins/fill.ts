@@ -1,10 +1,15 @@
 import type { QuestionTypePlugin } from "../types";
+import { normaliseAnswer } from "@/lib/cjk";
 
 // content: { caseSensitive?: boolean }
 // answer:  { accepted: ["color", "colour"] }   // any match counts
 // response:{ text: "colour" }
+//
+// normaliseAnswer is CJK-aware: English answers collapse internal
+// whitespace, Chinese answers strip ALL whitespace so「我 是 学 生」
+// (student spaced each 字 out) matches the canonical「我是学生」.
 
-const norm = (s: string, cs: boolean) => (cs ? s : s.toLowerCase()).trim().replace(/\s+/g, " ");
+const norm = (s: string, cs: boolean) => normaliseAnswer(cs ? s : s.toLowerCase());
 
 export const fillPlugin: QuestionTypePlugin = {
   type: "FILL",

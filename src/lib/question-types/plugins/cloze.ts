@@ -1,12 +1,16 @@
 import type { QuestionTypePlugin } from "../types";
+import { normaliseAnswer } from "@/lib/cjk";
 
 // A passage with N blanks. Each blank has a list of acceptable answers.
 // content: { passage: "I ___ to school every day. The bus ___ at 7am.", blanks: 2, caseSensitive?: boolean }
 // answer:  { blanks: [["go","walk"], ["arrives","comes"]] }
 // response:{ blanks: ["go", "arrives"] }
 // Score: each blank worth maxScore/blanks.
+//
+// normaliseAnswer is CJK-aware (see @/lib/cjk) so Chinese blank answers
+// match after any amount of stray spacing.
 
-const norm = (s: string, cs: boolean) => (cs ? s : s.toLowerCase()).trim().replace(/\s+/g, " ");
+const norm = (s: string, cs: boolean) => normaliseAnswer(cs ? s : s.toLowerCase());
 
 export const clozePlugin: QuestionTypePlugin = {
   type: "CLOZE",

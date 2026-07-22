@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import type { RendererProps } from "./index";
 import { sound } from "@/lib/sounds";
 import { useUiTheme } from "@/lib/ui-theme";
+import { hasCJK, joinTokensSmart } from "@/lib/cjk";
 
 /**
  * Tap-to-place sentence builder with FLIP animation.
@@ -15,6 +16,17 @@ export function OrderingDndRenderer({ prompt, content, value, onChange }: Render
   const theme = useUiTheme();
   const calm = theme === "calm";
   const items: string[] = content?.items ?? [];
+  const isCJK = items.some((t) => hasCJK(t)) || hasCJK(prompt);
+  const L = {
+    hint:       isCJK ? "✋ 点选一个词加入句子，再点一次取消。" : "✋ Tap a word to add it. Tap again to remove it.",
+    bank:       isCJK ? "📦 词语库"      : "📦 Word Bank",
+    left:       (n: number) => isCJK ? `还剩 ${n} 个` : `${n} left`,
+    empty:      isCJK ? "已经全部选完啦！✨" : "Empty — all words placed! ✨",
+    zone:       isCJK ? "✍️ 你的句子" : "✍️ Your Sentence",
+    zoneHint:   isCJK ? "点上面的词开始造句…" : "Tap a word above to start building your sentence…",
+    tapRemove:  isCJK ? "点一下移除" : "Tap to remove",
+    readback:   isCJK ? "目前的句子" : "Your sentence so far",
+  };
 
   const [placed, setPlaced] = useState<number[]>(() => {
     const saved: number[] | undefined = value?.order;
@@ -61,23 +73,23 @@ export function OrderingDndRenderer({ prompt, content, value, onChange }: Render
           {prompt}
         </p>
         <p className={hintChip}>
-          ✋ Tap a word to add it. Tap again to remove it.
+          {L.hint}
         </p>
 
         {/* WORD BANK */}
         <div className="mb-3 rounded-2xl border-2 border-slate-200 bg-slate-50/80 p-4">
           <div className="mb-2 flex items-center justify-between">
             <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">
-              📦 Word Bank
+              {L.bank}
             </span>
             <span className="text-[10px] font-bold text-slate-400">
-              {bank.length} left
+              {L.left(bank.length)}
             </span>
           </div>
           <div className="flex min-h-[60px] flex-wrap items-center gap-2">
             {bank.length === 0 ? (
               <span className="text-sm font-bold italic text-slate-400">
-                Empty — all words placed! ✨
+                {L.empty}
               </span>
             ) : (
               bank.map((idx) => (
@@ -104,7 +116,7 @@ export function OrderingDndRenderer({ prompt, content, value, onChange }: Render
         }`}>
           <div className="mb-2 flex items-center justify-between">
             <span className="text-[10px] font-black uppercase tracking-widest text-emerald-700">
-              ✍️ Your Sentence
+              {L.zone}
             </span>
             <span className="text-[10px] font-bold text-emerald-600">
               {placed.length}/{items.length}
@@ -114,7 +126,7 @@ export function OrderingDndRenderer({ prompt, content, value, onChange }: Render
           <div className="flex min-h-[68px] flex-wrap items-center gap-2">
             {placed.length === 0 ? (
               <span className="text-sm font-bold italic text-emerald-700/60">
-                Tap a word above to start building your sentence…
+                {L.zoneHint}
               </span>
             ) : (
               placed.map((idx, pos) => (
@@ -138,7 +150,7 @@ export function OrderingDndRenderer({ prompt, content, value, onChange }: Render
                   <span
                     className="ml-0.5 text-xs text-slate-400 opacity-0 transition-opacity group-hover:opacity-100"
                     aria-hidden
-                    title="Tap to remove"
+                    title={L.tapRemove}
                   >
                     ✕
                   </span>
@@ -157,13 +169,13 @@ export function OrderingDndRenderer({ prompt, content, value, onChange }: Render
           }`}
         >
           <div className="text-[10px] font-black uppercase tracking-widest text-slate-500">
-            Your sentence so far
+            {L.readback}
           </div>
           <div className="mt-1 min-h-[1.75rem] text-base font-semibold text-slate-700 sm:text-lg">
             {placed.length === 0 ? (
               <span className="italic text-slate-400">…</span>
             ) : (
-              placed.map((i) => items[i]).join(" ")
+              joinTokensSmart(placed.map((i) => items[i]))
             )}
           </div>
         </motion.div>

@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { sound } from "@/lib/sounds";
 import { OrderingDndRenderer } from "./OrderingDnd";
 import { useUiTheme } from "@/lib/ui-theme";
+import { hasCJK } from "@/lib/cjk";
 
 const RANK_COLORS_PLAYFUL = ["bg-yellow-400", "bg-pink-400", "bg-sky-400", "bg-emerald-400", "bg-violet-400", "bg-orange-400"];
 const RANK_COLORS_CALM = ["bg-emerald-400", "bg-teal-400", "bg-lime-400", "bg-green-400", "bg-emerald-500", "bg-teal-500"];
@@ -48,7 +49,11 @@ function OrderingLegacyRenderer({ prompt, content, value, onChange }: RendererPr
       <p className="mb-2 whitespace-pre-wrap text-2xl font-bold leading-snug text-slate-800 sm:text-3xl">
         {prompt}
       </p>
-      <p className={`mb-4 text-sm font-semibold ${hintColor}`}>👆 Use the arrows to move items up or down.</p>
+      <p className={`mb-4 text-sm font-semibold ${hintColor}`}>
+        {hasCJK(prompt) || items.some((t) => hasCJK(t))
+          ? "👆 用箭头把每一句上下排一排。"
+          : "👆 Use the arrows to move items up or down."}
+      </p>
       <ol className="space-y-3">
         {order.map((itemIdx, pos) => (
           <li key={pos} className="flex items-center gap-3 rounded-2xl border-4 border-slate-100 bg-white p-4 shadow-sm">
