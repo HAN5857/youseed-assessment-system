@@ -11,8 +11,16 @@ const fredoka = Fredoka({
 });
 
 export const metadata: Metadata = {
-  title: process.env.NEXT_PUBLIC_APP_NAME || "Language Adventure",
+  title: process.env.NEXT_PUBLIC_APP_NAME || "YouSeed · Language Adventure",
   description: "A fun, quick online test to discover your language level — for kids aged 4 to 12.",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/brand/youseed-icon-192.png", type: "image/png", sizes: "192x192" },
+      { url: "/brand/youseed-icon-512.png", type: "image/png", sizes: "512x512" },
+    ],
+    apple: [{ url: "/brand/youseed-icon-192.png", sizes: "192x192" }],
+  },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
