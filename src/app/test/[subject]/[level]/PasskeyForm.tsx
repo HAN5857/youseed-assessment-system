@@ -30,6 +30,13 @@ export function PasskeyForm({
     name: "", age: "", email: "", phone: "", location: "", subject: subjectName, grade: levelName,
   });
 
+  const passkeyPrefix =
+    subjectId === "chinese" ? "CHI" :
+    subjectId === "bahasa-melayu" ? "BM" :
+    "ENG";
+  const gradeNum = levelId.match(/\d+/)?.[0] ?? "1";
+  const passkeyExample = `${passkeyPrefix}-S${gradeNum}-DEMO`;
+
   async function checkPasskey(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
@@ -111,7 +118,7 @@ export function PasskeyForm({
                 <input
                   value={code}
                   onChange={(e) => setCode(e.target.value.toUpperCase())}
-                  placeholder="e.g. ENG-S1-DEMO"
+                  placeholder={`e.g. ${passkeyExample}`}
                   className="w-full rounded-2xl border-4 border-violet-200 bg-violet-50 px-5 py-4 text-center text-xl font-black tracking-widest text-violet-900 outline-none focus:border-violet-500 focus:ring-4 focus:ring-violet-100"
                   required
                   autoFocus

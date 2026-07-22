@@ -107,21 +107,30 @@ export function chineseStandard1Questions(): QData[] {
       // 快乐(0)→心里很高兴(0) · 干净(1)→没有脏(1) · 勤劳(2)→很用功(2) · 热闹(3)→很多人(3)
       answer: { pairs: { "0": 0, "1": 1, "2": 2, "3": 3 } } },
 
-    // Q9 · 拼音选择 — 3 sub-questions (mā ma / shū / huā)
+    // Q9 · 拼音选择 — 3 sub-questions (mā ma / shū / huā), each shown with its picture
     { type: "READING", dimension: "PHONICS", score: 3,
       prompt: "看图，选出与图片对应的正确拼音。",
       content: {
         passage: "根据下面每个词的图片，圈出正确的拼音。",
         subs: [
-          { stem: "「妈妈」的拼音是？", icon: "👩", options: [
-            { key: "A", text: "mā ma" }, { key: "B", text: "nā na" },
-          ]},
-          { stem: "「书本」的拼音是？", icon: "📖", options: [
-            { key: "A", text: "sū" }, { key: "B", text: "shū" },
-          ]},
-          { stem: "「花朵」的拼音是？", icon: "🌸", options: [
-            { key: "A", text: "huā" }, { key: "B", text: "hā" },
-          ]},
+          { stem: "「妈妈」的拼音是？",
+            image: "/questions/chinese-standard-1/q09a-mother.jpg",
+            imageAlt: "妈妈 mother",
+            options: [
+              { key: "A", text: "mā ma" }, { key: "B", text: "nā na" },
+            ]},
+          { stem: "「书本」的拼音是？",
+            image: "/questions/chinese-standard-1/q09b-book.jpg",
+            imageAlt: "书本 book",
+            options: [
+              { key: "A", text: "sū" }, { key: "B", text: "shū" },
+            ]},
+          { stem: "「花朵」的拼音是？",
+            image: "/questions/chinese-standard-1/q09c-flower.jpg",
+            imageAlt: "花朵 flower",
+            options: [
+              { key: "A", text: "huā" }, { key: "B", text: "hā" },
+            ]},
         ],
       },
       answer: { keys: ["A", "B", "A"] } },

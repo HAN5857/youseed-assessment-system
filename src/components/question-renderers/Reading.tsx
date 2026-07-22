@@ -14,7 +14,9 @@ const BADGE_COLORS_CALM = ["bg-emerald-500", "bg-teal-500", "bg-lime-500", "bg-g
 type Sub = {
   stem: string;
   options: { key: string; text: string }[];
-  icon?: string; // optional content-relevant emoji (decorative only — never reveals the answer)
+  icon?: string;   // optional content-relevant emoji (decorative only — never reveals the answer)
+  image?: string;  // optional picture prompt (e.g. /questions/chinese-standard-1/q09a-mother.jpg)
+  imageAlt?: string;
 };
 
 export function ReadingRenderer({ prompt, content, value, onChange }: RendererProps) {
@@ -72,7 +74,7 @@ export function ReadingRenderer({ prompt, content, value, onChange }: RendererPr
               <span className={qBadge} aria-hidden>
                 Q{i + 1}
               </span>
-              {s.icon && (
+              {!s.image && s.icon && (
                 <span
                   className="flex-none text-2xl kid-float"
                   aria-hidden
@@ -83,6 +85,16 @@ export function ReadingRenderer({ prompt, content, value, onChange }: RendererPr
               )}
               <span className="min-w-0 flex-1 break-words">{s.stem}</span>
             </p>
+            {s.image && (
+              <div className="mb-3 flex justify-center">
+                <img
+                  src={s.image}
+                  alt={s.imageAlt ?? s.stem}
+                  loading="lazy"
+                  className="max-h-48 w-auto rounded-xl border border-slate-200 bg-white object-contain shadow-sm sm:max-h-56"
+                />
+              </div>
+            )}
             <div className="space-y-2">
               {s.options.map((o, oi) => {
                 const sel = keys[i] === o.key;
