@@ -25,8 +25,30 @@ export function ShortRenderer({ prompt, content, value, onChange }: RendererProp
   const passage: string | undefined = content?.passage;
 
   const text: string = value?.text ?? "";
-  const wordCount = text.trim() === "" ? 0 : text.trim().split(/\s+/).length;
+  // CJK-aware unit counting.
+  // Chinese has no spaces, so we count "字" (characters) instead of words.
+  // Detection: if the prompt or the student's text contains any CJK codepoint,
+  // switch to character-counting mode. Otherwise standard English word-split.
+  // Mixed text (Chinese + Latin) is supported: each CJK char = 1 unit,
+  // each latin whitespace-separated chunk = 1 unit.
+  const cjkRe = /[㐀-鿿豈-﫿]/;
+  const isCJK = cjkRe.test(text) || cjkRe.test(prompt || "");
+  const wordCount = (() => {
+    if (text.trim() === "") return 0;
+    if (isCJK) {
+      const cjkChars = (text.match(/[㐀-鿿豈-﫿]/g) ?? []).length;
+      // Latin chunks: strip CJK + punctuation, then split by whitespace.
+      const latin = text
+        .replace(/[㐀-鿿豈-﫿]/g, " ")
+        .replace(/[　-〿＀-￯]/g, " ")
+        .trim();
+      const latinChunks = latin === "" ? 0 : latin.split(/\s+/).length;
+      return cjkChars + latinChunks;
+    }
+    return text.trim().split(/\s+/).length;
+  })();
   const charCount = text.length;
+  const unitLabel = (n: number) => isCJK ? `${n} 字` : `${n} word${n === 1 ? "" : "s"}`;
 
   // Word count state: under / on-target / over.
   const state =
@@ -72,7 +94,7 @@ export function ShortRenderer({ prompt, content, value, onChange }: RendererProp
 
         <div className="mb-2 mt-6 flex flex-wrap items-center justify-between gap-2">
           <span className="text-[12px] font-semibold uppercase tracking-[0.1em] text-[#6B7280]">
-            Target: {minWords}–{maxWords} words
+            {isCJK ? `目标：${minWords}–${maxWords} 字` : `Target: ${minWords}–${maxWords} words`}
           </span>
           {/* Pair of live counters: words (primary, colour-coded against the target)
               + characters (secondary, always neutral). The char chip updates on every
@@ -80,11 +102,13 @@ export function ShortRenderer({ prompt, content, value, onChange }: RendererProp
               receiving their input — fixes the "looks frozen at 1 word" perception. */}
           <div className="flex items-center gap-2" aria-live="polite">
             <span className={`rounded-full border px-4 py-1 text-sm font-bold tabular-nums ${counterStyle}`}>
-              {wordCount} word{wordCount === 1 ? "" : "s"}
+              {unitLabel(wordCount)}
             </span>
-            <span className="rounded-full border border-[#DDEFE4] bg-white px-3 py-1 text-[11px] font-semibold tabular-nums text-[#6B7280]">
-              {charCount} char{charCount === 1 ? "" : "s"}
-            </span>
+            {!isCJK && (
+              <span className="rounded-full border border-[#DDEFE4] bg-white px-3 py-1 text-[11px] font-semibold tabular-nums text-[#6B7280]">
+                {charCount} char{charCount === 1 ? "" : "s"}
+              </span>
+            )}
           </div>
         </div>
 
@@ -108,10 +132,10 @@ export function ShortRenderer({ prompt, content, value, onChange }: RendererProp
               <path d="M12 20h9" />
               <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
             </svg>
-            Tip: write in full sentences. Spelling and grammar count.
+            {isCJK ? "小贴士：写完整的句子，用词准确、语法正确。" : "Tip: write in full sentences. Spelling and grammar count."}
           </p>
           <p className="text-[11px] italic text-[#9CA3AF]">
-            Words are counted by spaces — separate each word with a space.
+            {isCJK ? "系统按字数计算 —— 每一个汉字算一字。" : "Words are counted by spaces — separate each word with a space."}
           </p>
         </div>
       </div>
@@ -136,10 +160,10 @@ export function ShortRenderer({ prompt, content, value, onChange }: RendererProp
           ? "text-xs font-semibold uppercase tracking-wider text-[#6B7280]"
           : "text-xs font-semibold uppercase tracking-wider text-slate-500"
         }>
-          Write about {minWords}–{maxWords} words
+          {isCJK ? `写 ${minWords}–${maxWords} 字` : `Write about ${minWords}–${maxWords} words`}
         </span>
-        <span className={`rounded-full border px-3 py-1 text-xs font-bold ${counterStyle}`}>
-          {wordCount} word{wordCount === 1 ? "" : "s"}
+        <span className={`rounded-full border px-3 py-1 text-xs font-bold ${counterStyle}`} aria-live="polite">
+          {unitLabel(wordCount)}
         </span>
       </div>
 
@@ -148,7 +172,7 @@ export function ShortRenderer({ prompt, content, value, onChange }: RendererProp
         onChange={(e) => onChange({ text: e.target.value })}
         rows={9}
         className={textareaClass}
-        placeholder={template ?? "Write your answer here…"}
+        placeholder={template ?? (isCJK ? "在这里写你的答案…" : "Write your answer here…")}
         spellCheck
       />
 
@@ -156,7 +180,7 @@ export function ShortRenderer({ prompt, content, value, onChange }: RendererProp
         ? "mt-2 text-xs font-medium text-[#6B7280]"
         : "mt-2 text-xs font-medium text-slate-500"
       }>
-        Tip: write in full sentences. Spelling and grammar count.
+        {isCJK ? "小贴士：写完整的句子，用词准确、语法正确。" : "Tip: write in full sentences. Spelling and grammar count."}
       </p>
     </div>
   );

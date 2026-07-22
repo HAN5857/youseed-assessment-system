@@ -15,9 +15,25 @@ import type { QuestionTypePlugin } from "../types";
 // answer:  unused at score time (tutor grades). Stored as { rubric?: string } for reference.
 // response: { text: string }
 
+// CJK-aware word counter. Chinese has no spaces between words, so each
+// CJK character IS a word/字. When the text contains any CJK codepoint,
+// switch to character counting (and still add each latin whitespace chunk).
+// Otherwise fall back to standard English word-split. Must stay in sync
+// with the counter shown in src/components/question-renderers/Short.tsx.
+const CJK_RE = /[㐀-鿿豈-﫿]/;
+const CJK_GLOBAL = /[㐀-鿿豈-﫿]/g;
+const CJK_PUNCT = /[　-〿＀-￯]/g;
+
 function countWords(s: string): number {
   const t = String(s ?? "").trim();
-  return t === "" ? 0 : t.split(/\s+/).length;
+  if (t === "") return 0;
+  if (CJK_RE.test(t)) {
+    const cjkChars = (t.match(CJK_GLOBAL) ?? []).length;
+    const latin = t.replace(CJK_GLOBAL, " ").replace(CJK_PUNCT, " ").trim();
+    const latinChunks = latin === "" ? 0 : latin.split(/\s+/).length;
+    return cjkChars + latinChunks;
+  }
+  return t.split(/\s+/).length;
 }
 
 const shortPlugin: QuestionTypePlugin = {
