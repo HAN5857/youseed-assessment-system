@@ -39,14 +39,14 @@ export const SCOPE_TEMPLATE_UPPER = (year: string, units: string) => [
 
 export function standard4Questions(): QData[] {
   return [
-    // Q1 — Deepavali (descriptive — no image needed; the prompt describes everything)
+    // Q1 — Deepavali (picture choice, descriptive — no image needed)
     { type: "SINGLE", dimension: "VOCAB", score: 1,
       prompt: "Read the sentence and choose the correct word.\n\nPeople light oil lamps, draw rangoli patterns and wear colourful traditional clothes during this celebration. What is it?",
       content: { options: [
         { key: "A", text: "Christmas" }, { key: "B", text: "Deepavali" }, { key: "C", text: "Chinese New Year" },
       ], topicIcon: "🪔", topicLabel: "Festival"},
       answer: { key: "B" } },
-    // Q2 — Cheetah (image-based picture choice)
+    // Q2 — Cheetah (picture choice, image)
     { type: "SINGLE", dimension: "VOCAB", score: 1,
       prompt: "Read the sentence and choose the correct word.\n\nThis animal is the fastest land animal in the world. It has black spots on golden fur and lives in Africa. What is it?",
       mediaUrl: "/questions/standard-4/cheetah.jpg",
@@ -73,13 +73,13 @@ export function standard4Questions(): QData[] {
     // Q6 — Chef
     { type: "FILL", dimension: "VOCAB", score: 1,
       prompt: "Read the description below. Write the missing word — the first letter is given.\n\nA person who cooks food professionally in a restaurant or hotel.\n\nHint:  C _ _ _",
-      content: { caseSensitive: false , topicIcon: "👨‍🍳", topicLabel: "People"},
+      content: { caseSensitive: false, topicIcon: "👨‍🍳", topicLabel: "People" },
       answer: { accepted: ["chef"] } },
-    // Q7 — Stormy
+    // Q7 — Homework (NEW — replaces the old "stormy" question)
     { type: "FILL", dimension: "VOCAB", score: 1,
-      prompt: "Read the description below. Write the missing word — the first letter is given.\n\nA type of weather with dark skies, thunder, strong winds and heavy rain.\n\nHint:  S _ _ _ _ _",
-      content: { caseSensitive: false , topicIcon: "⛈️", topicLabel: "Weather"},
-      answer: { accepted: ["stormy"] } },
+      prompt: "Read the description below. Write the missing word — the first letter is given.\n\nWork that your teacher gives you to do at home.\n\nHint:  H _ _ _ _ _ _ _",
+      content: { caseSensitive: false, topicIcon: "📚", topicLabel: "School" },
+      answer: { accepted: ["homework"] } },
     // Q8 — Phonics: pyramid (audio + picture)
     { type: "SINGLE", dimension: "PHONICS", score: 1,
       prompt: "Listen to the audio. Which of the following is the CORRECT spelling?",
@@ -104,7 +104,7 @@ export function standard4Questions(): QData[] {
         { key: "A", text: "ee" }, { key: "B", text: "ea" }, { key: "C", text: "ie" },
       ]},
       answer: { key: "B" } },
-    // Q11 — Phonics fill: cheetah (audio + picture, shared image with Q2)
+    // Q11 — Phonics fill: cheetah (audio + picture)
     { type: "SINGLE", dimension: "PHONICS", score: 1,
       prompt: "Listen to the audio. The picture shows the fastest land animal. Which letters complete the word?\n\nc h _ _ t a h",
       mediaUrl: "/audio/standard-4/cheetah.mp3",
@@ -118,136 +118,129 @@ export function standard4Questions(): QData[] {
       mediaUrl: "/questions/standard-4/bicycle.jpg",
       content: { options: [
         { key: "A", text: "bicycal" }, { key: "B", text: "bisycle" }, { key: "C", text: "bicycle" },
-      ], topicLabel: "Transport"},
+      ], topicLabel: "Transport" },
       answer: { key: "C" } },
-    // Q13 — Grammar past tense (image: travel)
+    // Q13 — Grammar: possessive pronoun (NEW — pen pal Kenji intro)
+    { type: "SINGLE", dimension: "GRAMMAR", score: 1,
+      prompt: "Choose the correct answer.\n\nThis is my new friend. ________ name is Kenji.",
+      content: { options: [
+        { key: "A", text: "He" }, { key: "B", text: "Him" }, { key: "C", text: "His" },
+      ], topicIcon: "🧒", topicLabel: "Friends" },
+      answer: { key: "C" } },
+    // Q14 — Grammar: be verb, 2nd person plural (NEW)
+    { type: "SINGLE", dimension: "GRAMMAR", score: 1,
+      prompt: "Choose the correct answer.\n\nWhere ________ you from?",
+      content: { options: [
+        { key: "A", text: "am" }, { key: "B", text: "are" }, { key: "C", text: "is" },
+      ], topicIcon: "🌍", topicLabel: "Nationality" },
+      answer: { key: "B" } },
+    // Q15 — Grammar: auxiliary Do (NEW)
+    { type: "SINGLE", dimension: "GRAMMAR", score: 1,
+      prompt: "Choose the correct answer.\n\n________ you have a pen pal in another country?",
+      content: { options: [
+        { key: "A", text: "Is" }, { key: "B", text: "Does" }, { key: "C", text: "Do" },
+      ], topicIcon: "✉️", topicLabel: "Pen pal" },
+      answer: { key: "C" } },
+    // Q16 — Grammar: past tense (image: travel)
     { type: "SINGLE", dimension: "GRAMMAR", score: 1,
       prompt: "Choose the correct answer.\n\nLast Saturday, Amir and his family ________ to Penang by bus.",
       mediaUrl: "/questions/standard-4/travel.jpg",
       content: { options: [
         { key: "A", text: "travel" }, { key: "B", text: "travels" }, { key: "C", text: "travelled" },
-      ], topicLabel: "Travel"},
+      ], topicLabel: "Travel" },
       answer: { key: "C" } },
-    // Q14 — Grammar future (image: visit grandparents)
+    // Q17 — Grammar: future (image: visit grandparents)
     { type: "SINGLE", dimension: "GRAMMAR", score: 1,
       prompt: "Choose the correct answer.\n\nDuring the next school holidays, we ________ visit our grandparents in Ipoh.",
       mediaUrl: "/questions/standard-4/visit-grandparents.jpg",
       content: { options: [
         { key: "A", text: "were" }, { key: "B", text: "are going to" }, { key: "C", text: "did" },
-      ], topicLabel: "Family"},
+      ], topicLabel: "Family" },
       answer: { key: "B" } },
-    // Q15 — Grammar superlative (image: cheetah running)
+    // Q18 — Grammar: superlative (image: cheetah running)
     { type: "SINGLE", dimension: "GRAMMAR", score: 1,
       prompt: "Choose the correct answer.\n\nThe cheetah is the ________ land animal in the world. It can run at 120 km/h!",
       mediaUrl: "/questions/standard-4/cheetah-15.jpg",
       content: { options: [
         { key: "A", text: "fast" }, { key: "B", text: "faster" }, { key: "C", text: "fastest" },
-      ], topicLabel: "Animals"},
+      ], topicLabel: "Animals" },
       answer: { key: "C" } },
-    // Q16-18 — Grammar in context cloze (My Healthy Lifestyle)
-    { type: "READING", dimension: "GRAMMAR", score: 3,
-      prompt: "Read the passage. Choose the correct word for each blank.",
-      content: {
-        passage:
-          "My Healthy Lifestyle\n\nMy name is Kavya. I always try to live a healthy lifestyle. Every morning, I (16) ______ for thirty minutes before going to school. At school, I (17) ______ drink sugary drinks. I prefer plain water or fresh fruit juice. My favourite sport is badminton. I play it (18) ______ a week — on Tuesday and Thursday.",
-        subs: [
-          { stem: "(16) Every morning, I ______ for thirty minutes.", options: [
-            { key: "A", text: "jog" }, { key: "B", text: "jogging" }, { key: "C", text: "jogged" },
-          ]},
-          { stem: "(17) At school, I ______ drink sugary drinks.", options: [
-            { key: "A", text: "always" }, { key: "B", text: "usually" }, { key: "C", text: "never" },
-          ]},
-          { stem: "(18) I play it ______ a week — on Tuesday and Thursday.", options: [
-            { key: "A", text: "once" }, { key: "B", text: "twice" }, { key: "C", text: "three times" },
-          ]},
-        ],
-      },
-      answer: { keys: ["A", "C", "B"] } },
-    // Q19 — Reading dialogue (Hana / Zack)
+    // Q19 — Reading: Melaka History Museum notice — which day closed?
     { type: "SINGLE", dimension: "READING", score: 1,
-      prompt: "Read the text carefully and choose the correct answer.\n\nAccording to the dialogue, which of the following is TRUE?",
+      prompt: "Read the text carefully and choose the correct answer.\n\nOn which day is the museum closed?",
       content: {
         passage:
-          "Hana: How often do you have Science, Zack?\nZack: I have it three times a week — Monday, Wednesday and Friday.\nHana: I only have it twice a week. But I love Science! It is my favourite subject. I also have Maths on Monday and Thursday.",
+          "MELAKA HISTORY MUSEUM\nOpen:    Tuesday – Sunday, 9.00 a.m. – 5.00 p.m.\nClosed:  Monday\nTickets: Adults RM5    Children RM2\nDo not touch the objects.\nPhotographs are not allowed inside.",
         options: [
-          { key: "A", text: "Zack has Science twice a week." },
-          { key: "B", text: "Hana has Maths twice a week." },
-          { key: "C", text: "Hana has Science three times a week." },
+          { key: "A", text: "Sunday" }, { key: "B", text: "Monday" }, { key: "C", text: "Tuesday" },
         ],
       },
       answer: { key: "B" } },
-    // Q20 — Ben's chores (Tuesday)
+    // Q20 — Reading: Melaka History Museum notice — what is NOT allowed?
     { type: "SINGLE", dimension: "READING", score: 1,
-      prompt: "Read the text carefully and choose the correct answer.\n\nWhat does Ben have to do on Tuesday?",
+      prompt: "Read the text carefully and choose the correct answer.\n\nWhat is NOT allowed inside the museum?",
       content: {
         passage:
-          "Ben's Weekly Chores\nMonday    → Make his bed and water the plants\nTuesday   → Feed the dog and rake leaves\nWednesday → Do the washing-up after dinner\nThursday  → Take out the rubbish\nFriday    → Sweep and mop the floor",
+          "MELAKA HISTORY MUSEUM\nOpen:    Tuesday – Sunday, 9.00 a.m. – 5.00 p.m.\nClosed:  Monday\nTickets: Adults RM5    Children RM2\nDo not touch the objects.\nPhotographs are not allowed inside.",
         options: [
-          { key: "A", text: "Sweep the floor and mop." },
-          { key: "B", text: "Feed the dog and rake leaves." },
-          { key: "C", text: "Take out the rubbish." },
+          { key: "A", text: "Eating" }, { key: "B", text: "Taking photographs" }, { key: "C", text: "Talking" },
         ],
       },
       answer: { key: "B" } },
-    // Q21 — Aquaria KLCC (cheapest total for 1 child + 1 adult + 1 senior)
-    { type: "SINGLE", dimension: "READING", score: 1,
-      prompt: "Read the text carefully and choose the correct answer.\n\nAli (age 9) visits Aquaria KLCC with his mother and grandmother. What is the cheapest total price?",
+    // Q21 — Reading (short answer): who is the new pupil?
+    { type: "FILL", dimension: "READING", score: 1,
+      prompt: "Read the email below and answer the question.\n\nWho is the new pupil in Aiman's class?",
       content: {
+        caseSensitive: false,
         passage:
-          "AQUARIA KLCC — Entry Ticket\nAdult:                              RM 55\nChild (4–12):                       RM 45\nSenior Citizen:                     RM 35\nFamily Package (2 adults + 2 children):  RM 170",
-        options: [
-          { key: "A", text: "RM 135" }, { key: "B", text: "RM 155" }, { key: "C", text: "RM 170" },
-        ],
+          "My New Friend\n\nMy name is Aiman. I am ten years old and I live in Melaka, Malaysia. Last month, a new pupil came to my class. His name is Kenji.\n\nKenji is from Japan. He is ten years old too. At first, he was very quiet. He could not speak Malay, and his English was not very good. Nobody talked to him.\n\nOne day, I saw Kenji sitting alone under a tree. He was drawing a mountain with snow on top. \"What is that?\" I asked. \"Mount Fuji,\" he said. \"It is in my country.\"\n\nI sat down next to him. We talked about our countries. I told him about the beaches in Melaka. He told me about the snow in Japan.\n\nNow, Kenji is my best friend. He is teaching me Japanese, and I am teaching him Malay.",
       },
-      answer: { key: "A" } },
-    // Q22 — Email Sabah: diurnal meaning
-    { type: "SINGLE", dimension: "READING", score: 1,
-      prompt: "Read the email below and choose the best answer.\n\nWhat does the word \"diurnal\" mean in the email?",
+      answer: { accepted: ["kenji", "kenji.", "the new pupil is kenji", "his name is kenji"] } },
+    // Q22 — Reading (short answer): what was Kenji drawing?
+    { type: "FILL", dimension: "READING", score: 1,
+      prompt: "Read the email below and answer the question.\n\nWhat was Kenji drawing?",
       content: {
+        caseSensitive: false,
         passage:
-          "To: shiven@gmail.com    Date: 5th August 2024\nSubject: My Trip to Sabah!\n\nHi Shi Ven,\nLast month, my family and I went on an amazing trip to Sabah! On the first day, we visited the Sepilok Orangutan Rehabilitation Centre. Our guide told us that orangutans are diurnal animals — they are active during the day and sleep at night in nests made of leaves high up in the trees.\nOn the second day, we went snorkelling at Pulau Gaya. The water was crystal clear and we saw many colourful fish around the coral reefs. In the evening, we ate freshly grilled seafood at a floating restaurant. It was the most delicious meal I had ever tasted!\nYour friend,  Amirul",
-        options: [
-          { key: "A", text: "Active at night and sleeping during the day." },
-          { key: "B", text: "Active during the day and sleeping at night." },
-          { key: "C", text: "Sleeping all day and all night." },
-        ],
+          "My New Friend\n\nMy name is Aiman. I am ten years old and I live in Melaka, Malaysia. Last month, a new pupil came to my class. His name is Kenji.\n\nKenji is from Japan. He is ten years old too. At first, he was very quiet. He could not speak Malay, and his English was not very good. Nobody talked to him.\n\nOne day, I saw Kenji sitting alone under a tree. He was drawing a mountain with snow on top. \"What is that?\" I asked. \"Mount Fuji,\" he said. \"It is in my country.\"\n\nI sat down next to him. We talked about our countries. I told him about the beaches in Melaka. He told me about the snow in Japan.\n\nNow, Kenji is my best friend. He is teaching me Japanese, and I am teaching him Malay.",
       },
-      answer: { key: "B" } },
-    // Q23 — Email Sabah: day 2
-    { type: "SINGLE", dimension: "READING", score: 1,
-      prompt: "Read the email below and choose the best answer.\n\nWhat did Amirul do on the second day?",
+      answer: { accepted: [
+        "mount fuji", "mountain", "a mountain", "a mountain with snow", "a mountain with snow on top",
+        "he was drawing a mountain with snow on top", "he was drawing mount fuji",
+        "kenji was drawing a mountain with snow on top", "kenji was drawing mount fuji",
+      ] } },
+    // Q23 — Reading (short answer): what is Kenji teaching Aiman?
+    { type: "FILL", dimension: "READING", score: 1,
+      prompt: "Read the email below and answer the question.\n\nWhat is Kenji teaching Aiman?",
       content: {
+        caseSensitive: false,
         passage:
-          "On the second day, we went snorkelling at Pulau Gaya. The water was crystal clear and we saw many colourful fish around the coral reefs. In the evening, we ate freshly grilled seafood at a floating restaurant.",
-        options: [
-          { key: "A", text: "He visited the Sepilok Orangutan Centre." },
-          { key: "B", text: "He went snorkelling and ate grilled seafood." },
-          { key: "C", text: "He took photos of fish in the market." },
-        ],
+          "My New Friend\n\nMy name is Aiman. I am ten years old and I live in Melaka, Malaysia. Last month, a new pupil came to my class. His name is Kenji.\n\nKenji is from Japan. He is ten years old too. At first, he was very quiet. He could not speak Malay, and his English was not very good. Nobody talked to him.\n\nOne day, I saw Kenji sitting alone under a tree. He was drawing a mountain with snow on top. \"What is that?\" I asked. \"Mount Fuji,\" he said. \"It is in my country.\"\n\nI sat down next to him. We talked about our countries. I told him about the beaches in Melaka. He told me about the snow in Japan.\n\nNow, Kenji is my best friend. He is teaching me Japanese, and I am teaching him Malay.",
       },
-      answer: { key: "B" } },
-    // Q24 — Email Sabah: TRUE
-    { type: "SINGLE", dimension: "READING", score: 1,
-      prompt: "Read the email below and choose the best answer.\n\nWhich of the following is TRUE about the email?",
+      answer: { accepted: [
+        "japanese", "kenji is teaching aiman japanese", "he is teaching aiman japanese",
+        "he is teaching him japanese", "japanese.",
+      ] } },
+    // Q24 — Reading (open opinion + reason, 2 marks): is Aiman a good friend?
+    { type: "SHORT", dimension: "READING", score: 2,
+      prompt: "Read the email below and answer the question.\n\nDo you think Aiman is a good friend? Give ONE reason.",
       content: {
+        minWords: 8,
+        maxWords: 40,
         passage:
-          "Our guide told us that orangutans are diurnal animals — they are active during the day and sleep at night in nests made of leaves. We went snorkelling at Pulau Gaya — the water was crystal clear. In the evening, we ate freshly grilled seafood at a floating restaurant.",
-        options: [
-          { key: "A", text: "Orangutans sleep during the day." },
-          { key: "B", text: "The water at Pulau Gaya was dirty and dark." },
-          { key: "C", text: "Amirul ate grilled seafood at a floating restaurant." },
-        ],
+          "My New Friend\n\nMy name is Aiman. I am ten years old and I live in Melaka, Malaysia. Last month, a new pupil came to my class. His name is Kenji.\n\nKenji is from Japan. He is ten years old too. At first, he was very quiet. He could not speak Malay, and his English was not very good. Nobody talked to him.\n\nOne day, I saw Kenji sitting alone under a tree. He was drawing a mountain with snow on top. \"What is that?\" I asked. \"Mount Fuji,\" he said. \"It is in my country.\"\n\nI sat down next to him. We talked about our countries. I told him about the beaches in Melaka. He told me about the snow in Japan.\n\nNow, Kenji is my best friend. He is teaching me Japanese, and I am teaching him Malay.",
+        template: "Yes / No — I think Aiman is a good friend because …",
       },
-      answer: { key: "C" } },
-    // Q25 — Writing email pen-pal (30-50 words)
-    { type: "SHORT", dimension: "WRITING", score: 10,
-      prompt: "Write an email to introduce yourself to a new pen pal called Eaden Siew.\nInclude:\n  • yourself and your family\n  • your school and favourite subject\n  • your hobbies\nWrite about 30–50 words.",
+      answer: { rubric: "1 mark for the opinion (Yes / No) + 1 mark for ONE reason from the passage. Any reasonable answer accepted." } },
+    // Q25 — Writing: International Day, 40–50 words, 15 marks
+    { type: "SHORT", dimension: "WRITING", score: 15,
+      prompt: "A school is holding an International Day. Pupils from different countries are wearing their traditional costumes. They are holding their national flags and sharing food from their countries. Some pupils are teaching their friends how to say \"hello\" in their own language.\n\nYour friend asks you to join the International Day at school. Do you want to join?\n\nGive TWO reasons. Write your answer in 40–50 words in a paragraph.",
       content: {
-        minWords: 30,
+        minWords: 40,
         maxWords: 50,
-        template: "Hi Eaden,\n\nMy name is _______. I am ____ years old. I live in _______ with my family. At school, my favourite subject is _______. In my free time, I love _______.\n\nYour friend,\n_______",
+        template: "Yes / No, I want / do not want to join the International Day.\n\nFirst, I …\n\nSecond, I …\n\nIt will be a …",
       },
-      answer: { rubric: "Greeting · self/family · school + favourite subject · hobbies · closing" } },
+      answer: { rubric: "Opinion (Yes/No) · TWO reasons · 40–50 words · coherent paragraph." } },
   ];
 }
 

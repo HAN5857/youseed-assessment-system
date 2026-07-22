@@ -5,11 +5,13 @@ import { useUiTheme, useUiTier } from "@/lib/ui-theme";
 import { splitPrompt } from "@/lib/prompt-format";
 import { InstructionHint } from "@/components/kids/InstructionHint";
 import { QuestionBody } from "@/components/kids/QuestionBody";
+import { PassageCard } from "@/components/kids/PassageCard";
 
-export function FillRenderer({ prompt, value, onChange }: RendererProps) {
+export function FillRenderer({ prompt, content, value, onChange }: RendererProps) {
   const theme = useUiTheme();
   const tier = useUiTier();
   const upper = theme === "calm" && tier === "upper-primary";
+  const passage: string | undefined = content?.passage;
 
   if (upper) {
     const { instruction, body } = splitPrompt(prompt);
@@ -20,6 +22,11 @@ export function FillRenderer({ prompt, value, onChange }: RendererProps) {
     const hint = hintSplit[1]?.trim();
     return (
       <div>
+        {passage && (
+          <div className="mb-5">
+            <PassageCard text={passage} />
+          </div>
+        )}
         {instruction && <InstructionHint text={instruction} />}
         <div className="mb-5">
           <QuestionBody text={description} />
