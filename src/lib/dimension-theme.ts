@@ -158,13 +158,94 @@ export function dimensionThemeCalm(dimension: string): DimensionTheme {
   return THEMES_CALM[dimension] ?? FALLBACK_CALM;
 }
 
+// ─── Chinese (华文) palette — jade + gold + cinnabar accents ────────────
+// A visually-distinct third palette family: still kid-friendly, but with
+// the reds/golds Mandarin materials traditionally use, plus jade greens
+// so it stays legible next to the calm-tier language chrome.
+const THEMES_CHINESE: Record<string, DimensionTheme> = {
+  VOCAB: {
+    emoji: "字", label: "字词",
+    gradient: "from-rose-500 to-red-500",
+    accent: "text-rose-700",
+    bg: "from-rose-50 via-white to-red-50",
+    sticker: "🀄",
+    entryAnim: "kid-slide-in",
+  },
+  GRAMMAR: {
+    emoji: "语", label: "语法",
+    gradient: "from-amber-500 to-orange-500",
+    accent: "text-amber-700",
+    bg: "from-amber-50 via-white to-orange-50",
+    sticker: "🎋",
+    entryAnim: "kid-pop-in",
+  },
+  READING: {
+    emoji: "读", label: "阅读",
+    gradient: "from-emerald-600 to-teal-600",
+    accent: "text-emerald-700",
+    bg: "from-emerald-50 via-white to-teal-50",
+    sticker: "📜",
+    entryAnim: "kid-zoom-in",
+  },
+  LISTENING: {
+    emoji: "听", label: "听力",
+    gradient: "from-indigo-500 to-violet-500",
+    accent: "text-indigo-700",
+    bg: "from-indigo-50 via-white to-violet-50",
+    sticker: "🎐",
+    entryAnim: "kid-slide-in",
+  },
+  PHONICS: {
+    emoji: "拼", label: "拼音",
+    gradient: "from-cyan-500 to-sky-500",
+    accent: "text-sky-700",
+    bg: "from-cyan-50 via-white to-sky-50",
+    sticker: "🐼",
+    entryAnim: "kid-pop-in",
+  },
+  WRITING: {
+    emoji: "写", label: "写作",
+    gradient: "from-red-500 to-rose-500",
+    accent: "text-red-700",
+    bg: "from-red-50 via-white to-rose-50",
+    sticker: "🖋️",
+    entryAnim: "kid-pop-in",
+  },
+  SPEAKING: {
+    emoji: "说", label: "口语",
+    gradient: "from-orange-500 to-amber-500",
+    accent: "text-orange-700",
+    bg: "from-orange-50 via-white to-amber-50",
+    sticker: "🏮",
+    entryAnim: "kid-bounce-in",
+  },
+};
+
+const FALLBACK_CHINESE: DimensionTheme = {
+  emoji: "题", label: "题目",
+  gradient: "from-red-500 to-amber-500",
+  accent: "text-red-700",
+  bg: "from-rose-50 via-white to-amber-50",
+  sticker: "⭐",
+  entryAnim: "kid-slide-in",
+};
+
+export function dimensionThemeChinese(dimension: string): DimensionTheme {
+  return THEMES_CHINESE[dimension] ?? FALLBACK_CHINESE;
+}
+
 // Milestone messages keyed by the question NUMBER the student just finished.
-export function milestoneForProgress(answered: number, total: number): string | null {
+// Chinese variant is triggered when the caller passes locale = "zh".
+export function milestoneForProgress(
+  answered: number,
+  total: number,
+  locale: "en" | "zh" = "en",
+): string | null {
   if (total < 5) return null;
-  const pct = answered / total;
-  if (answered === Math.floor(total * 0.25)) return "🌱 Great start! 25% done.";
-  if (answered === Math.floor(total * 0.5))  return "🔥 Halfway there — you've got this!";
-  if (answered === Math.floor(total * 0.75)) return "🚀 So close! Just a little more.";
-  if (answered === total - 1)                return "⭐ One more to go!";
+  const en = locale === "en";
+  if (answered === Math.floor(total * 0.25)) return en ? "🌱 Great start! 25% done." : "🌱 好的开始！走完四分之一。";
+  if (answered === Math.floor(total * 0.5))  return en ? "🔥 Halfway there — you've got this!" : "🔥 已经完成一半，加油！";
+  if (answered === Math.floor(total * 0.75)) return en ? "🚀 So close! Just a little more." : "🚀 就快到啦，再撑一下！";
+  if (answered === total - 1)                return en ? "⭐ One more to go!" : "⭐ 只剩最后一题！";
   return null;
 }

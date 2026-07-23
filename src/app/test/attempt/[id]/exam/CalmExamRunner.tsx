@@ -22,7 +22,7 @@ import { SoundToggle } from "@/components/kids/SoundToggle";
 import { StarProgress } from "@/components/kids/StarProgress";
 import { FinishDialog } from "@/components/kids/FinishDialog";
 import { StickerExplosion } from "@/components/kids/StickerExplosion";
-import { dimensionThemeCalm, milestoneForProgress } from "@/lib/dimension-theme";
+import { dimensionThemeCalm, dimensionThemeChinese, milestoneForProgress } from "@/lib/dimension-theme";
 import { useS1Edu } from "@/lib/s1-edu-flag";
 import { getStickerPool } from "@/lib/s1-stickers";
 import { speedyCopy, S1_MODULE_BOUNDARIES, type SeedyAnchor } from "@/lib/s1-edu-config";
@@ -32,23 +32,25 @@ import { MascotSpeechBubble } from "@/components/edu-s1/MascotSpeechBubble";
 import { PracticeRound } from "@/components/edu-s1/PracticeRound";
 import { ChapterInterstitial, type ChapterId } from "@/components/edu-s1/ChapterInterstitial";
 import { UiThemeProvider } from "@/lib/ui-theme";
+import { runnerCopy, isChineseSubject } from "@/lib/runner-i18n";
 
 type Q = {
   id: string; type: string; dimension: string; score: number;
   prompt: string; mediaUrl?: string | null; content: any;
 };
 
-const ENCOURAGE_PRIMARY = [
-  "You're doing great!", "Keep it up!", "Awesome!", "You're a star!",
-  "Nice one!", "Superb!", "Fantastic!", "Way to go!", "Brilliant!", "Smart move!",
-];
-// Upper-primary: confidence-building but academic, no exclamations or "you're a star".
+// English/default encouragement pool (also see @/lib/runner-i18n for the
+// Chinese pool used when subject === "chinese"). Kept here as fallback so
+// existing English exams keep the exact copy they've always had.
+// Upper-primary uses academically-toned copy across all languages.
 const ENCOURAGE_UPPER = [
   "Good.", "Nice.", "Well done.", "On track.", "Keep going.",
   "Solid choice.", "Steady.", "Good thinking.", "Looking strong.", "Confident answer.",
 ];
-
-const CORNER_STICKERS = ["⭐", "🌈", "🎈", "🎀", "🌟", "✨", "💫", "🎊", "🪄", "🍭"];
+const ENCOURAGE_UPPER_ZH = [
+  "不错。", "很好。", "答得稳。", "继续。", "思路清晰。",
+  "有把握。", "稳步前进。", "分析到位。", "答得漂亮。", "水到渠成。",
+];
 
 export function CalmExamRunner({
   leadId, title, subject, level, studentName, remainingSec, questions, initialResponses,
@@ -73,7 +75,12 @@ export function CalmExamRunner({
 }) {
   const upper = tier === "upper-primary";
   const edu = useS1Edu({ test: { subject: subject ?? null, level: level ?? null } });
-  const stickerPool = useMemo(() => getStickerPool(subject, level), [subject, level]);
+  const isChinese = isChineseSubject(subject);
+  const t = useMemo(() => runnerCopy(subject), [subject]);
+  const stickerPool = useMemo(
+    () => (isChinese ? t.milestoneStickers : getStickerPool(subject, level)),
+    [subject, level, isChinese, t.milestoneStickers],
+  );
   const router = useRouter();
   const [idx, setIdx] = useState(0);
   const [direction, setDirection] = useState<1 | -1>(1);
@@ -197,7 +204,9 @@ export function CalmExamRunner({
   function goNext() {
     if (idx < questions.length - 1) {
       sound().play("next");
-      const list = upper ? ENCOURAGE_UPPER : ENCOURAGE_PRIMARY;
+      const list = upper
+        ? (isChinese ? ENCOURAGE_UPPER_ZH : ENCOURAGE_UPPER)
+        : t.encouragements;
       showToast(list[Math.floor(Math.random() * list.length)]);
       setDirection(1);
       setIdx(idx + 1);
@@ -242,7 +251,9 @@ export function CalmExamRunner({
 
   const q = questions[idx];
   const Renderer = q ? getRenderer(q.type) ?? FallbackRenderer : FallbackRenderer;
-  const theme = dimensionThemeCalm(q?.dimension ?? "");
+  const theme = isChinese
+    ? dimensionThemeChinese(q?.dimension ?? "")
+    : dimensionThemeCalm(q?.dimension ?? "");
 
   const answeredSet = useMemo(() => {
     const s = new Set<number>();
@@ -253,7 +264,7 @@ export function CalmExamRunner({
 
   useEffect(() => {
     if (answeredCount > prevAnsweredRef.current) {
-      const raw = milestoneForProgress(answeredCount, questions.length);
+      const raw = milestoneForProgress(answeredCount, questions.length, isChinese ? "zh" : "en");
       // Upper-primary: strip the leading emoji + soften copy.
       const m = raw && upper
         ? raw.replace(/^\W+\s*/u, "")     // drop leading emoji + whitespace
@@ -338,8 +349,8 @@ export function CalmExamRunner({
     setPracticeComplete(true);
   }
 
-  const sticker1 = CORNER_STICKERS[idx % CORNER_STICKERS.length];
-  const sticker2 = CORNER_STICKERS[(idx * 7 + 3) % CORNER_STICKERS.length];
+  const sticker1 = t.cornerStickers[idx % t.cornerStickers.length];
+  const sticker2 = t.cornerStickers[(idx * 7 + 3) % t.cornerStickers.length];
 
   // Upper-primary uses a slightly more restrained slide + no scale bounce.
   // Primary keeps the original 80px slide + 0.96 scale spring.
@@ -359,8 +370,16 @@ export function CalmExamRunner({
     : { type: "spring" as const, stiffness: 220, damping: 26 };
 
   return (
-    <UiThemeProvider mode="calm" tier={tier}>
-      <div className={`calm-ui ${upper ? "calm-ui-upper" : ""} kid-bg-green relative flex min-h-screen flex-col`}>
+    <UiThemeProvider mode="calm" tier={tier} subject={subject ?? "english"}>
+      <div
+        {...(isChinese ? { lang: "zh-Hans" } : {})}
+        className={[
+          "calm-ui",
+          upper ? "calm-ui-upper" : "",
+          isChinese ? "chinese-ui zh-cn kid-bg-chinese" : "kid-bg-green",
+          "relative flex min-h-screen flex-col",
+        ].filter(Boolean).join(" ")}
+      >
         <StickerExplosion show={showStickers} key={`burst-${stickerBurst}`} pool={stickerPool} />
 
         {/* Top bar */}
@@ -373,7 +392,7 @@ export function CalmExamRunner({
               <div className="min-w-0">
                 <p className={`truncate text-slate-800 ${upper ? "text-sm font-semibold sm:text-base" : "text-sm font-black sm:text-base"}`}>{title}</p>
                 <p className={`text-xs ${upper ? "font-medium text-[#6B7280]" : "font-bold text-slate-500"}`}>
-                  Question {idx + 1} of {questions.length} · {answeredCount} answered
+                  {t.questionOf(idx, questions.length, answeredCount)}
                 </p>
               </div>
             </div>
@@ -385,7 +404,7 @@ export function CalmExamRunner({
                       ? "border-red-200 bg-red-50 text-red-700 kid-pulse"
                       : "border-[#DDEFE4] bg-[#EAF8F0] text-[#138a4a]"
                   }`}
-                  aria-label="Time remaining"
+                  aria-label={t.timeRemaining}
                 >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                     <circle cx="12" cy="13" r="8" />
@@ -500,7 +519,7 @@ export function CalmExamRunner({
                         {theme.label}
                       </span>
                       <span className={`rounded-full border-2 border-current bg-white px-2.5 py-0.5 text-xs font-bold ${theme.accent}`}>
-                        {q.score} ⭐ points
+                        {t.pointsChip(q.score)}
                       </span>
                     </>
                   )}
@@ -527,7 +546,7 @@ export function CalmExamRunner({
                   : "rounded-full border-2 border-slate-300 bg-white px-5 py-3 text-sm font-bold text-slate-600 shadow hover:bg-slate-50 disabled:opacity-40"
               }
             >
-              ← Back
+              {t.back}
             </button>
             {idx < questions.length - 1 ? (
               upper ? (
@@ -535,13 +554,13 @@ export function CalmExamRunner({
                   onClick={goNext}
                   className="inline-flex items-center gap-2 rounded-full bg-[#18A65B] px-6 py-2.5 text-sm font-semibold text-white shadow-md transition hover:brightness-110 active:translate-y-px"
                 >
-                  Next
+                  {isChinese ? "下一题" : "Next"}
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                     <path d="M5 12h14" /><path d="m12 5 7 7-7 7" />
                   </svg>
                 </button>
               ) : (
-                <button onClick={goNext} className="kid-btn kid-btn-green">Next →</button>
+                <button onClick={goNext} className="kid-btn kid-btn-green">{t.next}</button>
               )
             ) : (
               upper ? (
@@ -550,7 +569,7 @@ export function CalmExamRunner({
                   disabled={submitting}
                   className="inline-flex items-center gap-2 rounded-full bg-[#18A65B] px-6 py-2.5 text-sm font-semibold text-white shadow-md transition hover:brightness-110 active:translate-y-px disabled:opacity-60"
                 >
-                  {submitting ? "Submitting…" : "Submit"}
+                  {submitting ? t.submitting : (isChinese ? "交卷" : "Submit")}
                 </button>
               ) : (
                 <button
@@ -558,7 +577,7 @@ export function CalmExamRunner({
                   disabled={submitting}
                   className="kid-btn kid-btn-green"
                 >
-                  {submitting ? "Submitting… 🎉" : "Finish! 🏁"}
+                  {submitting ? t.submittingReady : t.finishReady}
                 </button>
               )
             )}
@@ -595,7 +614,7 @@ export function CalmExamRunner({
               exit={{ y: -20, opacity: 0, scale: 0.9 }}
               transition={{ type: "spring", stiffness: 350, damping: 22 }}
             >
-              {upper ? toast : `${toast} ✨`}
+              {upper ? toast : `${t.toastPrefix}${toast}${t.toastSuffix}`}
             </motion.div>
           )}
         </AnimatePresence>

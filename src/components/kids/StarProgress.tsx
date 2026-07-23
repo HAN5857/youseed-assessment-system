@@ -3,6 +3,9 @@
 // Fills with colored stars as the student progresses.
 // Answered = gold star, current = pulsing, not yet = grey outline.
 
+import { useUiSubject, useIsChineseTheme } from "@/lib/ui-theme";
+import { runnerCopy } from "@/lib/runner-i18n";
+
 export function StarProgress({
   total,
   answered,
@@ -12,6 +15,11 @@ export function StarProgress({
   answered: Set<number>;
   current: number;
 }) {
+  const subject = useUiSubject();
+  const t = runnerCopy(subject);
+  // On the Chinese route we swap the star glyph for a plum-blossom /
+  // outlined blossom pair (still 1 char, same size, same a11y label).
+  const chinese = useIsChineseTheme();
   return (
     <div className="flex flex-wrap gap-1.5">
       {Array.from({ length: total }).map((_, i) => {
@@ -22,12 +30,16 @@ export function StarProgress({
             key={i}
             className={[
               "grid place-items-center rounded-full h-7 w-7 text-sm transition-all",
-              isAnswered ? "bg-yellow-300 text-orange-600 shadow-inner" : "bg-white/40 text-white/60",
+              isAnswered
+                ? (chinese ? "bg-rose-300 text-rose-800 shadow-inner" : "bg-yellow-300 text-orange-600 shadow-inner")
+                : "bg-white/40 text-white/60",
               isCurrent ? "kid-pulse ring-2 ring-white" : "",
             ].join(" ")}
-            aria-label={`Question ${i + 1} ${isAnswered ? "answered" : "not answered"}`}
+            aria-label={t.starProgressLabel(i, isAnswered)}
           >
-            {isAnswered ? "★" : "☆"}
+            {isAnswered
+              ? (chinese ? "❀" : "★")
+              : (chinese ? "❁" : "☆")}
           </div>
         );
       })}

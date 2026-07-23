@@ -172,9 +172,17 @@ const COPY: Record<Lang, {
 };
 
 export function InstructionsView({
-  leadId, studentName, duration, passingScore, totalQuestions, dimensionCounts,
+  leadId, studentName, testSubject, duration, passingScore, totalQuestions, dimensionCounts,
 }: Props) {
-  const [lang, setLang] = useState<Lang>("en");
+  // Default the language chip to match the test's subject so a Chinese
+  // student doesn't have to click "中文" every time they open the exam.
+  const defaultLang: Lang = (() => {
+    const s = String(testSubject ?? "").toLowerCase();
+    if (s === "chinese" || s === "zh" || s === "zh-cn") return "zh";
+    if (s === "bahasa-melayu" || s === "malay" || s === "bm") return "bm";
+    return "en";
+  })();
+  const [lang, setLang] = useState<Lang>(defaultLang);
   const t = COPY[lang];
 
   return (

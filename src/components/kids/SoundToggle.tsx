@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { sound } from "@/lib/sounds";
 import { s1EduPrefs } from "@/lib/s1-edu-flag";
 import { seedyVoice } from "@/lib/seedy-voice";
+import { useUiSubject } from "@/lib/ui-theme";
+import { runnerCopy } from "@/lib/runner-i18n";
 
 export function SoundToggle({
   showMusic = true,
@@ -15,6 +17,8 @@ export function SoundToggle({
   const [muted, setMuted] = useState(false);
   const [music, setMusic] = useState(false);
   const [voice, setVoice] = useState(true); // default ON (locked decision)
+  const subject = useUiSubject();
+  const t = runnerCopy(subject);
 
   useEffect(() => {
     // Persist across the session. Music defaults to ON (only off if explicitly opted out).
@@ -66,7 +70,7 @@ export function SoundToggle({
     <div className="flex items-center gap-2">
       <button
         onClick={toggleMute}
-        aria-label={muted ? "Unmute sounds" : "Mute sounds"}
+        aria-label={muted ? t.soundOn : t.soundOff}
         className="kid-pill h-10 w-10 rounded-full bg-white/90 text-xl shadow hover:scale-105 active:scale-95"
       >
         {muted ? "🔇" : "🔊"}
@@ -74,7 +78,7 @@ export function SoundToggle({
       {showMusic && (
         <button
           onClick={toggleMusic}
-          aria-label={music ? "Pause music" : "Play music"}
+          aria-label={music ? t.musicOff : t.musicOn}
           className={`kid-pill h-10 w-10 rounded-full text-xl shadow hover:scale-105 active:scale-95 ${
             music ? "bg-yellow-300" : "bg-white/90"
           }`}
@@ -85,8 +89,8 @@ export function SoundToggle({
       {showVoice && (
         <button
           onClick={toggleVoice}
-          aria-label={voice ? "Turn Seedy's voice off" : "Turn Seedy's voice on"}
-          title={voice ? "Seedy is talking 🌱" : "Seedy is quiet"}
+          aria-label={voice ? t.voiceOff : t.voiceOn}
+          title={voice ? t.voiceIsOn : t.voiceIsOff}
           className={`kid-pill h-10 w-10 rounded-full text-xl shadow hover:scale-105 active:scale-95 ${
             voice ? "bg-emerald-300" : "bg-white/90"
           }`}

@@ -7,17 +7,21 @@
 //                            no doodle, no bookmark, ruled lines kept subtle so
 //                            older students can focus on text. (S4-S6)
 
-import { useUiTheme, useUiTier } from "@/lib/ui-theme";
+import { useUiTheme, useUiTier, useUiSubject } from "@/lib/ui-theme";
+import { runnerCopy } from "@/lib/runner-i18n";
 
 export function PassageCard({
   text,
-  hint = "📚 Take your time — read it twice!",
+  hint,
 }: {
   text: string;
   hint?: string;
 }) {
   const theme = useUiTheme();
   const tier = useUiTier();
+  const subject = useUiSubject();
+  const t = runnerCopy(subject);
+  const resolvedHint = hint ?? t.passageHint;
 
   if (theme === "calm" && tier === "upper-primary") {
     return (
@@ -27,9 +31,9 @@ export function PassageCard({
           <div className="pointer-events-none absolute bottom-0 left-0 top-0 w-1 bg-[#18A65B]" aria-hidden />
           <SmartPassage text={text} />
         </div>
-        {hint && (
+        {resolvedHint && (
           <div className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-[#DDEFE4] bg-[#F7FBF8] px-3 py-1 text-xs font-medium text-[#138a4a]">
-            Read carefully — you can scroll back to the passage at any time.
+            {t.passageHintUpper}
           </div>
         )}
       </div>
@@ -85,9 +89,9 @@ export function PassageCard({
           aria-hidden
         />
 
-        {hint && (
+        {resolvedHint && (
           <div className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-800">
-            {hint}
+            {resolvedHint}
           </div>
         )}
       </div>
@@ -142,9 +146,9 @@ export function PassageCard({
         aria-hidden
       />
 
-      {hint && (
+      {resolvedHint && (
         <div className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-amber-800">
-          {hint}
+          {resolvedHint}
         </div>
       )}
     </div>

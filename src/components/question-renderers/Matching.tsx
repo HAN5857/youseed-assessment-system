@@ -2,10 +2,11 @@
 import type { RendererProps } from "./index";
 import { sound } from "@/lib/sounds";
 import { MatchingDndRenderer } from "./MatchingDnd";
-import { useUiTheme, useUiTier } from "@/lib/ui-theme";
+import { useUiTheme, useUiTier, useUiSubject } from "@/lib/ui-theme";
 import { InstructionHint } from "@/components/kids/InstructionHint";
 import { QuestionBody } from "@/components/kids/QuestionBody";
 import { splitPrompt } from "@/lib/prompt-format";
+import { runnerCopy } from "@/lib/runner-i18n";
 
 const COLOURS_PLAYFUL = [
   "bg-pink-100 border-pink-300",
@@ -41,6 +42,8 @@ export function MatchingRenderer(props: RendererProps) {
 function MatchingLegacyRenderer({ prompt, content, value, onChange }: RendererProps) {
   const theme = useUiTheme();
   const tier = useUiTier();
+  const subject = useUiSubject();
+  const T = runnerCopy(subject);
   const upper = theme === "calm" && tier === "upper-primary";
 
   const rawLeft: LeftItem[] = content?.left ?? [];
@@ -178,7 +181,7 @@ function MatchingLegacyRenderer({ prompt, content, value, onChange }: RendererPr
                 onChange={(e) => setPair(i, Number(e.target.value))}
                 className={`w-full min-w-40 flex-none rounded-xl border-4 border-white bg-white px-4 py-3 text-base font-bold text-slate-700 shadow-sm outline-none ${focusBorder} sm:w-auto sm:flex-1`}
               >
-                <option value="">— choose —</option>
+                <option value="">{T.matchingChoosePlaceholder}</option>
                 {right.map((r, ri) => (
                   <option key={ri} value={ri}>{r}</option>
                 ))}

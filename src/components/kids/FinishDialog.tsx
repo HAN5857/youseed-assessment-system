@@ -3,7 +3,8 @@
 import { useEffect } from "react";
 import { Mascot } from "./Mascot";
 import { sound } from "@/lib/sounds";
-import { useUiTier } from "@/lib/ui-theme";
+import { useUiTier, useUiSubject } from "@/lib/ui-theme";
+import { runnerCopy } from "@/lib/runner-i18n";
 
 export function FinishDialog({
   open,
@@ -138,6 +139,8 @@ function CalmFinishDialog({
 }) {
   const tier = useUiTier();
   const upper = tier === "upper-primary";
+  const subject = useUiSubject();
+  const t = runnerCopy(subject);
 
   return (
     <div
@@ -178,8 +181,8 @@ function CalmFinishDialog({
               : "text-center text-2xl font-black tracking-tight text-slate-800 sm:text-3xl"
           }>
             {upper
-              ? (allAnswered ? "Submit your assessment?" : "Submit before finishing?")
-              : (allAnswered ? <>Ready to finish? 🎉</> : <>Almost there! 💪</>)}
+              ? (allAnswered ? t.finishTitleDone : t.finishTitleUnfinished)
+              : (allAnswered ? t.finishTitleDone : t.finishTitleUnfinished)}
           </h2>
           <p className={
             upper
@@ -187,12 +190,8 @@ function CalmFinishDialog({
               : "mt-2 text-center text-base font-semibold text-slate-600"
           }>
             {allAnswered
-              ? (upper
-                  ? "You answered every question. Once submitted, you cannot change your answers."
-                  : "You answered every question — great job!")
-              : (upper
-                  ? `${total - answered} question${total - answered === 1 ? "" : "s"} unanswered. You can still submit, but unanswered questions score zero.`
-                  : `You've answered ${total - answered} more to try. Want to keep going?`)}
+              ? t.finishBodyDone
+              : t.finishBodyUnfinished(total - answered)}
           </p>
 
           {/* Progress visualisation */}
@@ -207,7 +206,7 @@ function CalmFinishDialog({
                   upper
                     ? "text-[11px] font-semibold uppercase tracking-wider text-[#6B7280]"
                     : "text-xs font-black uppercase tracking-wider text-emerald-700"
-                }>Answered</div>
+                }>{t.finishAnsweredLabel}</div>
                 <div className={
                   upper
                     ? "text-3xl font-bold text-[#1F2937]"
@@ -221,7 +220,7 @@ function CalmFinishDialog({
                   upper
                     ? "text-[11px] font-semibold uppercase tracking-wider text-[#6B7280]"
                     : "text-xs font-black uppercase tracking-wider text-green-700"
-                }>Complete</div>
+                }>{t.finishCompleteLabel}</div>
                 <div className={
                   upper
                     ? "text-3xl font-bold text-[#138a4a]"
@@ -255,7 +254,7 @@ function CalmFinishDialog({
                   : "rounded-full border-2 border-slate-300 bg-white px-6 py-3 text-sm font-bold text-slate-600 hover:bg-slate-50"
               }
             >
-              {upper ? "Review my answers" : (allAnswered ? "Let me check again" : "Keep trying 💪")}
+              {upper ? t.finishSecondary : (allAnswered ? t.finishSecondary : t.finishSecondaryUnfinished)}
             </button>
             <button
               type="button"
@@ -266,7 +265,7 @@ function CalmFinishDialog({
                   : "kid-btn kid-btn-green"
               }
             >
-              {upper ? "Submit assessment" : (allAnswered ? "Yes, finish! 🏁" : "Finish anyway 🏁")}
+              {upper ? t.finishPrimary : (allAnswered ? t.finishPrimary : t.finishPrimaryUnfinished)}
             </button>
           </div>
         </div>

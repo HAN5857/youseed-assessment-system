@@ -38,6 +38,35 @@ html[lang="zh"], html[lang="zh-CN"], html[lang="zh-Hans"], .zh-cn {
 }
 .calm-ui ::selection { background: var(--c-primary-soft); color: var(--c-text); }
 
+/* ─── Chinese (Mandarin) theme tokens ────────────────────────────────────
+   Applied via `.chinese-ui` on the runner root when subject === "chinese".
+   Composes with `.calm-ui` (which sets `--c-*` defaults) — these
+   overrides swap the accent family from YouSeed jade-green to a warm
+   cinnabar-red + soft gold pair inspired by Chinese kids' textbooks
+   (red seal ink, imperial gold ornaments) while keeping identical
+   contrast + card structure so no layout shifts on subject swap.
+   Kept kid-friendly by softening cinnabar to a rose-red and using
+   parchment cream for the background instead of stark white. */
+.chinese-ui.calm-ui {
+  --c-primary:        #D9403C;   /* soft cinnabar — kid-safe red */
+  --c-primary-strong: #A82623;   /* deep vermillion — headings */
+  --c-primary-soft:   #FDECEA;   /* pale peach — chip fills */
+  --c-text:           #1F2937;
+  --c-text-muted:     #6B7280;
+  --c-bg:             #FFF8EF;   /* parchment cream */
+  --c-card:           #FFFFFF;
+  --c-border:         #F3E4C5;   /* soft gold */
+  --c-border-soft:    #FBF3E1;
+  --c-amber-soft:     #FEF3C7;   /* keep matching soft-amber warn */
+  --c-amber-text:     #7C2D12;
+  /* Chinese-only accents used by .chinese-ui components */
+  --c-gold:           #E5A833;
+  --c-gold-soft:      #FBEED0;
+  --c-jade:           #4B9E6A;
+  --c-ink:            #1F1B16;
+}
+.chinese-ui.calm-ui ::selection { background: var(--c-gold-soft); color: var(--c-ink); }
+
 @layer utilities {
   .text-balance { text-wrap: balance; }
 }
@@ -111,6 +140,65 @@ html[lang="zh"], html[lang="zh-CN"], html[lang="zh-Hans"], .zh-cn {
   bottom: -80px; right: -80px;
   background: #6ee7b7;
   animation: kid-drift 18s ease-in-out infinite reverse;
+}
+
+/* ─── Chinese variant — parchment paper + soft red + gold wash ───────
+   Same wallpaper structure as .kid-bg-green (four radial washes over
+   a cream base + two drifting blobs) so the timing + blur + z-index
+   composes with `kid-float` corner stickers exactly the same way.
+   Palette: warm parchment cream, imperial gold accent, soft cinnabar
+   red — same accent hues used by the .chinese-ui token overrides so
+   the wallpaper and the card chrome read as a set.
+   A faint diagonal paper-grain SVG overlay is layered on top to hint
+   at rice-paper texture without adding a network request (data URI). */
+.kid-bg-chinese {
+  background:
+    /* rice-paper grain — subtle diagonal fiber pattern, 8% alpha */
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'><g fill='none' stroke='%23c19a48' stroke-width='0.4' opacity='0.10'><path d='M0 30 L120 20'/><path d='M0 60 L120 55'/><path d='M0 90 L120 85'/><path d='M30 0 L20 120'/><path d='M60 0 L55 120'/><path d='M90 0 L85 120'/></g></svg>"),
+    radial-gradient(circle at 15% 10%, rgba(229, 168, 51, 0.30),  transparent 45%),
+    radial-gradient(circle at 85% 15%, rgba(217, 64, 60, 0.20),   transparent 50%),
+    radial-gradient(circle at 75% 85%, rgba(229, 168, 51, 0.24),  transparent 55%),
+    radial-gradient(circle at 20% 90%, rgba(251, 238, 208, 0.60), transparent 50%),
+    linear-gradient(135deg, #FFF8EF 0%, #FFFDF7 50%, #FFF3E0 100%);
+  background-attachment: fixed;
+  position: relative;
+  overflow: hidden;
+}
+.kid-bg-chinese::before,
+.kid-bg-chinese::after {
+  content: "";
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(48px);
+  opacity: 0.55;
+  pointer-events: none;
+  z-index: 0;
+}
+.kid-bg-chinese::before {
+  width: 260px; height: 260px;
+  top: -70px; left: -60px;
+  background: #F3C97A;   /* soft imperial gold blob */
+  animation: kid-drift 16s ease-in-out infinite;
+}
+.kid-bg-chinese::after {
+  width: 340px; height: 340px;
+  bottom: -90px; right: -90px;
+  background: #F19692;   /* soft peach-red blob */
+  animation: kid-drift 20s ease-in-out infinite reverse;
+}
+
+/* Chinese card frame — swap emerald ribbon shine for a gold ribbon. */
+.chinese-ui .kid-ribbon-shine {
+  background: linear-gradient(90deg, #E5A833 0%, #F3C97A 50%, #E5A833 100%);
+}
+
+/* Chinese answer chips (dimension-theme classes) shift to red/gold. */
+.chinese-ui .kid-btn-green {
+  background: linear-gradient(135deg, #D9403C 0%, #E5A833 100%);
+  color: #FFFDF7;
+}
+.chinese-ui .kid-btn-green:hover {
+  filter: brightness(1.06);
 }
 
 /* ─── Animations ─────────────────────────────────────────────────────── */
