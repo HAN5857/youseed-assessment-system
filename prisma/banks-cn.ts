@@ -259,3 +259,294 @@ export function chineseStandard1Questions(): QData[] {
       answer: { rubric: "至少 1 句：图里有小朋友 / 花 / 树 / 秋千等。至少 1 句描述动作：他们在玩耍 / 滑滑梯 / 荡秋千。" } },
   ];
 }
+
+// ─────────────────────────────────────────────────────────────────────────
+// 二年级 · Chinese Standard 2 (KSSR Semakan · 华小)
+//
+// Level focus (per YouSeed 华文 guideline):
+//   • 形近字辨析  (木/本/末, 土/士, 泳/永/氷) — the core S2 challenge
+//   • 多音字     (长: cháng vs zhǎng)
+//   • 短文阅读    (~5 sentence passage with 2 comprehension sub-qs)
+//   • 词句重组    (drag-drop sentence-building — dragDrop:true so students
+//                  get the modern tap-to-place UI, not the legacy arrow one)
+//   • 陈述句改疑问句  (grammar transformation — SHORT with rubric)
+//   • 看图造句    (writing prompts with an image + a guided template)
+//
+// Design choices vs S1:
+//   • Every 形近字 question uses `topicLabel` to surface the character
+//     pair being distinguished, so students see e.g. "木 / 本 / 末" as a
+//     labelled chip next to the question — turns it into a mini flash-card.
+//   • ORDERING questions opt into `dragDrop: true` (tap-to-place) rather
+//     than the arrow UI, which feels dated for S2 students.
+//   • READING with sub-questions is used for both 词语意思配对 (Q5, 4 subs)
+//     and 短文阅读 (Q16, 2 subs) — richer than a plain SINGLE array.
+//   • Listen-and-choose (Q3/Q4) uses TTS in zh-CN via speakText, same
+//     pattern as S1 Q3/Q4, but with 形近字 options.
+//   • Two SHORT writing prompts (Q19, Q20) with image + template so the
+//     writing counter shows 6–30 字 targets suited for S2.
+export function chineseStandard2Questions(): QData[] {
+  return [
+    // ─── 甲组  字词与拼音 ───────────────────────────────────────
+    // Q1 · 形近字 看图 · 木/本/末
+    { type: "SINGLE", dimension: "VOCAB", score: 2,
+      prompt: "看图，这棵植物的名称是什么？\n\n形近字对比：木（树）· 本（本子）· 末（末尾）",
+      mediaUrl: "/questions/chinese-standard-2/q01-papaya.svg",
+      content: { options: [
+        { key: "A", text: "木瓜" },
+        { key: "B", text: "本瓜" },
+        { key: "C", text: "末瓜" },
+      ], topicLabel: "形近字 · 木 / 本 / 末", topicIcon: "🌳" },
+      answer: { key: "A" } },
+
+    // Q2 · 形近字 看图 · 土/士
+    { type: "SINGLE", dimension: "VOCAB", score: 2,
+      prompt: "看图，小朋友手里拿着什么？\n\n形近字对比：土（泥土）vs 士（士兵）— 上面一横的长短不同！",
+      mediaUrl: "/questions/chinese-standard-2/q02-potato.svg",
+      content: { options: [
+        { key: "A", text: "土地" },
+        { key: "B", text: "士兵" },
+        { key: "C", text: "土豆" },
+      ], topicLabel: "形近字 · 土 / 士", topicIcon: "🥔" },
+      answer: { key: "C" } },
+
+    // Q3 · 听音选词 · 职业类
+    { type: "SINGLE", dimension: "LISTENING", score: 2,
+      prompt: "🔊 听一听，这是什么职业？",
+      content: {
+        options: [
+          { key: "A", text: "医生" },
+          { key: "B", text: "医师" },
+          { key: "C", text: "医疗" },
+        ],
+        speakText: "医生",
+        maxPlays: 3,
+        lang: "zh-CN",
+        topicLabel: "听力 · 职业",
+        topicIcon: "🎧",
+      },
+      answer: { key: "A" } },
+
+    // Q4 · 听音选词 · 形近字 泳/永/氷
+    { type: "SINGLE", dimension: "LISTENING", score: 2,
+      prompt: "🔊 听一听，小朋友正在做什么？\n\n形近字提示：泳（三点水，跟水有关）· 永（永远）· 氷（冰）",
+      content: {
+        options: [
+          { key: "A", text: "游永" },
+          { key: "B", text: "游泳" },
+          { key: "C", text: "游水" },
+        ],
+        speakText: "游泳",
+        maxPlays: 3,
+        lang: "zh-CN",
+        topicLabel: "听力 · 形近字",
+        topicIcon: "🏊",
+      },
+      answer: { key: "B" } },
+
+    // Q5 · 词语意思配对 — MATCHING with 4 pairs
+    { type: "MATCHING", dimension: "VOCAB", score: 4,
+      prompt: "把左边的词语和右边正确的解释配对。\n\n提示：先想一想每个词语最贴切的意思，再连线。",
+      content: {
+        left:  ["节约", "保护", "整齐", "分享"],
+        right: [
+          "不浪费，好好利用",     // 节约
+          "把好东西给别人一起享用", // 分享
+          "照顾和守护",            // 保护
+          "排列得很有秩序",        // 整齐
+        ],
+        dragDrop: true,
+        topicLabel: "词义配对",
+      },
+      // left indices → right indices
+      // 节约(0)→不浪费(0) · 保护(1)→照顾和守护(2) · 整齐(2)→排列(3) · 分享(3)→给别人(1)
+      answer: { pairs: { "0": 0, "1": 2, "2": 3, "3": 1 } } },
+
+    // Q6 · 多音字 · 长(cháng) — 长短的长
+    { type: "SINGLE", dimension: "PHONICS", score: 2,
+      prompt: "读一读，选出【长】字的正确读音：\n\n爷爷的头发很长，像一条白色的丝线。",
+      content: {
+        options: [
+          { key: "A", text: "cháng（长短的长）" },
+          { key: "B", text: "zhǎng（成长的长）" },
+        ],
+        topicLabel: "多音字 · 长",
+        topicIcon: "🔤",
+      },
+      answer: { key: "A" } },
+
+    // Q7 · 多音字 · 长(zhǎng) — 成长的长
+    { type: "SINGLE", dimension: "PHONICS", score: 2,
+      prompt: "读一读，选出【长】字的正确读音：\n\n小明每年都在长高，今年已经比妈妈还高了。",
+      content: {
+        options: [
+          { key: "A", text: "cháng（长短的长）" },
+          { key: "B", text: "zhǎng（成长的长）" },
+        ],
+        topicLabel: "多音字 · 长",
+        topicIcon: "📏",
+      },
+      answer: { key: "B" } },
+
+    // Q8 · 拼音选择 · 双词
+    { type: "READING", dimension: "PHONICS", score: 2,
+      prompt: "选出正确的拼音。",
+      content: {
+        passage: "两个词语，看清楚每个字的读音：\n\n保护（照顾和守护）\n合作（一起完成）",
+        subs: [
+          { stem: "「保护」的拼音是？", icon: "🛡️", options: [
+            { key: "A", text: "bǎo hù" }, { key: "B", text: "bǎi huà" },
+          ]},
+          { stem: "「合作」的拼音是？", icon: "🤝", options: [
+            { key: "A", text: "héi zhuò" }, { key: "B", text: "hé zuò" },
+          ]},
+        ],
+      },
+      answer: { keys: ["A", "B"] } },
+
+    // ─── 乙组  句子与语法 ──────────────────────────────────────
+    // Q9 · 选词填空 · 节约/浪费
+    { type: "SINGLE", dimension: "GRAMMAR", score: 2,
+      prompt: "选出最恰当的词语填入句子：\n\n弟弟每天都 ______ 用水，从来不让水龙头白白流水。",
+      content: { options: [
+        { key: "A", text: "节约" },
+        { key: "B", text: "浪费" },
+      ], topicLabel: "选词填空", topicIcon: "💧" },
+      answer: { key: "A" } },
+
+    // Q10 · 选词填空 · 合作/争吵
+    { type: "SINGLE", dimension: "GRAMMAR", score: 2,
+      prompt: "选出最恰当的词语填入句子：\n\n班上同学们 ______ 完成了手工作品，大家都非常开心。",
+      content: { options: [
+        { key: "A", text: "合作" },
+        { key: "B", text: "争吵" },
+      ], topicLabel: "选词填空", topicIcon: "🎨" },
+      answer: { key: "A" } },
+
+    // Q11 · 选词填空 · 哪里/什么
+    { type: "SINGLE", dimension: "GRAMMAR", score: 2,
+      prompt: "选出正确的疑问词：\n\n你的书包在 ______ ？",
+      content: { options: [
+        { key: "A", text: "哪里" },
+        { key: "B", text: "什么" },
+      ], topicLabel: "疑问词", topicIcon: "❓" },
+      answer: { key: "A" } },
+
+    // Q12 · 因果关系 CLOZE
+    { type: "CLOZE", dimension: "GRAMMAR", score: 2,
+      prompt: "填入正确的关联词：\n\n下面的句子有两个空格，请从「因为、所以」两个词中挑选合适的填入。",
+      content: {
+        passage: "___ 下雨了，___ 我们不能出去玩。",
+        blanks: 2,
+        caseSensitive: false,
+        topicLabel: "关联词 · 因果",
+      },
+      answer: { blanks: [["因为"], ["所以"]] } },
+
+    // Q13 · 拟声 · 闪/亮
+    { type: "SINGLE", dimension: "VOCAB", score: 2,
+      prompt: "选出最恰当的词语：\n\n天上的星星一 ______ 一 ______ 的。（选两个相同的词）",
+      content: { options: [
+        { key: "A", text: "闪 · 闪" },
+        { key: "B", text: "亮 · 亮" },
+        { key: "C", text: "闪 · 亮" },
+      ], topicLabel: "形容词", topicIcon: "⭐" },
+      answer: { key: "A" } },
+
+    // Q14 · 词句重组 — 小明每天都努力学习
+    { type: "ORDERING", dimension: "GRAMMAR", score: 3,
+      prompt: "把下面的词语排成一句正确的句子。\n\n点一下词块把它加入句子里，再点一次可以取回。",
+      content: {
+        items: ["努力", "每天", "学习", "小明", "都"],
+        dragDrop: true,
+        topicLabel: "词句重组",
+      },
+      // Correct order: 小明(3) · 每天(1) · 都(4) · 努力(0) · 学习(2)
+      answer: { order: [3, 1, 4, 0, 2] } },
+
+    // Q15 · 词句重组 — 她把糖果分享给同学
+    { type: "ORDERING", dimension: "GRAMMAR", score: 3,
+      prompt: "把下面的词语排成一句正确的句子。\n\n提示：这句话用了「把」字句结构。",
+      content: {
+        items: ["分享", "同学", "把", "给", "她", "糖果"],
+        dragDrop: true,
+        topicLabel: "词句重组 · 把字句",
+      },
+      // Correct: 她(4) · 把(2) · 糖果(5) · 分享(0) · 给(3) · 同学(1)
+      answer: { order: [4, 2, 5, 0, 3, 1] } },
+
+    // Q16 · 陈述句改疑问句 — SHORT with rubric
+    { type: "SHORT", dimension: "GRAMMAR", score: 2,
+      prompt: "把下面的陈述句改写成疑问句（问句）。\n\n原句：小明把糖果分享给同学。\n\n提示：可以把「同学」改成「谁」，句尾加上「？」。",
+      content: {
+        minWords: 6,
+        maxWords: 20,
+        template: "小明把糖果分享给 ______？",
+        lang: "zh",
+        topicLabel: "句子改写",
+        topicIcon: "✏️",
+      },
+      answer: { rubric: "示例答案：\n  • 小明把糖果分享给谁了？\n  • 小明把糖果分享给谁？\n\n评分要点：\n  1. 句尾要有问号「？」\n  2. 用了疑问词（谁 / 什么人 / 哪位）\n  3. 保留「把」字句的语序" } },
+
+    // ─── 丙组  阅读与写话 ──────────────────────────────────────
+    // Q17 · 阅读理解 — 短文：大自然的礼物 (2 subs)
+    { type: "READING", dimension: "READING", score: 4,
+      prompt: "阅读下面的短文，回答两道题。",
+      content: {
+        passage:
+          "《大自然的礼物》\n\n" +
+          "春天来了，花儿开了，鸟儿唱歌了。\n" +
+          "小明和妹妹来到公园。他们看见许多美丽的花朵。\n" +
+          "妹妹说：「这些花好香啊！」\n" +
+          "小明点点头，说：「我们要保护大自然，不要摘花，好吗？」\n" +
+          "妹妹笑着说：「好！我们一起来保护大自然！」",
+        subs: [
+          { stem: "短文里，哪个季节来了？", icon: "🌸", options: [
+            { key: "A", text: "夏天" }, { key: "B", text: "秋天" },
+            { key: "C", text: "春天" }, { key: "D", text: "冬天" },
+          ]},
+          { stem: "小明为什么说不要摘花？", icon: "🌱", options: [
+            { key: "A", text: "因为花太贵了" },
+            { key: "B", text: "因为要保护大自然" },
+            { key: "C", text: "因为花不好看" },
+            { key: "D", text: "因为妹妹不喜欢花" },
+          ]},
+        ],
+        topicLabel: "阅读理解",
+      },
+      answer: { keys: ["C", "B"] } },
+
+    // Q18 · 拼音填写 · 独立题 (as a bonus phonics check)
+    { type: "FILL", dimension: "PHONICS", score: 2,
+      prompt: "输入正确的拼音（用小写字母，中间空格分开）：\n\n【合作】的拼音是？",
+      content: { caseSensitive: false, topicLabel: "拼音填写", topicIcon: "🔤" },
+      answer: { accepted: ["hé zuò", "he zuo", "hé zuò", "hézuò", "hezuo"] } },
+
+    // Q19 · 看图造句 · 钓鱼
+    { type: "SHORT", dimension: "WRITING", score: 3,
+      prompt: "根据图意和提供的重点字，写一句完整的话。\n\n重点字：钓鱼",
+      content: {
+        minWords: 6,
+        maxWords: 30,
+        imageUrl: "/questions/chinese-standard-2/q19-fishing.svg",
+        template: "___ 在河边钓鱼。",
+        lang: "zh",
+        topicLabel: "看图造句",
+        topicIcon: "🎣",
+      },
+      answer: { rubric: "示例：爷爷在河边钓鱼。/ 星期天，爷爷在河边钓鱼。\n\n评分要点：句子要有主语（谁）、地点（在哪里）、动作（钓鱼），字数 6–30 字。" } },
+
+    // Q20 · 看图造句 · 喜欢
+    { type: "SHORT", dimension: "WRITING", score: 3,
+      prompt: "根据图意和提供的重点字，写一句完整的话。\n\n重点字：喜欢",
+      content: {
+        minWords: 6,
+        maxWords: 30,
+        imageUrl: "/questions/chinese-standard-2/q20-watermelon.svg",
+        template: "我喜欢吃 ___，因为 ___。",
+        lang: "zh",
+        topicLabel: "看图造句",
+        topicIcon: "🍉",
+      },
+      answer: { rubric: "示例：我喜欢吃西瓜，因为它又甜又多汁。\n\n评分要点：句子要有主语、宾语（吃什么）、原因，字数 6–30 字。" } },
+  ];
+}

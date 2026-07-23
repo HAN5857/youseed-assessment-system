@@ -11,6 +11,7 @@ import {
 import {
   SCOPE_TEMPLATE_CN_LOWER,
   chineseStandard1Questions,
+  chineseStandard2Questions,
 } from "./banks-cn";
 
 const prisma = new PrismaClient();
@@ -190,6 +191,19 @@ async function main() {
     questionsBuilder: () => chineseStandard1Questions(),
   });
 
+  // ─── CHINESE STANDARD 2 (华文二年级) ─────────────────────────────────
+  // Focus: 形近字, 多音字, 词句重组 (drag-drop), 阅读理解, 看图造句.
+  const cn2 = await upsertTest({
+    subject: "chinese",
+    level: "standard-2",
+    title: "华文二年级 · 程度评估测试",
+    duration: 25,
+    passingScore: 60,
+    scope: SCOPE_TEMPLATE_CN_LOWER("二年级", "华小华文 KSSR Semakan"),
+    active: true,
+    questionsBuilder: () => chineseStandard2Questions(),
+  });
+
   // ─── Demo passkeys (one per active level) ─────────────────────────────
   const demoKeys: { code: string; testId: string; note: string }[] = [
     { code: "ENG-S1-DEMO", testId: s1.id, note: "Demo passkey — English Standard 1" },
@@ -199,6 +213,7 @@ async function main() {
     { code: "ENG-S5-DEMO", testId: s5.id, note: "Demo passkey — English Standard 5" },
     { code: "ENG-S6-DEMO", testId: s6.id, note: "Demo passkey — English Standard 6" },
     { code: "CHI-S1-DEMO", testId: cn1.id, note: "Demo passkey — 华文一年级 (Chinese Standard 1)" },
+    { code: "CHI-S2-DEMO", testId: cn2.id, note: "Demo passkey — 华文二年级 (Chinese Standard 2)" },
     // Backward-compat: original passkey points to Standard 3 (current default)
     { code: "DEMO-2026-START", testId: s3.id, note: "Legacy demo passkey (S3)" },
   ];
@@ -222,6 +237,7 @@ async function main() {
   console.log("     ENG-S5-DEMO    → English Standard 5");
   console.log("     ENG-S6-DEMO    → English Standard 6");
   console.log("     CHI-S1-DEMO    → 华文一年级 (Chinese Standard 1)");
+  console.log("     CHI-S2-DEMO    → 华文二年级 (Chinese Standard 2)");
   console.log("     DEMO-2026-START → English Standard 3 (legacy)");
   console.log("");
   console.log("   Users tested → admin: " + admin.email + ", tutor: " + tutor.email);

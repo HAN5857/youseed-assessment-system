@@ -1,0 +1,53 @@
+<svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A child holding a potato in their hand">
+  <defs>
+    <linearGradient id="bgP" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fef3c7"/>
+      <stop offset="100%" stop-color="#fed7aa"/>
+    </linearGradient>
+    <radialGradient id="potato" cx="0.4" cy="0.35">
+      <stop offset="0%" stop-color="#fde68a"/>
+      <stop offset="60%" stop-color="#d4a574"/>
+      <stop offset="100%" stop-color="#92620b"/>
+    </radialGradient>
+  </defs>
+  <rect width="220" height="220" fill="url(#bgP)"/>
+  <!-- Ground shadow -->
+  <ellipse cx="110" cy="210" rx="90" ry="6" fill="#000" opacity="0.1"/>
+  <!-- Child body (simplified) -->
+  <!-- Hair -->
+  <path d="M 82 62 Q 82 40 110 38 Q 138 40 138 62 Q 138 70 132 72 L 88 72 Q 82 70 82 62" fill="#292524" stroke="#0f172a" stroke-width="1.5"/>
+  <!-- Face -->
+  <ellipse cx="110" cy="80" rx="26" ry="28" fill="#fed7aa" stroke="#78350f" stroke-width="1.8"/>
+  <!-- Fringe -->
+  <path d="M 84 62 Q 100 55 130 60 L 132 72 L 88 72 Z" fill="#292524"/>
+  <!-- Eyes -->
+  <circle cx="100" cy="82" r="2.8" fill="#1f2937"/>
+  <circle cx="120" cy="82" r="2.8" fill="#1f2937"/>
+  <circle cx="101" cy="81" r="0.8" fill="#fff"/>
+  <circle cx="121" cy="81" r="0.8" fill="#fff"/>
+  <!-- Cheeks -->
+  <circle cx="90" cy="90" r="4" fill="#fda4af" opacity="0.6"/>
+  <circle cx="130" cy="90" r="4" fill="#fda4af" opacity="0.6"/>
+  <!-- Smile -->
+  <path d="M 100 94 Q 110 102 120 94" stroke="#7c2d12" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <!-- Neck -->
+  <rect x="103" y="105" width="14" height="10" fill="#fed7aa" stroke="#78350f" stroke-width="1.5"/>
+  <!-- Shirt / body -->
+  <path d="M 70 115 Q 110 108 150 115 L 158 190 L 62 190 Z" fill="#3b82f6" stroke="#1e3a8a" stroke-width="2"/>
+  <!-- Left arm holding potato out -->
+  <path d="M 70 115 Q 55 130 55 155 L 62 158 L 70 138 Z" fill="#3b82f6" stroke="#1e3a8a" stroke-width="1.8"/>
+  <!-- Hand -->
+  <ellipse cx="55" cy="160" rx="10" ry="8" fill="#fed7aa" stroke="#78350f" stroke-width="1.5"/>
+  <!-- Right arm at side -->
+  <path d="M 150 115 Q 168 130 170 175 L 158 178 L 152 130 Z" fill="#3b82f6" stroke="#1e3a8a" stroke-width="1.8"/>
+  <!-- The potato itself (large + centered on left hand) -->
+  <ellipse cx="45" cy="158" rx="24" ry="18" fill="url(#potato)" stroke="#78350f" stroke-width="2"/>
+  <!-- Potato eyes / dark specks -->
+  <circle cx="38" cy="155" r="1.5" fill="#78350f"/>
+  <circle cx="50" cy="150" r="1.5" fill="#78350f"/>
+  <circle cx="55" cy="160" r="1.2" fill="#78350f"/>
+  <circle cx="40" cy="165" r="1.2" fill="#78350f"/>
+  <circle cx="48" cy="164" r="1" fill="#78350f"/>
+  <!-- Highlight -->
+  <ellipse cx="38" cy="150" rx="4" ry="3" fill="#fef3c7" opacity="0.5"/>
+</svg>
