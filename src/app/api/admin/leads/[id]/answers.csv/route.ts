@@ -4,6 +4,7 @@
 
 import { prisma } from "@/lib/db";
 import { requireSession } from "@/lib/auth";
+import { canAccessTutorResource } from "@/lib/tenant-scope";
 
 type BreakdownItem = {
   questionId: string;
@@ -28,11 +29,11 @@ export async function GET(req: Request, ctx: { params: Promise<{ id: string }> }
     where: { id },
     include: {
       test: { select: { title: true, subject: true, level: true } },
-      tutor: { select: { name: true, email: true } },
+      tutor: { select: { name: true, email: true, org: true } },
     },
   });
   if (!lead) return new Response("Not found", { status: 404 });
-  if (session.role !== "SUPERADMIN" && lead.tutorId !== session.uid) {
+  if (!(await canAccessTutorResource(session, lead.tutorId, lead.tutor?.org))) {
     return new Response("Forbidden", { status: 403 });
   }
 

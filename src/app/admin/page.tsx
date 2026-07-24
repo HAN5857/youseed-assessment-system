@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import { getSession } from "@/lib/auth";
+import { tenantVisibleTutorIds } from "@/lib/tenant-scope";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { LeadsFilters } from "./LeadsFilters";
@@ -43,15 +44,22 @@ export default async function LeadsListPage({
 
   const sp = await searchParams;
   const isSuper = session.role === "SUPERADMIN";
+  // Tenant-aware tutor set — SUPERADMIN → null (all), ADMIN+org → whole
+  // team, others → self. See src/lib/tenant-scope.ts.
+  const visibleIds = await tenantVisibleTutorIds(session);
+  const canShowTutorFilter = isSuper || (session.role === "ADMIN" && !!session.org);
 
   // Build the Prisma where clause from URL params.
   const where: Prisma.LeadWhereInput = {};
-  if (!isSuper) where.tutorId = session.uid;
+  if (visibleIds) where.tutorId = { in: Array.from(visibleIds) };
   if (sp.status) where.status = sp.status;
   if (sp.contact) where.contactStatus = sp.contact;
   if (sp.level) where.level = sp.level;
   if (sp.test) where.testId = sp.test;
-  if (sp.tutor && isSuper) where.tutorId = sp.tutor;
+  // Tutor-filter dropdown narrows WITHIN the visible set — never widens.
+  if (sp.tutor && (isSuper || (visibleIds && visibleIds.has(sp.tutor)))) {
+    where.tutorId = sp.tutor;
+  }
   if (sp.q && sp.q.trim()) {
     const q = sp.q.trim();
     where.OR = [
@@ -63,23 +71,30 @@ export default async function LeadsListPage({
   }
 
   // Fetch filtered leads + the full set of summary counts (counts always
-  // reflect tutor scope, not the active filter — they answer "how many
+  // reflect tenant scope, not the active filter — they answer "how many
   // total" not "how many match my filter").
-  const baseScope: Prisma.LeadWhereInput = isSuper ? {} : { tutorId: session.uid };
+  const baseScope: Prisma.LeadWhereInput = visibleIds
+    ? { tutorId: { in: Array.from(visibleIds) } }
+    : {};
   const [leads, totals, tutors, tests] = await Promise.all([
     prisma.lead.findMany({
       where,
       include: {
         test: { select: { title: true, subject: true, level: true } },
-        tutor: { select: { id: true, name: true, email: true } },
+        tutor: { select: { id: true, name: true, email: true, org: true } },
       },
       orderBy: { startedAt: "desc" },
       take: 500,
     }),
     prisma.lead.groupBy({ by: ["status"], where: baseScope, _count: true }),
-    isSuper
+    canShowTutorFilter
       ? prisma.user.findMany({
-          where: { active: true, role: { in: ["TUTOR", "ADMIN"] } },
+          where: {
+            active: true,
+            role: { in: ["TUTOR", "ADMIN"] },
+            // For an org-scoped admin, only show teammates in the dropdown.
+            ...(isSuper ? {} : { org: session.org ?? undefined }),
+          },
           select: { id: true, name: true, email: true },
           orderBy: { name: "asc" },
         })
@@ -101,8 +116,8 @@ export default async function LeadsListPage({
           <h1 className="text-2xl font-bold tracking-tight">Leads</h1>
           <p className="text-sm text-slate-600">
             {hasActiveFilter
-              ? `${leads.length} matching ${isSuper ? "across all prospects" : "of your prospects"}.`
-              : `${leads.length} most recent ${isSuper ? "across all prospects" : "of your prospects"}.`}
+              ? `${leads.length} matching ${isSuper ? "across all prospects" : canShowTutorFilter ? `across ${session.org}` : "of your prospects"}.`
+              : `${leads.length} most recent ${isSuper ? "across all prospects" : canShowTutorFilter ? `across ${session.org}` : "of your prospects"}.`}
           </p>
         </div>
         <a
@@ -122,7 +137,7 @@ export default async function LeadsListPage({
         ))}
       </div>
 
-      <LeadsFilters showTutor={isSuper} tutors={tutors} tests={tests} />
+      <LeadsFilters showTutor={canShowTutorFilter} tutors={tutors} tests={tests} />
 
       <div className="mt-6 overflow-hidden rounded-xl border border-slate-200 bg-white">
         <div className="overflow-x-auto">
@@ -131,7 +146,7 @@ export default async function LeadsListPage({
               <tr>
                 <th className="px-4 py-3">Name</th>
                 <th className="px-4 py-3">Test</th>
-                {isSuper && <th className="px-4 py-3">Tutor</th>}
+                {canShowTutorFilter && <th className="px-4 py-3">Tutor</th>}
                 <th className="px-4 py-3">Status</th>
                 <th className="px-4 py-3">Score</th>
                 <th className="px-4 py-3">Level</th>
@@ -151,7 +166,7 @@ export default async function LeadsListPage({
                     <div className="text-slate-800">{l.test.title}</div>
                     <div className="text-xs text-slate-500">{l.test.subject}</div>
                   </td>
-                  {isSuper && (
+                  {canShowTutorFilter && (
                     <td className="px-4 py-3">
                       <div className="text-slate-800">{l.tutor.name}</div>
                       <div className="text-xs text-slate-500">{l.tutor.email}</div>
@@ -183,7 +198,7 @@ export default async function LeadsListPage({
               ))}
               {leads.length === 0 && (
                 <tr>
-                  <td colSpan={isSuper ? 9 : 8} className="px-4 py-12 text-center text-sm text-slate-500">
+                  <td colSpan={canShowTutorFilter ? 9 : 8} className="px-4 py-12 text-center text-sm text-slate-500">
                     {hasActiveFilter
                       ? "No leads match the current filters. Try clearing them above."
                       : "No leads yet. Generate a passkey and share the test link."}

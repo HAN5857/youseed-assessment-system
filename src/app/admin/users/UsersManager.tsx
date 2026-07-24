@@ -8,6 +8,7 @@ type UserRow = {
   email: string;
   name: string;
   role: string;
+  org: string | null;
   active: boolean;
   createdAt: string;
   passkeyCount: number;
@@ -24,9 +25,13 @@ type RevealedPassword = {
 export function UsersManager({
   initial,
   currentUserId,
+  isSuper,
+  callerOrg,
 }: {
   initial: UserRow[];
   currentUserId: string;
+  isSuper: boolean;
+  callerOrg: string | null;
 }) {
   const router = useRouter();
   const [users, setUsers] = useState<UserRow[]>(initial);
@@ -38,6 +43,8 @@ export function UsersManager({
   const [formEmail, setFormEmail] = useState("");
   const [formRole, setFormRole] = useState<"TUTOR" | "ADMIN">("TUTOR");
   const [formPassword, setFormPassword] = useState("");
+  // SUPERADMIN can pick any org label; org-admin has this pre-filled + locked.
+  const [formOrg, setFormOrg] = useState<string>(isSuper ? "" : callerOrg ?? "");
   // Note: SUPERADMIN can only be assigned via direct DB edit, never via this
   // form — by design, to prevent accidental privilege escalation.
   const [formBusy, setFormBusy] = useState(false);
@@ -58,6 +65,9 @@ export function UsersManager({
           // Only send an initialPassword if the admin actually typed one.
           // Empty string / whitespace → server auto-generates.
           initialPassword: formPassword.trim() ? formPassword : undefined,
+          // SuperAdmin can set any org; server ignores this for org-admins
+          // (they're always forced into their own org).
+          org: formOrg.trim() ? formOrg.trim() : null,
         }),
       });
       const data = await res.json();
@@ -90,6 +100,7 @@ export function UsersManager({
       setFormEmail("");
       setFormRole("TUTOR");
       setFormPassword("");
+      setFormOrg(isSuper ? "" : callerOrg ?? "");
       setFormOpen(false);
     } catch (err: any) {
       setFormError(err?.message ?? "Network error");
@@ -189,8 +200,28 @@ export function UsersManager({
                 className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
               >
                 <option value="TUTOR">Tutor — sees only their own students</option>
-                <option value="ADMIN">Admin — sees only their own students (same scope as Tutor; label only)</option>
+                <option value="ADMIN">Admin — sees every teammate in the org</option>
               </select>
+            </label>
+            <label className="block sm:col-span-3">
+              <span className="text-xs font-medium text-slate-600">
+                Organisation / team {isSuper
+                  ? <span className="text-slate-400">(optional — new brands can be typed freely)</span>
+                  : <span className="text-slate-400">(locked to your team)</span>}
+              </span>
+              <input
+                type="text"
+                value={formOrg}
+                onChange={(e) => setFormOrg(e.target.value)}
+                disabled={!isSuper}
+                maxLength={40}
+                placeholder={isSuper ? "e.g. youseed / anak_bijak" : callerOrg ?? ""}
+                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-mono lowercase outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 disabled:bg-slate-100 disabled:text-slate-500"
+              />
+              <p className="mt-1 text-[11px] text-slate-500">
+                Users sharing the same organisation label form one team — any ADMIN in that team sees all teammates&apos; leads &amp; passkeys.
+                {isSuper && " Leave blank if the tutor is unaffiliated (they'll see only their own records)."}
+              </p>
             </label>
             <label className="block sm:col-span-3">
               <span className="text-xs font-medium text-slate-600">
@@ -240,6 +271,7 @@ export function UsersManager({
               <th className="px-4 py-3">Name</th>
               <th className="px-4 py-3">Email</th>
               <th className="px-4 py-3">Role</th>
+              {isSuper && <th className="px-4 py-3">Org</th>}
               <th className="px-4 py-3">Status</th>
               <th className="px-4 py-3 text-right">Passkeys</th>
               <th className="px-4 py-3 text-right">Leads</th>
@@ -274,6 +306,17 @@ export function UsersManager({
                       {u.role}
                     </span>
                   </td>
+                  {isSuper && (
+                    <td className="px-4 py-3">
+                      {u.org ? (
+                        <span className="rounded bg-slate-100 px-2 py-0.5 font-mono text-[11px] font-semibold text-slate-800">
+                          {u.org}
+                        </span>
+                      ) : (
+                        <span className="text-xs italic text-slate-400">—</span>
+                      )}
+                    </td>
+                  )}
                   <td className="px-4 py-3">
                     <span
                       className={`rounded-full px-2 py-0.5 text-xs font-medium ${

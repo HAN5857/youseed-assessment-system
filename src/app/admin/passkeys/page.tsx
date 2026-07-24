@@ -1,13 +1,18 @@
 import { prisma } from "@/lib/db";
 import { getSession } from "@/lib/auth";
+import { tenantWhereTutor } from "@/lib/tenant-scope";
 import { redirect } from "next/navigation";
 import { PasskeyManager } from "./PasskeyManager";
+
+export const dynamic = "force-dynamic";
 
 export default async function PasskeysPage() {
   const session = await getSession();
   if (!session) redirect("/admin/login");
 
-  const where = session.role === "SUPERADMIN" ? {} : { tutorId: session.uid };
+  // Tenant-scoped — see src/lib/tenant-scope.ts. An org-scoped ADMIN
+  // sees every passkey their teammates hold, not just their own.
+  const where = await tenantWhereTutor(session);
   const [passkeys, tests] = await Promise.all([
     prisma.passkey.findMany({
       where,

@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import { requireSession } from "@/lib/auth";
+import { tenantVisibleTutorIds } from "@/lib/tenant-scope";
 import type { Prisma } from "@prisma/client";
 
 export async function GET(req: Request) {
@@ -10,16 +11,24 @@ export async function GET(req: Request) {
   const url = new URL(req.url);
   const sp = url.searchParams;
   const isSuper = session.role === "SUPERADMIN";
+  // Tenant-scoping — see src/lib/tenant-scope.ts for the rules.
+  const tenantIds = await tenantVisibleTutorIds(session);
 
   // Mirror the same filter logic as /admin/page.tsx so the export reflects
   // exactly what the user is looking at on screen.
   const where: Prisma.LeadWhereInput = {};
-  if (!isSuper) where.tutorId = session.uid;
+  if (tenantIds) where.tutorId = { in: Array.from(tenantIds) };
   const status  = sp.get("status");  if (status)  where.status = status;
   const contact = sp.get("contact"); if (contact) where.contactStatus = contact;
   const level   = sp.get("level");   if (level)   where.level = level;
   const test    = sp.get("test");    if (test)    where.testId = test;
-  const tutor   = sp.get("tutor");   if (tutor && isSuper) where.tutorId = tutor;
+  const tutor   = sp.get("tutor");
+  if (tutor) {
+    // SUPERADMIN can filter to any tutor; ADMIN/TUTOR can only narrow
+    // WITHIN their visible set (never widen it).
+    if (isSuper) where.tutorId = tutor;
+    else if (tenantIds?.has(tutor)) where.tutorId = tutor;
+  }
   const q = sp.get("q");
   if (q && q.trim()) {
     const t = q.trim();

@@ -17,12 +17,19 @@ model User {
   email        String   @unique
   passwordHash String
   name         String
-  role         String   // "TUTOR" | "ADMIN"
+  role         String   // "TUTOR" | "ADMIN" | "SUPERADMIN"
+  // Tenant / organisation. Users with the same non-null `org` are one
+  // team: any ADMIN in an org sees every tutor + lead + passkey owned by
+  // users in that org. NULL means "no team" — user is scoped to their
+  // own records only. See src/lib/tenant-scope.ts for the query helpers.
+  org          String?
   active       Boolean  @default(true)
   createdAt    DateTime @default(now())
 
   passkeys     Passkey[]
   leads        Lead[]
+
+  @@index([org])
 }
 
 // ─── Test content ───────────────────────────────────────────────────────────

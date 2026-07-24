@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { requireSession } from "@/lib/auth";
+import { canAccessTutorResource } from "@/lib/tenant-scope";
 
 export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }> }) {
   let session;
@@ -9,9 +10,12 @@ export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }>
   }
   const { id } = await ctx.params;
   const body = await req.json().catch(() => ({}));
-  const pk = await prisma.passkey.findUnique({ where: { id } });
+  const pk = await prisma.passkey.findUnique({
+    where: { id },
+    include: { tutor: { select: { org: true } } },
+  });
   if (!pk) return NextResponse.json({ ok: false, error: "NOT_FOUND" }, { status: 404 });
-  if (session.role !== "SUPERADMIN" && pk.tutorId !== session.uid) {
+  if (!(await canAccessTutorResource(session, pk.tutorId, pk.tutor?.org))) {
     return NextResponse.json({ ok: false, error: "FORBIDDEN" }, { status: 403 });
   }
   const updated = await prisma.passkey.update({

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { requireSession } from "@/lib/auth";
+import { tenantWhereTutor } from "@/lib/tenant-scope";
 import { customAlphabet } from "nanoid";
 
 const generate = customAlphabet("ABCDEFGHJKLMNPQRSTUVWXYZ23456789", 8);
@@ -22,7 +23,9 @@ export async function GET() {
   } catch {
     return NextResponse.json({ ok: false, error: "UNAUTHORIZED" }, { status: 401 });
   }
-  const where = session.role === "SUPERADMIN" ? {} : { tutorId: session.uid };
+  // Tenant-aware — an ADMIN with an org sees every passkey their teammates
+  // hold. See src/lib/tenant-scope.ts for the rule table.
+  const where = await tenantWhereTutor(session);
   const items = await prisma.passkey.findMany({
     where,
     include: { test: { select: { title: true, subject: true } }, tutor: { select: { name: true, email: true } } },

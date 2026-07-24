@@ -17,11 +17,21 @@ model User {
   passwordHash String
   name         String
   role         String
+  // Tenant / organisation label. Users with the same non-null `org` are
+  // treated as one team: any ADMIN sees every tutor + lead + passkey
+  // owned by users sharing their org. NULL means "no team" — user is
+  // scoped exclusively to their own records, matching the pre-multi-org
+  // behaviour. SUPERADMIN always sees everything regardless of org.
+  // Example values: "youseed", "anak_bijak". Free-form so new brands
+  // can be onboarded without a code change.
+  org          String?
   active       Boolean  @default(true)
   createdAt    DateTime @default(now())
 
   passkeys     Passkey[]
   leads        Lead[]
+
+  @@index([org])
 }
 
 model Test {

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { requireSession } from "@/lib/auth";
+import { canAccessTutorResource } from "@/lib/tenant-scope";
 
 const patchSchema = z.object({
   contactStatus: z.enum(["NEW", "CONTACTED", "ENROLLED", "LOST"]).optional(),
@@ -14,9 +15,12 @@ export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }>
     return NextResponse.json({ ok: false, error: "UNAUTHORIZED" }, { status: 401 });
   }
   const { id } = await ctx.params;
-  const lead = await prisma.lead.findUnique({ where: { id } });
+  const lead = await prisma.lead.findUnique({
+    where: { id },
+    include: { tutor: { select: { org: true } } },
+  });
   if (!lead) return NextResponse.json({ ok: false, error: "NOT_FOUND" }, { status: 404 });
-  if (session.role !== "SUPERADMIN" && lead.tutorId !== session.uid) {
+  if (!(await canAccessTutorResource(session, lead.tutorId, lead.tutor?.org))) {
     return NextResponse.json({ ok: false, error: "FORBIDDEN" }, { status: 403 });
   }
   const body = await req.json().catch(() => ({}));

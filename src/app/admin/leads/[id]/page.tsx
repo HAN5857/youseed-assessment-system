@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import { getSession } from "@/lib/auth";
+import { canAccessTutorResource } from "@/lib/tenant-scope";
 import { redirect, notFound } from "next/navigation";
 import { ResultView } from "@/components/ResultView";
 import { ContactStatusForm } from "./ContactStatusForm";
@@ -29,11 +30,11 @@ export default async function LeadDetailPage({
     where: { id },
     include: {
       test: { select: { title: true, subject: true, level: true, duration: true } },
-      tutor: { select: { name: true, email: true } },
+      tutor: { select: { name: true, email: true, org: true } },
     },
   });
   if (!lead) notFound();
-  if (session.role !== "SUPERADMIN" && lead.tutorId !== session.uid) {
+  if (!(await canAccessTutorResource(session, lead.tutorId, lead.tutor?.org))) {
     return <div className="p-10 text-center text-sm text-red-600">Forbidden.</div>;
   }
 

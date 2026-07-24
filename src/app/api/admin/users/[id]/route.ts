@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
-import { requireSuperAdmin, hashPassword } from "@/lib/auth";
+import { requireSession, hashPassword } from "@/lib/auth";
 import { customAlphabet } from "nanoid";
 
 const generatePassword = customAlphabet(
@@ -10,18 +10,29 @@ const generatePassword = customAlphabet(
 );
 
 const patchSchema = z.object({
-  action: z.enum(["toggle-active", "reset-password", "rename"]).optional(),
+  action: z.enum(["toggle-active", "reset-password", "rename", "set-org"]).optional(),
   active: z.boolean().optional(),
   name: z.string().min(1).max(120).optional(),
+  org: z.string().max(40).optional().nullable(),
 });
+
+function cleanOrg(raw: string | null | undefined): string | null {
+  if (raw == null) return null;
+  const s = String(raw).trim().toLowerCase().replace(/\s+/g, "_").replace(/[^a-z0-9_-]/g, "");
+  return s.length === 0 ? null : s.slice(0, 40);
+}
 
 export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }> }) {
   let session;
   try {
-    session = await requireSuperAdmin();
-  } catch (e: any) {
-    const code = e?.message === "FORBIDDEN" ? 403 : 401;
-    return NextResponse.json({ ok: false, error: e?.message ?? "UNAUTHORIZED" }, { status: code });
+    session = await requireSession();
+  } catch {
+    return NextResponse.json({ ok: false, error: "UNAUTHORIZED" }, { status: 401 });
+  }
+  // SUPERADMIN can touch anyone; ADMIN+org can touch teammates; others 403.
+  const canOrgManage = session.role === "SUPERADMIN" || (session.role === "ADMIN" && !!session.org);
+  if (!canOrgManage) {
+    return NextResponse.json({ ok: false, error: "FORBIDDEN" }, { status: 403 });
   }
   const { id } = await ctx.params;
   const body = await req.json().catch(() => ({}));
@@ -35,6 +46,17 @@ export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }>
 
   const target = await prisma.user.findUnique({ where: { id } });
   if (!target) return NextResponse.json({ ok: false, error: "NOT_FOUND" }, { status: 404 });
+  // ADMIN can only touch users in their org (never SUPERADMIN, never other orgs).
+  if (session.role !== "SUPERADMIN") {
+    if (target.role === "SUPERADMIN" || target.org !== session.org) {
+      return NextResponse.json({ ok: false, error: "FORBIDDEN" }, { status: 403 });
+    }
+  }
+  // Only SUPERADMIN can change a user's org (moving a tutor between brands
+  // is a governance action, not something a brand admin should self-serve).
+  if (parsed.data.action === "set-org" && session.role !== "SUPERADMIN") {
+    return NextResponse.json({ ok: false, error: "FORBIDDEN" }, { status: 403 });
+  }
 
   // Safety: an admin cannot deactivate themselves (would lock them out).
   if (parsed.data.action === "toggle-active" || typeof parsed.data.active === "boolean") {
@@ -66,13 +88,20 @@ export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }>
     nextActive = parsed.data.active;
   }
 
+  // Org set action (SUPERADMIN only, already gated above).
+  const nextOrg =
+    parsed.data.action === "set-org"
+      ? cleanOrg(parsed.data.org)
+      : undefined;
+
   const user = await prisma.user.update({
     where: { id },
     data: {
       ...(typeof nextActive === "boolean" ? { active: nextActive } : {}),
       ...(parsed.data.name ? { name: parsed.data.name.trim() } : {}),
+      ...(nextOrg !== undefined ? { org: nextOrg } : {}),
     },
-    select: { id: true, email: true, name: true, role: true, active: true, createdAt: true },
+    select: { id: true, email: true, name: true, role: true, org: true, active: true, createdAt: true },
   });
   return NextResponse.json({ ok: true, user });
 }

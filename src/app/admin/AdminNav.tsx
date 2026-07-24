@@ -21,13 +21,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LogoutButton } from "./LogoutButton";
 
-type NavSession = { name: string; role: string } | null;
+type NavSession = { name: string; role: string; org?: string | null } | null;
 
-const TABS: Array<{ href: string; label: string; requires?: "SUPERADMIN" }> = [
+const TABS: Array<{ href: string; label: string; requires?: "ORG_MANAGER" }> = [
   { href: "/admin",          label: "Leads" },
   { href: "/admin/passkeys", label: "Passkeys" },
   { href: "/admin/tests",    label: "Tests" },
-  { href: "/admin/users",    label: "Users", requires: "SUPERADMIN" },
+  { href: "/admin/users",    label: "Users", requires: "ORG_MANAGER" },
 ];
 
 function isActive(pathname: string, href: string) {
@@ -37,8 +37,10 @@ function isActive(pathname: string, href: string) {
 
 export function AdminNav({ session }: { session: NavSession }) {
   const pathname = usePathname() ?? "/admin";
-  const canSeeUsers = session?.role === "SUPERADMIN";
-  const visibleTabs = TABS.filter((t) => !t.requires || (t.requires === "SUPERADMIN" && canSeeUsers));
+  // Users tab visible to SUPERADMIN (everyone) OR ADMIN with an org
+  // (their team). TUTORs and orphan admins never see it.
+  const canSeeUsers = session?.role === "SUPERADMIN" || (session?.role === "ADMIN" && !!session.org);
+  const visibleTabs = TABS.filter((t) => !t.requires || (t.requires === "ORG_MANAGER" && canSeeUsers));
 
   return (
     <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">

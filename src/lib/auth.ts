@@ -18,6 +18,11 @@ export type SessionPayload = {
   uid: string;
   role: Role;
   name: string;
+  // Tenant / organisation the user belongs to. NULL / undefined means the
+  // user has no team — scoped to their own records only, exactly like the
+  // pre-multi-org behaviour. See src/lib/tenant-scope.ts for how ADMIN
+  // callers with an `org` fan out to include their whole team.
+  org?: string | null;
 };
 
 // True only for SUPERADMIN. All other roles see only their own data.

@@ -1,8 +1,27 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
-import { requireSuperAdmin, hashPassword } from "@/lib/auth";
+import { requireSession, hashPassword } from "@/lib/auth";
 import { customAlphabet } from "nanoid";
+
+// Any signed-in user with admin-ish role gates:
+//   SUPERADMIN → can list/create anyone (any org)
+//   ADMIN + org → can list/create teammates only, forced into their own org
+//   TUTOR / no-org ADMIN → 403 (can't reach this page anyway)
+async function requireOrgManager() {
+  const s = await requireSession();
+  if (s.role === "SUPERADMIN") return s;
+  if (s.role === "ADMIN" && s.org) return s;
+  throw new Error("FORBIDDEN");
+}
+
+// Free-form but sanitised — lowercase, [a-z0-9_-], max 40. Empty → NULL
+// (removes the user's org membership).
+function cleanOrg(raw: string | null | undefined): string | null {
+  if (raw == null) return null;
+  const s = String(raw).trim().toLowerCase().replace(/\s+/g, "_").replace(/[^a-z0-9_-]/g, "");
+  return s.length === 0 ? null : s.slice(0, 40);
+}
 
 // Initial-password generator: ambiguity-free alphabet, 14 chars ≈ 70+ bits entropy.
 // Returned ONCE in the create response — never logged or persisted in plaintext.
@@ -21,24 +40,32 @@ const createSchema = z.object({
   // passwords for tutors. Tutors can rotate it themselves after logging in
   // via /admin/account.
   initialPassword: z.string().min(8).max(200).optional(),
+  // Optional: tenant / organisation slug. SUPERADMIN can set to anything;
+  // ADMIN callers are forced into their own org (server-side override).
+  org: z.string().max(40).optional().nullable(),
 });
 
 export async function GET() {
+  let session;
   try {
-    await requireSuperAdmin();
+    session = await requireOrgManager();
   } catch (e: any) {
     const code = e?.message === "FORBIDDEN" ? 403 : 401;
     return NextResponse.json({ ok: false, error: e?.message ?? "UNAUTHORIZED" }, { status: code });
   }
+  // SUPERADMIN sees every user; org-admin sees only teammates in their org.
+  const where = session.role === "SUPERADMIN" ? {} : { org: session.org ?? undefined };
   // Include per-user passkey + lead counts so the admin can see at-a-glance
   // who's actually using the system.
   const users = await prisma.user.findMany({
+    where,
     orderBy: [{ active: "desc" }, { createdAt: "desc" }],
     select: {
       id: true,
       email: true,
       name: true,
       role: true,
+      org: true,
       active: true,
       createdAt: true,
       _count: { select: { passkeys: true, leads: true } },
@@ -48,8 +75,9 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
+  let session;
   try {
-    await requireSuperAdmin();
+    session = await requireOrgManager();
   } catch (e: any) {
     const code = e?.message === "FORBIDDEN" ? 403 : 401;
     return NextResponse.json({ ok: false, error: e?.message ?? "UNAUTHORIZED" }, { status: code });
@@ -64,6 +92,11 @@ export async function POST(req: Request) {
   }
   const { email, name, role, initialPassword: providedPassword } = parsed.data;
   const normalized = email.trim().toLowerCase();
+  // Org: SUPERADMIN can set any label (or null); ADMIN is forced into
+  // their own org — silently overwrite anything they try to send.
+  const org = session.role === "SUPERADMIN"
+    ? cleanOrg(parsed.data.org)
+    : session.org ?? null;
 
   // Reject duplicate emails up-front for a clean error message
   const existing = await prisma.user.findUnique({ where: { email: normalized } });
@@ -84,9 +117,10 @@ export async function POST(req: Request) {
       role,
       passwordHash,
       active: true,
+      org,
     },
     select: {
-      id: true, email: true, name: true, role: true, active: true, createdAt: true,
+      id: true, email: true, name: true, role: true, org: true, active: true, createdAt: true,
     },
   });
 
