@@ -37,6 +37,7 @@ export function UsersManager({
   const [formName, setFormName] = useState("");
   const [formEmail, setFormEmail] = useState("");
   const [formRole, setFormRole] = useState<"TUTOR" | "ADMIN">("TUTOR");
+  const [formPassword, setFormPassword] = useState("");
   // Note: SUPERADMIN can only be assigned via direct DB edit, never via this
   // form — by design, to prevent accidental privilege escalation.
   const [formBusy, setFormBusy] = useState(false);
@@ -50,7 +51,14 @@ export function UsersManager({
       const res = await fetch("/api/admin/users", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: formName, email: formEmail, role: formRole }),
+        body: JSON.stringify({
+          name: formName,
+          email: formEmail,
+          role: formRole,
+          // Only send an initialPassword if the admin actually typed one.
+          // Empty string / whitespace → server auto-generates.
+          initialPassword: formPassword.trim() ? formPassword : undefined,
+        }),
       });
       const data = await res.json();
       if (!res.ok || !data.ok) {
@@ -81,6 +89,7 @@ export function UsersManager({
       setFormName("");
       setFormEmail("");
       setFormRole("TUTOR");
+      setFormPassword("");
       setFormOpen(false);
     } catch (err: any) {
       setFormError(err?.message ?? "Network error");
@@ -183,6 +192,25 @@ export function UsersManager({
                 <option value="ADMIN">Admin — sees only their own students (same scope as Tutor; label only)</option>
               </select>
             </label>
+            <label className="block sm:col-span-3">
+              <span className="text-xs font-medium text-slate-600">
+                Initial password <span className="text-slate-400">(optional — leave blank to auto-generate)</span>
+              </span>
+              <input
+                type="text"
+                autoComplete="new-password"
+                value={formPassword}
+                onChange={(e) => setFormPassword(e.target.value)}
+                minLength={8}
+                maxLength={200}
+                placeholder="e.g. Welcome2026 (min 8 chars — the tutor can change it after signing in)"
+                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-mono outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+              />
+              <p className="mt-1 text-[11px] text-slate-500">
+                Type a simple, memorable password for the tutor. If blank, the system generates a strong random one (shown once).
+                Tutors can change their own password anytime at <span className="rounded bg-slate-100 px-1 font-mono text-slate-700">/admin/account</span>.
+              </p>
+            </label>
             {formError && (
               <p className="sm:col-span-3 rounded-md border border-rose-200 bg-rose-50 px-3 py-2 text-xs font-medium text-rose-800">
                 {formError}
@@ -190,7 +218,7 @@ export function UsersManager({
             )}
             <div className="sm:col-span-3 flex items-center justify-end gap-3">
               <span className="text-xs text-slate-500">
-                A secure password is generated automatically and shown once.
+                {formPassword.trim() ? "Using your custom password (shown once above)." : "A secure password is generated automatically and shown once."}
               </span>
               <button
                 type="submit"

@@ -29,7 +29,7 @@ export function PasskeyManager({ tests, initial }: { tests: Test[]; initial: Pas
         body: JSON.stringify({ testId, count, maxUses, prefix: prefix || undefined, note: note || undefined }),
       });
       const data = await r.json();
-      if (!r.ok) throw new Error(data.error ?? "Failed");
+      if (!r.ok) throw new Error(data.message ?? data.error ?? "Failed");
       const matchingTest = tests.find((t) => t.id === testId);
       const newOnes: Passkey[] = data.items.map((p: any) => ({
         id: p.id, code: p.code,
@@ -85,9 +85,29 @@ export function PasskeyManager({ tests, initial }: { tests: Test[]; initial: Pas
               className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" />
           </label>
           <label className="block">
-            <span className="mb-1 block text-xs font-medium text-slate-700">Prefix (optional)</span>
-            <input value={prefix} onChange={e => setPrefix(e.target.value)} placeholder="e.g. ENG"
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" />
+            <span className="mb-1 block text-xs font-medium text-slate-700">
+              {count === 1 ? "Passkey code (optional)" : "Prefix (optional)"}
+            </span>
+            <input value={prefix} onChange={e => setPrefix(e.target.value)}
+              placeholder={count === 1 ? "e.g. ooi_eng_s2" : "e.g. OOI (adds random suffix)"}
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-mono uppercase" />
+            {/* Live preview + policy hint so the tutor knows exactly what
+                code will be generated before they click Generate. */}
+            <p className="mt-1 text-[11px] font-medium text-slate-500">
+              {(() => {
+                const clean = prefix.trim().toUpperCase().replace(/\s+/g, "-").replace(/[^A-Z0-9_-]/g, "");
+                if (count === 1 && clean) {
+                  return <>Will create <span className="rounded bg-slate-100 px-1.5 py-0.5 font-mono font-semibold text-slate-800">{clean}</span> exactly.</>;
+                }
+                if (count === 1 && !clean) {
+                  return <>Leave blank ⇒ random 8-char code will be generated.</>;
+                }
+                if (count > 1 && clean) {
+                  return <>Will create <span className="rounded bg-slate-100 px-1.5 py-0.5 font-mono font-semibold text-slate-800">{clean}-XXXXXXXX</span> for each ({count} codes).</>;
+                }
+                return <>{count} random codes will be generated.</>;
+              })()}
+            </p>
           </label>
           <label className="block sm:col-span-4">
             <span className="mb-1 block text-xs font-medium text-slate-700">Note (optional)</span>

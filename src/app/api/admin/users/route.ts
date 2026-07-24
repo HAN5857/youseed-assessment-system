@@ -15,6 +15,12 @@ const createSchema = z.object({
   email: z.string().email().max(200),
   name: z.string().min(1).max(120),
   role: z.enum(["TUTOR", "ADMIN"]).default("TUTOR"),
+  // Optional: SuperAdmin can pre-set the initial password. If omitted the
+  // system generates one (existing behaviour). Minimum 8 chars keeps a
+  // sensible floor without frustrating admins who want easy-to-remember
+  // passwords for tutors. Tutors can rotate it themselves after logging in
+  // via /admin/account.
+  initialPassword: z.string().min(8).max(200).optional(),
 });
 
 export async function GET() {
@@ -56,7 +62,7 @@ export async function POST(req: Request) {
       { status: 400 },
     );
   }
-  const { email, name, role } = parsed.data;
+  const { email, name, role, initialPassword: providedPassword } = parsed.data;
   const normalized = email.trim().toLowerCase();
 
   // Reject duplicate emails up-front for a clean error message
@@ -68,7 +74,8 @@ export async function POST(req: Request) {
     );
   }
 
-  const initialPassword = generatePassword();
+  // Custom initial password from the admin wins; otherwise auto-generate.
+  const initialPassword = providedPassword ?? generatePassword();
   const passwordHash = await hashPassword(initialPassword);
   const user = await prisma.user.create({
     data: {
