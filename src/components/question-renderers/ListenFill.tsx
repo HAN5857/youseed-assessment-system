@@ -8,24 +8,58 @@ export function ListenFillRenderer({ prompt, content, value, onChange }: Rendere
   const theme = useUiTheme();
   const calm = theme === "calm";
   const speakText: string = content?.speakText ?? "";
+  // Pre-recorded audio (MP3, WAV, …) wins over TTS when provided. Use this
+  // for questions where the tutor wants a natural human voice or a specific
+  // regional accent instead of the OS-supplied Speech Synthesis voice.
+  const audioUrl: string = content?.audioUrl ?? "";
   const maxPlays: number = content?.maxPlays ?? 3;
   const lang: string = content?.lang ?? "en-US";
   const [plays, setPlays] = useState(0);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [supported, setSupported] = useState(true);
   const cancelledRef = useRef(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  const usingFile = !!audioUrl;
 
   useEffect(() => {
+    if (usingFile) {
+      // Pre-recorded audio needs no Web Speech API — always supported when
+      // <audio> exists (all modern browsers).
+      setSupported(typeof window !== "undefined" && "Audio" in window);
+      return () => {
+        cancelledRef.current = true;
+        try { audioRef.current?.pause(); } catch { /* ignore */ }
+      };
+    }
     setSupported(typeof window !== "undefined" && "speechSynthesis" in window);
     return () => {
       cancelledRef.current = true;
       try { window.speechSynthesis?.cancel(); } catch { /* ignore */ }
     };
-  }, []);
+  }, [usingFile]);
 
   const play = () => {
-    if (plays >= maxPlays || !supported || !speakText) return;
+    if (plays >= maxPlays || !supported) return;
     sound().play("click");
+    if (usingFile) {
+      try {
+        // Reset + play from start each click so students always hear the
+        // whole clip (rather than resuming mid-way).
+        if (!audioRef.current) audioRef.current = new Audio(audioUrl);
+        else audioRef.current.src = audioUrl;
+        audioRef.current.currentTime = 0;
+        audioRef.current.onplay = () => setIsSpeaking(true);
+        audioRef.current.onended = () => setIsSpeaking(false);
+        audioRef.current.onerror = () => setIsSpeaking(false);
+        void audioRef.current.play();
+        setPlays((p) => p + 1);
+      } catch {
+        setIsSpeaking(false);
+      }
+      return;
+    }
+    if (!speakText) return;
     try {
       window.speechSynthesis.cancel();
       const u = new SpeechSynthesisUtterance(speakText);

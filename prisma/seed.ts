@@ -506,11 +506,18 @@ function standard2Questions(): QData[] {
       prompt: "🎧 Click the button to listen. Then type the missing letters:\n\nb _ _ ch",
       content: { speakText: "beach", caseSensitive: false, maxPlays: 3, lang: "en-US" },
       answer: { accepted: ["ea", "beach"] } },
-    // Q8 — s_ck (sock)
+    // Q8 — d_sk (desk) — uses a pre-recorded MP3 for consistent audio
+    // instead of the OS TTS voice.
     { type: "LISTEN_FILL", dimension: "VOCAB", score: 4,
-      prompt: "🎧 Click the button to listen. Then fill in the missing letter:\n\ns _ ck",
-      content: { speakText: "sock", caseSensitive: false, maxPlays: 3, lang: "en-US" },
-      answer: { accepted: ["o", "sock"] } },
+      prompt: "🎧 Click the button to listen. Then fill in the missing letter:\n\nd _ sk",
+      content: {
+        audioUrl: "/audio/standard-2/desk.mp3",
+        speakText: "desk",     // TTS fallback if the audio 404s
+        caseSensitive: false,
+        maxPlays: 3,
+        lang: "en-US",
+      },
+      answer: { accepted: ["e", "desk"] } },
     // Q9 — c_p (cap)
     { type: "LISTEN_FILL", dimension: "VOCAB", score: 4,
       prompt: "🎧 Click the button to listen. Then fill in the missing letter:\n\nc _ p",
