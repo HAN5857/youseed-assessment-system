@@ -8,10 +8,12 @@
     "build:prod": "prisma generate --schema=./prisma/schema.production.prisma && next build",
     "start": "next start",
     "lint": "next lint",
+    "test:mandarin": "tsx scripts/verify-mandarin-banks.ts",
     "db:migrate": "prisma migrate dev",
     "db:seed": "tsx prisma/seed.ts",
     "db:seed:prod": "tsx prisma/seed.ts",
     "db:seed:prod:s4-s6": "tsx prisma/seed-prod-s4-s6.ts",
+    "db:seed:prod:chinese:s3-s6": "tsx prisma/seed-prod-chinese-s3-s6.ts",
     "db:reset": "prisma migrate reset --force",
     "db:studio": "prisma studio",
     "postinstall": "prisma generate"

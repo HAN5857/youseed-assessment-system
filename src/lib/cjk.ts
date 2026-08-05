@@ -50,15 +50,21 @@ export function hasCJK(text: string | null | undefined): boolean {
  *   countWordsSmart("汉咯")                    →  2
  *   countWordsSmart("我喜欢吃苹果，因为它很甜。")→ 11
  *   countWordsSmart("hello world")             →  2
- *   countWordsSmart("我喜欢 apple pie")        →  6  (3 CJK + 3 latin chunks)
+ *   countWordsSmart("我喜欢 apple pie")        →  5  (3 CJK + 2 latin chunks)
+ *   countWordsSmart("，。！？")                 →  0  (punctuation is not a 字)
  *   countWordsSmart("")                         →  0
  */
 export function countWordsSmart(text: string | null | undefined): number {
   const t = String(text ?? "").trim();
   if (t === "") return 0;
-  if (!CJK_ANY_RE.test(t)) return t.split(/\s+/).length;
-  const cjkChars = (t.match(CJK_ANY_GLOBAL) ?? []).length;
-  const latin = t.replace(CJK_ANY_GLOBAL, " ").replace(CJK_PUNCT_GLOBAL, " ").trim();
+  // Strip Chinese/full-width punctuation before deciding between Chinese
+  // and whitespace counting. Otherwise input such as "，。！？" contains no
+  // Han character and incorrectly falls through as one Latin "word".
+  const countable = t.replace(CJK_PUNCT_GLOBAL, " ").trim();
+  if (countable === "") return 0;
+  if (!CJK_ANY_RE.test(countable)) return countable.split(/\s+/).length;
+  const cjkChars = (countable.match(CJK_ANY_GLOBAL) ?? []).length;
+  const latin = countable.replace(CJK_ANY_GLOBAL, " ").trim();
   const latinChunks = latin === "" ? 0 : latin.split(/\s+/).length;
   return cjkChars + latinChunks;
 }

@@ -10,9 +10,16 @@ import {
 } from "./banks-s4-s6";
 import {
   SCOPE_TEMPLATE_CN_LOWER,
+  SCOPE_TEMPLATE_CN_UPPER,
   chineseStandard1Questions,
   chineseStandard2Questions,
 } from "./banks-cn";
+import {
+  chineseStandard3Questions,
+  chineseStandard4Questions,
+  chineseStandard5Questions,
+  chineseStandard6Questions,
+} from "./banks-cn-s3-s6";
 
 const prisma = new PrismaClient();
 
@@ -204,6 +211,34 @@ async function main() {
     questionsBuilder: () => chineseStandard2Questions(),
   });
 
+  const cn3 = await upsertTest({
+    subject: "chinese", level: "standard-3",
+    title: "华文三年级 · 程度评估测试", duration: 25, passingScore: 60,
+    scope: SCOPE_TEMPLATE_CN_LOWER("三年级", "华小华文 KSSR Semakan"),
+    active: true, questionsBuilder: () => chineseStandard3Questions(),
+  });
+
+  const cn4 = await upsertTest({
+    subject: "chinese", level: "standard-4",
+    title: "华文四年级 · 程度评估测试", duration: 30, passingScore: 60,
+    scope: SCOPE_TEMPLATE_CN_UPPER("四年级", "华小华文 KSSR Semakan · MPT4 融合"),
+    active: true, questionsBuilder: () => chineseStandard4Questions(),
+  });
+
+  const cn5 = await upsertTest({
+    subject: "chinese", level: "standard-5",
+    title: "华文五年级 · 程度评估测试", duration: 30, passingScore: 60,
+    scope: SCOPE_TEMPLATE_CN_UPPER("五年级", "华小华文 KSSR Semakan · UASA 格式"),
+    active: true, questionsBuilder: () => chineseStandard5Questions(),
+  });
+
+  const cn6 = await upsertTest({
+    subject: "chinese", level: "standard-6",
+    title: "华文六年级 · 程度评估测试", duration: 35, passingScore: 60,
+    scope: SCOPE_TEMPLATE_CN_UPPER("六年级", "华小华文 KSSR Semakan · UASA 格式"),
+    active: true, questionsBuilder: () => chineseStandard6Questions(),
+  });
+
   // ─── Demo passkeys (one per active level) ─────────────────────────────
   const demoKeys: { code: string; testId: string; note: string }[] = [
     { code: "ENG-S1-DEMO", testId: s1.id, note: "Demo passkey — English Standard 1" },
@@ -214,6 +249,10 @@ async function main() {
     { code: "ENG-S6-DEMO", testId: s6.id, note: "Demo passkey — English Standard 6" },
     { code: "CHI-S1-DEMO", testId: cn1.id, note: "Demo passkey — 华文一年级 (Chinese Standard 1)" },
     { code: "CHI-S2-DEMO", testId: cn2.id, note: "Demo passkey — 华文二年级 (Chinese Standard 2)" },
+    { code: "CHI-S3-DEMO", testId: cn3.id, note: "Demo passkey — 华文三年级 (Chinese Standard 3)" },
+    { code: "CHI-S4-DEMO", testId: cn4.id, note: "Demo passkey — 华文四年级 (Chinese Standard 4)" },
+    { code: "CHI-S5-DEMO", testId: cn5.id, note: "Demo passkey — 华文五年级 (Chinese Standard 5)" },
+    { code: "CHI-S6-DEMO", testId: cn6.id, note: "Demo passkey — 华文六年级 (Chinese Standard 6)" },
     // Backward-compat: original passkey points to Standard 3 (current default)
     { code: "DEMO-2026-START", testId: s3.id, note: "Legacy demo passkey (S3)" },
   ];
@@ -238,6 +277,10 @@ async function main() {
   console.log("     ENG-S6-DEMO    → English Standard 6");
   console.log("     CHI-S1-DEMO    → 华文一年级 (Chinese Standard 1)");
   console.log("     CHI-S2-DEMO    → 华文二年级 (Chinese Standard 2)");
+  console.log("     CHI-S3-DEMO    → 华文三年级 (Chinese Standard 3)");
+  console.log("     CHI-S4-DEMO    → 华文四年级 (Chinese Standard 4)");
+  console.log("     CHI-S5-DEMO    → 华文五年级 (Chinese Standard 5)");
+  console.log("     CHI-S6-DEMO    → 华文六年级 (Chinese Standard 6)");
   console.log("     DEMO-2026-START → English Standard 3 (legacy)");
   console.log("");
   console.log("   Users tested → admin: " + admin.email + ", tutor: " + tutor.email);

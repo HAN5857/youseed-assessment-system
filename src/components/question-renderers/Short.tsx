@@ -25,6 +25,9 @@ export function ShortRenderer({ prompt, content, value, onChange }: RendererProp
   const maxWords: number = content?.maxWords ?? 50;
   const template: string | undefined = content?.template;
   const passage: string | undefined = content?.passage;
+  const passageImage: string | undefined = content?.passageImage;
+  const passageImageAlt: string | undefined = content?.passageImageAlt;
+  const writingChoices: Array<{ key: string; title: string; description?: string; icon?: string }> = content?.writingChoices ?? [];
 
   const text: string = value?.text ?? "";
   const isCJK = hasCJK(text) || hasCJK(prompt || "");
@@ -62,7 +65,11 @@ export function ShortRenderer({ prompt, content, value, onChange }: RendererProp
     const progressLabel = wordCount === 0 ? "等待起笔" : wordCount < minWords ? "灵感正在成形" : wordCount <= maxWords ? "表达完整" : "可以稍微精简";
     return (
       <div className="mandarin-writing-studio">
-        {passage && <div className="mb-5"><PassageCard text={passage} /></div>}
+        {passage && (
+          <div className="mb-5">
+            <PassageCard text={passage} imageUrl={passageImage} imageAlt={passageImageAlt} />
+          </div>
+        )}
         {imageUrl && (
           <figure className="mandarin-writing-image">
             <Image src={imageUrl} alt="写作题的观察图片" width={900} height={600} sizes="(max-width: 640px) 100vw, 620px" />
@@ -71,6 +78,14 @@ export function ShortRenderer({ prompt, content, value, onChange }: RendererProp
         )}
 
         <StructuredPrompt prompt={prompt} />
+
+        {writingChoices.length > 0 && (
+          <MandarinWritingChoices
+            choices={writingChoices}
+            selectedKey={value?.selectedTopic}
+            onSelect={(selectedTopic) => onChange({ ...(value ?? {}), selectedTopic })}
+          />
+        )}
 
         <div className="mandarin-writing-toolbar">
           <div><span>写作足迹</span><strong>{progressLabel}</strong></div>
@@ -84,7 +99,7 @@ export function ShortRenderer({ prompt, content, value, onChange }: RendererProp
         {template && <div className="mandarin-writing-starter"><span>起笔小帮手</span><p>{template}</p></div>}
         <textarea
           value={text}
-          onChange={(e) => onChange({ text: e.target.value })}
+          onChange={(e) => onChange({ ...(value ?? {}), text: e.target.value })}
           rows={9}
           className="mandarin-writing-textarea"
           placeholder="把你的观察和想法写在这里…"
@@ -109,7 +124,7 @@ export function ShortRenderer({ prompt, content, value, onChange }: RendererProp
 
         {passage && (
           <div className="mb-5">
-            <PassageCard text={passage} />
+            <PassageCard text={passage} imageUrl={passageImage} imageAlt={passageImageAlt} />
           </div>
         )}
 
@@ -142,7 +157,7 @@ export function ShortRenderer({ prompt, content, value, onChange }: RendererProp
 
         <textarea
           value={text}
-          onChange={(e) => onChange({ text: e.target.value })}
+          onChange={(e) => onChange({ ...(value ?? {}), text: e.target.value })}
           rows={9}
           className={textareaClass}
           placeholder={template ?? "Write your answer here…"}
@@ -170,7 +185,7 @@ export function ShortRenderer({ prompt, content, value, onChange }: RendererProp
     <div>
       {passage && (
         <div className="mb-5">
-          <PassageCard text={passage} />
+          <PassageCard text={passage} imageUrl={passageImage} imageAlt={passageImageAlt} />
         </div>
       )}
 
@@ -192,7 +207,7 @@ export function ShortRenderer({ prompt, content, value, onChange }: RendererProp
 
       <textarea
         value={text}
-        onChange={(e) => onChange({ text: e.target.value })}
+        onChange={(e) => onChange({ ...(value ?? {}), text: e.target.value })}
         rows={9}
         className={textareaClass}
         placeholder={template ?? (isCJK ? "在这里写你的答案…" : "Write your answer here…")}
@@ -206,6 +221,48 @@ export function ShortRenderer({ prompt, content, value, onChange }: RendererProp
         {isCJK ? "小贴士：写完整的句子，用词准确、语法正确。" : "Tip: write in full sentences. Spelling and grammar count."}
       </p>
     </div>
+  );
+}
+
+function MandarinWritingChoices({
+  choices,
+  selectedKey,
+  onSelect,
+}: {
+  choices: Array<{ key: string; title: string; description?: string; icon?: string }>;
+  selectedKey?: string;
+  onSelect: (key: string) => void;
+}) {
+  return (
+    <fieldset className="mandarin-writing-choices">
+      <legend>
+        <span>先选择你的创作方向</span>
+        <small>Choose one writing topic</small>
+      </legend>
+      <div className="mandarin-writing-choice-grid">
+        {choices.map((choice, index) => {
+          const selected = selectedKey === choice.key;
+          return (
+            <button
+              key={choice.key}
+              type="button"
+              className={selected ? "is-selected" : ""}
+              aria-pressed={selected}
+              onClick={() => onSelect(choice.key)}
+            >
+              <span className="mandarin-writing-choice-number" aria-hidden>
+                {choice.icon ?? ["一", "二", "三"][index] ?? "文"}
+              </span>
+              <span className="mandarin-writing-choice-copy">
+                <strong>{choice.title}</strong>
+                {choice.description && <small>{choice.description}</small>}
+              </span>
+              <span className="mandarin-writing-choice-check" aria-hidden>{selected ? "✓" : ""}</span>
+            </button>
+          );
+        })}
+      </div>
+    </fieldset>
   );
 }
 
