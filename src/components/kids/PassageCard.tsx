@@ -9,13 +9,18 @@
 
 import { useUiTheme, useUiTier, useUiSubject } from "@/lib/ui-theme";
 import { runnerCopy } from "@/lib/runner-i18n";
+import Image from "next/image";
 
 export function PassageCard({
   text,
   hint,
+  imageUrl,
+  imageAlt,
 }: {
   text: string;
   hint?: string;
+  imageUrl?: string;
+  imageAlt?: string;
 }) {
   const theme = useUiTheme();
   const tier = useUiTier();
@@ -25,15 +30,40 @@ export function PassageCard({
   const chinese = ["chinese", "zh", "zh-cn"].includes(String(subject).toLowerCase());
 
   if (chinese) {
+    const visual = resolveMandarinPassageVisual(text, imageUrl, imageAlt);
     return (
       <div className="mandarin-passage-wrap">
-        <div className="mandarin-passage-title"><span>阅</span><strong>文字小天地</strong></div>
+        <div className="mandarin-passage-title">
+          <span>阅</span>
+          <strong>文字小天地<small>Reading story</small></strong>
+        </div>
+        {visual && (
+          <figure className="mandarin-passage-visual">
+            <Image
+              src={visual.src}
+              alt={visual.alt}
+              width={1536}
+              height={1024}
+              sizes="(max-width: 1024px) 100vw, 560px"
+              quality={82}
+            />
+            <figcaption>
+              <span>{visual.captionZh}</span>
+              <small>{visual.captionEn}</small>
+            </figcaption>
+          </figure>
+        )}
         <div className="mandarin-passage-paper">
           <div className="mandarin-passage-corner top" aria-hidden />
           <div className="mandarin-passage-corner bottom" aria-hidden />
           <MandarinSmartPassage text={text} />
         </div>
-        {resolvedHint && <div className="mandarin-passage-hint">慢慢读，重要的线索常藏在句子之间。</div>}
+        {resolvedHint && (
+          <div className="mandarin-passage-hint">
+            <span>慢慢读，重要的线索常藏在句子之间。</span>
+            <small>Read slowly and look for clues between the lines.</small>
+          </div>
+        )}
       </div>
     );
   }
@@ -168,6 +198,53 @@ export function PassageCard({
       )}
     </div>
   );
+}
+
+type MandarinPassageVisual = {
+  src: string;
+  alt: string;
+  captionZh: string;
+  captionEn: string;
+};
+
+/**
+ * Keeps legacy/live question rows visually complete while new question-bank
+ * entries can provide an explicit passage image. The two title matches are
+ * deliberately narrow: an unrelated passage never receives a random image.
+ */
+function resolveMandarinPassageVisual(
+  text: string,
+  imageUrl?: string,
+  imageAlt?: string,
+): MandarinPassageVisual | null {
+  if (imageUrl) {
+    return {
+      src: imageUrl,
+      alt: imageAlt ?? "帮助理解短文内容的情境图",
+      captionZh: "先看情境，再走进文字。",
+      captionEn: "Observe the scene, then read the story.",
+    };
+  }
+
+  if (/我的家/u.test(text)) {
+    return {
+      src: "/questions/chinese-reading/s1-my-family.png",
+      alt: "小雨和爸爸、妈妈、哥哥在温暖的家里，各自进行喜欢的活动",
+      captionZh: "观察家里的人物和活动，再读一读小雨的介绍。",
+      captionEn: "Notice the family members and their activities before reading.",
+    };
+  }
+
+  if (/大自然的礼物/u.test(text)) {
+    return {
+      src: "/questions/chinese-reading/s2-natures-gift.png",
+      alt: "春天的公园里，小明和妹妹欣赏花朵并爱护大自然",
+      captionZh: "看看春天的公园里发生了什么，再寻找故事线索。",
+      captionEn: "Observe the spring park, then look for clues in the story.",
+    };
+  }
+
+  return null;
 }
 
 // ─── Smart line-by-line passage renderer (upper-primary calm tier) ────────

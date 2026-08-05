@@ -17,14 +17,14 @@ type Props = {
   dimensionCounts: [string, number][];
 };
 
-const SKILLS: Record<string, { mark: string; name: string; description: string }> = {
-  VOCAB: { mark: "字", name: "字词寻宝", description: "从图像、拼音和语境里找到词语线索" },
-  GRAMMAR: { mark: "句", name: "句子工坊", description: "动手组合、转换并理解句子的秘密" },
-  READING: { mark: "读", name: "阅读探境", description: "走进短文，发现藏在文字里的答案" },
-  LISTENING: { mark: "听", name: "听音辨意", description: "静心聆听，捕捉声音与意思" },
-  PHONICS: { mark: "音", name: "拼音小径", description: "辨认声调、音节与正确读音" },
-  WRITING: { mark: "写", name: "小作家天地", description: "把观察与想法变成自己的文字" },
-  SPEAKING: { mark: "说", name: "表达舞台", description: "清楚而有信心地说出想法" },
+const SKILLS: Record<string, { mark: string; name: string; english: string; description: string }> = {
+  VOCAB: { mark: "字", name: "字词寻宝", english: "Words & meaning", description: "从图像、拼音和语境里找到词语线索" },
+  GRAMMAR: { mark: "句", name: "句子工坊", english: "Sentence building", description: "动手组合、转换并理解句子的秘密" },
+  READING: { mark: "读", name: "阅读探境", english: "Reading discovery", description: "走进短文，发现藏在文字里的答案" },
+  LISTENING: { mark: "听", name: "听音辨意", english: "Listening", description: "静心聆听，捕捉声音与意思" },
+  PHONICS: { mark: "音", name: "拼音小径", english: "Pinyin & sounds", description: "辨认声调、音节与正确读音" },
+  WRITING: { mark: "写", name: "小作家天地", english: "Chinese writing", description: "把观察与想法变成自己的文字" },
+  SPEAKING: { mark: "说", name: "表达舞台", english: "Speaking", description: "清楚而有信心地说出想法" },
 };
 
 export function MandarinInstructionsView(props: Props) {
@@ -49,6 +49,7 @@ export function MandarinInstructionsView(props: Props) {
             <span className="mandarin-kicker"><CompassGlyph className="h-5 w-5" /> 出发前的小茶歇</span>
             <h1>{firstName}，准备好<span>发现自己的华文力量</span>了吗？</h1>
             <p>不必背答案，也不用紧张。跟着直觉慢慢走，每一站都会让老师更了解你已经掌握什么、下一步适合学什么。</p>
+            <p className="mandarin-english-subline">Mandarin is the main assessment language. Optional English guidance helps you understand what each task asks you to do.</p>
           </div>
           <MandarinCompanion mood="ready" className="mandarin-briefing-mascot" />
         </div>
@@ -66,7 +67,7 @@ export function MandarinInstructionsView(props: Props) {
           </div>
           <div className="mandarin-skill-grid">
             {props.dimensionCounts.map(([dimension, count], index) => {
-              const item = SKILLS[dimension] ?? { mark: "探", name: dimension, description: "发现这一项能力的学习线索" };
+              const item = SKILLS[dimension] ?? { mark: "探", name: dimension, english: "Learning discovery", description: "发现这一项能力的学习线索" };
               return (
                 <motion.article
                   key={dimension}
@@ -76,7 +77,7 @@ export function MandarinInstructionsView(props: Props) {
                   transition={{ duration: reduceMotion ? 0 : 0.3, delay: reduceMotion ? 0 : index * 0.045 }}
                 >
                   <span className="mandarin-skill-seal" aria-hidden>{item.mark}</span>
-                  <div><h3>{item.name}</h3><p>{item.description}</p><small>{count} 个小任务</small></div>
+                  <div><h3>{item.name}<small>{item.english}</small></h3><p>{item.description}</p><small>{count} 个小任务</small></div>
                 </motion.article>
               );
             })}

@@ -7,6 +7,7 @@ import { AudioClipPlayer } from "@/components/kids/AudioClipPlayer";
 import { InstructionHint } from "@/components/kids/InstructionHint";
 import { QuestionBody } from "@/components/kids/QuestionBody";
 import { splitPrompt } from "@/lib/prompt-format";
+import Image from "next/image";
 
 // Audio file extensions trigger the inline player instead of an <img>.
 const AUDIO_EXT = /\.(mp3|wav|ogg|m4a|mpeg|aac)(\?.*)?$/i;
@@ -31,7 +32,11 @@ export function SingleRenderer({ prompt, mediaUrl, content, value, onChange }: R
     <div>
       {passage && (
         <div className="mb-5">
-          <PassageCard text={passage} />
+          <PassageCard
+            text={passage}
+            imageUrl={content?.passageImage}
+            imageAlt={content?.passageImageAlt}
+          />
         </div>
       )}
       {(upper || chinese) && instruction && <InstructionHint text={instruction} />}
@@ -46,19 +51,20 @@ export function SingleRenderer({ prompt, mediaUrl, content, value, onChange }: R
       )}
       {imageUrl && (
         <div className="mb-5 flex justify-center">
-          <img
+          <Image
             src={imageUrl}
             alt=""
-            loading="lazy"
-            decoding="async"
+            width={900}
+            height={600}
+            sizes="(max-width: 640px) 92vw, 640px"
             className={
               chinese
-                ? "mandarin-question-image max-h-60 w-auto object-contain sm:max-h-72"
+                ? "mandarin-question-image max-h-60 max-w-full w-auto object-contain sm:max-h-72"
                 : upper
-                ? "max-h-48 w-auto rounded-xl border border-[#DDEFE4] bg-white object-contain p-1.5 shadow-sm sm:max-h-56"
+                ? "max-h-48 max-w-full w-auto rounded-xl border border-[#DDEFE4] bg-white object-contain p-1.5 shadow-sm sm:max-h-56"
                 : theme === "calm"
-                  ? "max-h-64 w-auto rounded-3xl border-4 border-emerald-200 bg-white p-3 shadow-lg"
-                  : "max-h-64 w-auto rounded-3xl border-4 border-amber-200 bg-white p-3 shadow-lg"
+                  ? "max-h-64 max-w-full w-auto rounded-3xl border-4 border-emerald-200 bg-white p-3 shadow-lg"
+                  : "max-h-64 max-w-full w-auto rounded-3xl border-4 border-amber-200 bg-white p-3 shadow-lg"
             }
           />
         </div>

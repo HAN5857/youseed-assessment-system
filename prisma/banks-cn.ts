@@ -224,6 +224,8 @@ export function chineseStandard1Questions(): QData[] {
     { type: "SINGLE", dimension: "READING", score: 2,
       prompt: "阅读下面的短文，然后回答问题。\n\n小雨的家有几个人？",
       content: {
+        passageImage: "/questions/chinese-reading/s1-my-family.png",
+        passageImageAlt: "小雨和爸爸、妈妈、哥哥在家里进行各自喜欢的活动",
         passage:
           "我的家\n\n我叫小雨。我家有四个人：爸爸、妈妈、哥哥和我。\n爸爸是老师。妈妈喜欢做饭。哥哥喜欢打球。\n我喜欢画画。我很爱我的家！",
         options: [
@@ -237,6 +239,8 @@ export function chineseStandard1Questions(): QData[] {
     { type: "SINGLE", dimension: "READING", score: 2,
       prompt: "阅读下面的短文，然后回答问题。\n\n爸爸的职业是什么？",
       content: {
+        passageImage: "/questions/chinese-reading/s1-my-family.png",
+        passageImageAlt: "小雨和爸爸、妈妈、哥哥在家里进行各自喜欢的活动",
         passage:
           "我的家\n\n我叫小雨。我家有四个人：爸爸、妈妈、哥哥和我。\n爸爸是老师。妈妈喜欢做饭。哥哥喜欢打球。\n我喜欢画画。我很爱我的家！",
         options: [
@@ -492,6 +496,8 @@ export function chineseStandard2Questions(): QData[] {
     { type: "READING", dimension: "READING", score: 4,
       prompt: "阅读下面的短文，回答两道题。",
       content: {
+        passageImage: "/questions/chinese-reading/s2-natures-gift.png",
+        passageImageAlt: "春天的公园里，小明和妹妹欣赏花朵并保护大自然",
         passage:
           "《大自然的礼物》\n\n" +
           "春天来了，花儿开了，鸟儿唱歌了。\n" +

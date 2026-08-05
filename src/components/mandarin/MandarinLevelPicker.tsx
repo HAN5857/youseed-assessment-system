@@ -31,6 +31,7 @@ export function MandarinLevelPicker({ levels }: { levels: MandarinLevel[] }) {
             <div className="mandarin-eyebrow"><SealGlyph className="h-5 w-5" /> YouSeed 华文探索馆</div>
             <h1>今天，想从哪一页<span>开始探索？</span></h1>
             <p>这里没有冷冰冰的考卷。每一站都是一个小发现：听一听、看一看、动手排一排，再把心里的想法写下来。</p>
+            <p className="mandarin-english-subline">A joyful Chinese learning journey with gentle English guidance whenever it helps.</p>
             <div className="mandarin-hero-note">
               <BambooGlyph className="h-5 w-5" />
               <span>选择目前就读年级，小墨会陪你完成整段华文旅程。</span>
@@ -47,6 +48,7 @@ export function MandarinLevelPicker({ levels }: { levels: MandarinLevel[] }) {
                 <div className="mandarin-level-mark" aria-hidden>{chapter.mark}</div>
                 <div className="mandarin-level-index">探索卷 · {String(index + 1).padStart(2, "0")}</div>
                 <h2>华文{CHINESE_NUMERALS[index] ?? index + 1}年级</h2>
+                <small className="mandarin-level-english">Chinese · Standard {index + 1}</small>
                 <p>{chapter.line}</p>
                 <div className="mandarin-level-meta">
                   <span>建议年龄 · {index + 7} 岁</span>
@@ -67,7 +69,7 @@ export function MandarinLevelPicker({ levels }: { levels: MandarinLevel[] }) {
 
         <footer className="mandarin-portal-footer">
           <Link href="/test"><ArrowGlyph direction="left" className="h-4 w-4" /> 返回语言选择</Link>
-          <span><InkBrushGlyph className="h-4 w-4" /> 每一次尝试，都是新的发现。</span>
+          <span><InkBrushGlyph className="h-4 w-4" /> 每一次尝试，都是新的发现。<small>Every attempt reveals something new.</small></span>
         </footer>
       </section>
     </main>

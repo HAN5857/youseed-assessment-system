@@ -5,10 +5,11 @@ import { SoundToggle } from "@/components/kids/SoundToggle";
 import { BambooGlyph, CompassGlyph, InkBrushGlyph, ScrollGlyph, SoundWavesGlyph } from "./MandarinGlyphs";
 
 export function MandarinJourneyHeader({
-  title, current, total, answered, minutes, seconds, timeLow,
+  title, current, total, answered, minutes, seconds, timeLow, englishSupport, onToggleEnglish,
 }: {
   title: string; current: number; total: number; answered: Set<number>;
   minutes: string; seconds: string; timeLow: boolean;
+  englishSupport: boolean; onToggleEnglish: () => void;
 }) {
   const phase = journeyPhase(current, total);
   return (
@@ -22,14 +23,24 @@ export function MandarinJourneyHeader({
           <div className={`mandarin-time ${timeLow ? "is-low" : ""}`} aria-label="旅程剩余时间">
             <ScrollGlyph className="h-4 w-4" /><span>{minutes}:{seconds}</span>
           </div>
+          <button
+            type="button"
+            className={`mandarin-language-toggle ${englishSupport ? "is-active" : ""}`}
+            onClick={onToggleEnglish}
+            aria-pressed={englishSupport}
+            aria-label={englishSupport ? "Hide English guidance" : "Show English guidance"}
+            title={englishSupport ? "关闭英文辅助" : "开启英文辅助"}
+          >
+            <strong>EN</strong><span>辅助</span>
+          </button>
           <SoundToggle showMusic />
         </div>
       </div>
 
       <div className="mandarin-progress-wrap">
         <div className="mandarin-progress-copy">
-          <span>第 {current + 1} 站 · 共 {total} 站</span>
-          <strong>已点亮 {answered.size} 片竹叶</strong>
+          <span>第 {current + 1} 站 · 共 {total} 站<small>Stop {current + 1} of {total}</small></span>
+          <strong>已点亮 {answered.size} 片竹叶<small>{answered.size} completed</small></strong>
         </div>
         <div className="mandarin-progress-track" role="progressbar" aria-valuemin={0} aria-valuemax={total} aria-valuenow={answered.size} aria-label={`已完成 ${answered.size} 个任务，共 ${total} 个`}>
           {Array.from({ length: total }).map((_, index) => (
@@ -38,6 +49,20 @@ export function MandarinJourneyHeader({
         </div>
       </div>
     </header>
+  );
+}
+
+export function MandarinEnglishGuide({ dimension, type }: { dimension: string; type: string }) {
+  const copy = englishGuide(dimension, type);
+  return (
+    <aside className="mandarin-english-guide" aria-label="English task guidance">
+      <span aria-hidden>EN</span>
+      <div>
+        <strong>{copy.title}</strong>
+        <p>{copy.description}</p>
+      </div>
+      <small>Guidance only · Mandarin remains the assessment language</small>
+    </aside>
   );
 }
 
@@ -92,4 +117,15 @@ function questMeta(dimension: string, type: string) {
   if (dimension === "GRAMMAR") return { mark: "句", kicker: "发现表达规律", title: "句子研究所", icon: BambooGlyph };
   if (dimension === "PHONICS") return { mark: "音", kicker: "听清每个音节", title: "拼音小径", icon: SoundWavesGlyph };
   return { mark: "寻", kicker: "看一看，想一想", title: "字词寻宝", icon: CompassGlyph };
+}
+
+function englishGuide(dimension: string, type: string) {
+  if (/LISTEN/i.test(type) || dimension === "LISTENING") return { title: "Listen carefully", description: "Play the audio, then choose the answer that best matches what you hear." };
+  if (/ORDER/i.test(type)) return { title: "Build the sentence", description: "Tap the word blocks to arrange them into a clear and correct Chinese sentence." };
+  if (/MATCH/i.test(type)) return { title: "Match the clues", description: "Connect each Chinese word with the meaning or item that belongs with it." };
+  if (dimension === "READING" || type === "READING") return { title: "Read and discover", description: "Use the illustration to understand the setting, then find evidence in the Chinese passage." };
+  if (dimension === "WRITING" || type === "SHORT") return { title: "Express your idea", description: "Use the picture or sentence starter to write your answer in Chinese." };
+  if (dimension === "GRAMMAR") return { title: "Explore the sentence", description: "Read the Chinese sentence carefully and choose or write the form that fits best." };
+  if (dimension === "PHONICS") return { title: "Notice the sound", description: "Look closely at the pinyin, tone or character sound before answering." };
+  return { title: "Find the word clue", description: "Look at the picture and Chinese words, then choose the best match." };
 }

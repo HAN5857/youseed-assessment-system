@@ -107,6 +107,7 @@ export function MandarinPasskeyForm({
                 <span className="mandarin-kicker"><CompassGlyph className="h-5 w-5" /> 第一站</span>
                 <h1>请出示你的<span>探索钥匙</span></h1>
                 <p className="mandarin-form-intro">不是考试编号，而是老师为你准备的专属入口。</p>
+                <p className="mandarin-english-subline">Enter the exploration key provided by your teacher.</p>
                 <form onSubmit={checkPasskey} className="mt-7 space-y-5">
                   <label className="mandarin-key-label" htmlFor="mandarin-passkey">探索钥匙</label>
                   <input
@@ -132,14 +133,15 @@ export function MandarinPasskeyForm({
                 <span className="mandarin-kicker"><CheckGlyph className="h-5 w-5" /> 探索卷已找到</span>
                 <h1>写下你的<span>学习名片</span></h1>
                 <p className="mandarin-form-intro">{test.title} · 约 {test.duration} 分钟</p>
+                <p className="mandarin-english-subline">Tell us a little about the learner before beginning.</p>
                 {levelUnit && <p className="mandarin-form-unit">{levelUnit}</p>}
                 <form onSubmit={submitForm} className="mandarin-profile-grid">
-                  <MandarinInput label="你的名字" hint="我们会这样称呼你" value={form.name} onChange={(v) => setForm({ ...form, name: v })} required />
-                  <MandarinInput label="年龄" hint="请输入实际年龄" type="number" min={4} max={99} value={form.age} onChange={(v) => setForm({ ...form, age: v })} required />
-                  <MandarinInput label="家长电邮" type="email" value={form.email} onChange={(v) => setForm({ ...form, email: v })} required />
-                  <MandarinInput label="家长联络号码" type="tel" value={form.phone} onChange={(v) => setForm({ ...form, phone: v })} required />
-                  <MandarinInput label="居住地区" value={form.location} onChange={(v) => setForm({ ...form, location: v })} required />
-                  <MandarinInput label="目前年级" value={displayLevel} onChange={() => undefined} disabled />
+                  <MandarinInput label="你的名字" englishLabel="Student name" hint="我们会这样称呼你" value={form.name} onChange={(v) => setForm({ ...form, name: v })} required />
+                  <MandarinInput label="年龄" englishLabel="Age" hint="请输入实际年龄" type="number" min={4} max={99} value={form.age} onChange={(v) => setForm({ ...form, age: v })} required />
+                  <MandarinInput label="家长电邮" englishLabel="Parent email" type="email" value={form.email} onChange={(v) => setForm({ ...form, email: v })} required />
+                  <MandarinInput label="家长联络号码" englishLabel="Parent contact" type="tel" value={form.phone} onChange={(v) => setForm({ ...form, phone: v })} required />
+                  <MandarinInput label="居住地区" englishLabel="Area" value={form.location} onChange={(v) => setForm({ ...form, location: v })} required />
+                  <MandarinInput label="目前年级" englishLabel="Current standard" value={displayLevel} onChange={() => undefined} disabled />
                   {error && <p className="mandarin-form-error sm:col-span-2" role="alert">{error}</p>}
                   <button type="submit" disabled={loading} className="mandarin-primary-button sm:col-span-2">
                     {loading ? <><span className="mandarin-loader" aria-hidden /> 正在准备旅程…</> : <>我的学习名片完成了 <ArrowGlyph className="h-5 w-5" /></>}
@@ -163,13 +165,13 @@ function StepLine({ done, active, number, label }: { done: boolean; active: bool
   );
 }
 
-function MandarinInput({ label, hint, value, onChange, type = "text", required, disabled, min, max }: {
-  label: string; hint?: string; value: string; onChange: (value: string) => void; type?: string;
+function MandarinInput({ label, englishLabel, hint, value, onChange, type = "text", required, disabled, min, max }: {
+  label: string; englishLabel?: string; hint?: string; value: string; onChange: (value: string) => void; type?: string;
   required?: boolean; disabled?: boolean; min?: number; max?: number;
 }) {
   return (
     <label className="mandarin-field">
-      <span>{label}{required && <b aria-hidden> ·</b>}</span>
+      <span>{label}{required && <b aria-hidden> ·</b>}{englishLabel && <small>{englishLabel}</small>}</span>
       <input type={type} value={value} onChange={(e) => onChange(e.target.value)} required={required} disabled={disabled} min={min} max={max} />
       {hint && <small>{hint}</small>}
     </label>

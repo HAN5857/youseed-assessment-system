@@ -53,6 +53,7 @@ export function MandarinResultView({ lead, test }: { lead: Lead; test: Test }) {
             <span className="mandarin-kicker light"><CheckGlyph className="h-5 w-5" /> 华文探索旅程 · 已完成</span>
             <h1>{firstName}，你留下了一份<span>独一无二的学习足迹</span></h1>
             <p>这不是一张只看分数的成绩单，而是一幅帮助老师与家长看见优势、理解需要、规划下一步的华文成长地图。</p>
+            <p className="mandarin-english-subline light">A clear Mandarin learning profile for parents, tutors and the learner’s next step.</p>
           </div>
           <MandarinCompanion mood="celebrate" className="mandarin-result-mascot" />
         </motion.div>

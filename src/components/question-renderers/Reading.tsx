@@ -8,6 +8,7 @@ import { splitPrompt } from "@/lib/prompt-format";
 import { InstructionHint } from "@/components/kids/InstructionHint";
 import { QuestionBody } from "@/components/kids/QuestionBody";
 import { hasCJK } from "@/lib/cjk";
+import Image from "next/image";
 
 const BADGE_COLORS_PLAYFUL = ["bg-pink-500", "bg-sky-500", "bg-yellow-500", "bg-emerald-500"];
 const BADGE_COLORS_CALM = ["bg-emerald-500", "bg-teal-500", "bg-lime-500", "bg-green-500"];
@@ -66,7 +67,11 @@ export function ReadingRenderer({ prompt, content, value, onChange }: RendererPr
             </p>
           )
         )}
-        <PassageCard text={passage} />
+        <PassageCard
+          text={passage}
+          imageUrl={content?.passageImage}
+          imageAlt={content?.passageImageAlt}
+        />
       </div>
 
       {/* Sub-questions column */}
@@ -90,11 +95,13 @@ export function ReadingRenderer({ prompt, content, value, onChange }: RendererPr
             </p>
             {s.image && (
               <div className="mb-3 flex justify-center">
-                <img
+                <Image
                   src={s.image}
                   alt={s.imageAlt ?? s.stem}
-                  loading="lazy"
-                  className="max-h-48 w-auto rounded-xl border border-slate-200 bg-white object-contain shadow-sm sm:max-h-56"
+                  width={640}
+                  height={480}
+                  sizes="(max-width: 640px) 92vw, 520px"
+                  className="max-h-48 max-w-full w-auto rounded-xl border border-slate-200 bg-white object-contain shadow-sm sm:max-h-56"
                 />
               </div>
             )}
