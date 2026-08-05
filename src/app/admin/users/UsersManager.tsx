@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 
 type UserRow = {
@@ -36,6 +36,10 @@ export function UsersManager({
   const router = useRouter();
   const [users, setUsers] = useState<UserRow[]>(initial);
   const [revealed, setRevealed] = useState<RevealedPassword | null>(null);
+  // Which user (if any) has the reset-password / set-org dialog open.
+  const [pwTarget, setPwTarget] = useState<UserRow | null>(null);
+  const [orgTarget, setOrgTarget] = useState<UserRow | null>(null);
+  const [dialogBusy, setDialogBusy] = useState(false);
 
   // ── Create form state ──
   const [formOpen, setFormOpen] = useState(false);
@@ -127,26 +131,57 @@ export function UsersManager({
     setUsers((prev) => prev.map((u) => (u.id === user.id ? { ...u, active: data.user.active } : u)));
   }
 
-  async function resetPassword(user: UserRow) {
-    if (!confirm(`Reset password for ${user.email}? The current password will stop working immediately.`)) {
-      return;
+  // Submit a password reset. `newPassword` empty → server generates a
+  // random one; non-empty → set that exact password (min 8, validated in
+  // the dialog). Works for SUPERADMIN and org-admins (server-gated).
+  async function submitResetPassword(user: UserRow, newPassword: string) {
+    setDialogBusy(true);
+    try {
+      const res = await fetch(`/api/admin/users/${user.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "reset-password",
+          ...(newPassword.trim() ? { newPassword: newPassword.trim() } : {}),
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.ok) {
+        alert(data?.message ?? data?.error ?? "Failed to reset password");
+        return;
+      }
+      setPwTarget(null);
+      setRevealed({
+        userId: data.user.id,
+        email: data.user.email,
+        password: data.newPassword,
+        reason: "reset",
+      });
+    } finally {
+      setDialogBusy(false);
     }
-    const res = await fetch(`/api/admin/users/${user.id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action: "reset-password" }),
-    });
-    const data = await res.json();
-    if (!res.ok || !data.ok) {
-      alert(data?.error ?? "Failed to reset password");
-      return;
+  }
+
+  // Assign / change / clear a user's org (SUPERADMIN only — the endpoint
+  // rejects org-admins for set-org). Empty string clears the org (solo scope).
+  async function submitSetOrg(user: UserRow, org: string) {
+    setDialogBusy(true);
+    try {
+      const res = await fetch(`/api/admin/users/${user.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "set-org", org: org.trim() || null }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.ok) {
+        alert(data?.message ?? data?.error ?? "Failed to set organisation");
+        return;
+      }
+      setUsers((prev) => prev.map((u) => (u.id === user.id ? { ...u, org: data.user.org } : u)));
+      setOrgTarget(null);
+    } finally {
+      setDialogBusy(false);
     }
-    setRevealed({
-      userId: data.user.id,
-      email: data.user.email,
-      password: data.newPassword,
-      reason: "reset",
-    });
   }
 
   return (
@@ -308,13 +343,22 @@ export function UsersManager({
                   </td>
                   {isSuper && (
                     <td className="px-4 py-3">
-                      {u.org ? (
-                        <span className="rounded bg-slate-100 px-2 py-0.5 font-mono text-[11px] font-semibold text-slate-800">
-                          {u.org}
-                        </span>
-                      ) : (
-                        <span className="text-xs italic text-slate-400">—</span>
-                      )}
+                      <button
+                        type="button"
+                        onClick={() => setOrgTarget(u)}
+                        title="Assign / change organisation"
+                        className="group inline-flex items-center gap-1"
+                      >
+                        {u.org ? (
+                          <span className="rounded bg-slate-100 px-2 py-0.5 font-mono text-[11px] font-semibold text-slate-800 group-hover:bg-indigo-100 group-hover:text-indigo-800">
+                            {u.org}
+                          </span>
+                        ) : (
+                          <span className="rounded border border-dashed border-slate-300 px-2 py-0.5 text-[11px] italic text-slate-400 group-hover:border-indigo-300 group-hover:text-indigo-600">
+                            + set org
+                          </span>
+                        )}
+                      </button>
                     </td>
                   )}
                   <td className="px-4 py-3">
@@ -335,7 +379,7 @@ export function UsersManager({
                     <div className="flex justify-end gap-2">
                       <button
                         type="button"
-                        onClick={() => resetPassword(u)}
+                        onClick={() => setPwTarget(u)}
                         className="rounded-md border border-slate-300 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 hover:bg-slate-50"
                       >
                         Reset password
@@ -370,9 +414,125 @@ export function UsersManager({
       </div>
       <p className="text-xs text-slate-500">
         Tutors created here can sign in at <code className="rounded bg-slate-100 px-1 py-0.5">/admin/login</code> with the
-        email and generated password. They&apos;ll only see their own leads and passkeys.
-        Admins see every tutor&apos;s data and can manage user accounts.
+        email and generated password. They can change their own password anytime at{" "}
+        <code className="rounded bg-slate-100 px-1 py-0.5">/admin/account</code>.
+        Admins see their team&apos;s data and can reset any teammate&apos;s password.
       </p>
+
+      {/* Reset-password dialog — type a specific password or leave blank
+          for a strong random one. */}
+      {pwTarget && (
+        <MiniPromptDialog
+          title={`Reset password — ${pwTarget.name}`}
+          subtitle={
+            <>Set a new password for <b>{pwTarget.email}</b>. The current one stops working immediately.</>
+          }
+          label="New password"
+          hint="Leave blank to auto-generate a strong random password."
+          placeholder="min 8 characters"
+          confirmLabel="Reset password"
+          minLength={8}
+          allowEmpty
+          busy={dialogBusy}
+          onCancel={() => setPwTarget(null)}
+          onSubmit={(v) => submitResetPassword(pwTarget, v)}
+        />
+      )}
+
+      {/* Set-org dialog (SUPERADMIN) — move a user between organisations. */}
+      {orgTarget && (
+        <MiniPromptDialog
+          title={`Organisation — ${orgTarget.name}`}
+          subtitle={
+            <>Assign <b>{orgTarget.email}</b> to a team. Everyone sharing a label is one org; any ADMIN in it sees the whole team.</>
+          }
+          label="Organisation label"
+          hint="Lowercase letters, numbers, _ and - only. Leave blank to remove from any org (solo scope)."
+          placeholder="e.g. anak_bijak"
+          confirmLabel="Save organisation"
+          initialValue={orgTarget.org ?? ""}
+          allowEmpty
+          mono
+          busy={dialogBusy}
+          onCancel={() => setOrgTarget(null)}
+          onSubmit={(v) => submitSetOrg(orgTarget, v)}
+        />
+      )}
+    </div>
+  );
+}
+
+// ─── Reusable single-field prompt dialog ─────────────────────────────────
+// Used for both "reset password" and "set org". Keeps a consistent modal
+// look instead of window.prompt(), and can enforce a min length.
+function MiniPromptDialog({
+  title, subtitle, label, hint, placeholder, confirmLabel,
+  initialValue = "", minLength = 0, allowEmpty = false, mono = false, busy = false,
+  onCancel, onSubmit,
+}: {
+  title: string;
+  subtitle?: ReactNode;
+  label: string;
+  hint?: string;
+  placeholder?: string;
+  confirmLabel: string;
+  initialValue?: string;
+  minLength?: number;
+  allowEmpty?: boolean;
+  mono?: boolean;
+  busy?: boolean;
+  onCancel: () => void;
+  onSubmit: (value: string) => void;
+}) {
+  const [value, setValue] = useState(initialValue);
+  const trimmed = value.trim();
+  const tooShort = trimmed.length > 0 && trimmed.length < minLength;
+  const emptyBlocked = !allowEmpty && trimmed.length === 0;
+  const disabled = busy || tooShort || emptyBlocked;
+
+  return (
+    <div className="fixed inset-0 z-50 grid place-items-center px-4" role="dialog" aria-modal="true">
+      <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" onClick={busy ? undefined : onCancel} />
+      <div className="relative w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl">
+        <h3 className="text-lg font-bold text-slate-900">{title}</h3>
+        {subtitle && <p className="mt-1 text-sm text-slate-600">{subtitle}</p>}
+        <label className="mt-4 block">
+          <span className="text-xs font-semibold uppercase tracking-wider text-slate-600">{label}</span>
+          <input
+            type="text"
+            autoFocus
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            placeholder={placeholder}
+            onKeyDown={(e) => { if (e.key === "Enter" && !disabled) onSubmit(value); }}
+            className={`mt-1 w-full rounded-lg border px-3 py-2 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 ${
+              tooShort ? "border-rose-300" : "border-slate-300"
+            } ${mono ? "font-mono lowercase" : "font-mono"}`}
+          />
+          {tooShort && (
+            <p className="mt-1 text-xs font-medium text-rose-600">Must be at least {minLength} characters.</p>
+          )}
+          {hint && !tooShort && <p className="mt-1 text-[11px] text-slate-500">{hint}</p>}
+        </label>
+        <div className="mt-6 flex justify-end gap-3">
+          <button
+            type="button"
+            onClick={onCancel}
+            disabled={busy}
+            className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={() => onSubmit(value)}
+            disabled={disabled}
+            className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            {busy ? "Saving…" : confirmLabel}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
