@@ -1,26 +1,18 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
-import { requireSession, hashPassword } from "@/lib/auth";
+import { requireSession, hashPassword, type SessionPayload } from "@/lib/auth";
 import { customAlphabet } from "nanoid";
 
 // Any signed-in user with admin-ish role gates:
-//   SUPERADMIN → can list/create anyone (any org)
+//   SUPERADMIN  → can list/create anyone (any org)
 //   ADMIN + org → can list/create teammates only, forced into their own org
 //   TUTOR / no-org ADMIN → 403 (can't reach this page anyway)
-async function requireOrgManager() {
+async function requireOrgManager(): Promise<SessionPayload> {
   const s = await requireSession();
   if (s.role === "SUPERADMIN") return s;
-  if (s.role === "ADMIN" && s.org) return s;
+  if (s.role === "ADMIN" && s.orgId) return s;
   throw new Error("FORBIDDEN");
-}
-
-// Free-form but sanitised — lowercase, [a-z0-9_-], max 40. Empty → NULL
-// (removes the user's org membership).
-function cleanOrg(raw: string | null | undefined): string | null {
-  if (raw == null) return null;
-  const s = String(raw).trim().toLowerCase().replace(/\s+/g, "_").replace(/[^a-z0-9_-]/g, "");
-  return s.length === 0 ? null : s.slice(0, 40);
 }
 
 // Initial-password generator: ambiguity-free alphabet, 14 chars ≈ 70+ bits entropy.
@@ -40,9 +32,9 @@ const createSchema = z.object({
   // passwords for tutors. Tutors can rotate it themselves after logging in
   // via /admin/account.
   initialPassword: z.string().min(8).max(200).optional(),
-  // Optional: tenant / organisation slug. SUPERADMIN can set to anything;
-  // ADMIN callers are forced into their own org (server-side override).
-  org: z.string().max(40).optional().nullable(),
+  // Optional: Organization.id. SUPERADMIN can assign any existing org (or
+  // null = solo). ADMIN callers are forced into their own org server-side.
+  orgId: z.string().optional().nullable(),
 });
 
 export async function GET() {
@@ -54,7 +46,7 @@ export async function GET() {
     return NextResponse.json({ ok: false, error: e?.message ?? "UNAUTHORIZED" }, { status: code });
   }
   // SUPERADMIN sees every user; org-admin sees only teammates in their org.
-  const where = session.role === "SUPERADMIN" ? {} : { org: session.org ?? undefined };
+  const where = session.role === "SUPERADMIN" ? {} : { orgId: session.orgId ?? undefined };
   // Include per-user passkey + lead counts so the admin can see at-a-glance
   // who's actually using the system.
   const users = await prisma.user.findMany({
@@ -65,7 +57,8 @@ export async function GET() {
       email: true,
       name: true,
       role: true,
-      org: true,
+      orgId: true,
+      org: { select: { slug: true, name: true } },
       active: true,
       createdAt: true,
       _count: { select: { passkeys: true, leads: true } },
@@ -92,11 +85,20 @@ export async function POST(req: Request) {
   }
   const { email, name, role, initialPassword: providedPassword } = parsed.data;
   const normalized = email.trim().toLowerCase();
-  // Org: SUPERADMIN can set any label (or null); ADMIN is forced into
-  // their own org — silently overwrite anything they try to send.
-  const org = session.role === "SUPERADMIN"
-    ? cleanOrg(parsed.data.org)
-    : session.org ?? null;
+  // Org: SUPERADMIN can assign any EXISTING org (or null); ADMIN is forced
+  // into their own org. Validate the org exists to avoid dangling FKs.
+  let orgId: string | null;
+  if (session.role === "SUPERADMIN") {
+    orgId = parsed.data.orgId?.trim() || null;
+    if (orgId) {
+      const exists = await prisma.organization.findUnique({ where: { id: orgId }, select: { id: true } });
+      if (!exists) {
+        return NextResponse.json({ ok: false, error: "ORG_NOT_FOUND" }, { status: 400 });
+      }
+    }
+  } else {
+    orgId = session.orgId ?? null;
+  }
 
   // Reject duplicate emails up-front for a clean error message
   const existing = await prisma.user.findUnique({ where: { email: normalized } });
@@ -117,10 +119,11 @@ export async function POST(req: Request) {
       role,
       passwordHash,
       active: true,
-      org,
+      orgId,
     },
     select: {
-      id: true, email: true, name: true, role: true, org: true, active: true, createdAt: true,
+      id: true, email: true, name: true, role: true, orgId: true,
+      org: { select: { slug: true, name: true } }, active: true, createdAt: true,
     },
   });
 

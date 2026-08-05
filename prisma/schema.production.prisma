@@ -17,21 +17,37 @@ model User {
   passwordHash String
   name         String
   role         String
-  // Tenant / organisation label. Users with the same non-null `org` are
-  // treated as one team: any ADMIN sees every tutor + lead + passkey
-  // owned by users sharing their org. NULL means "no team" — user is
-  // scoped exclusively to their own records, matching the pre-multi-org
-  // behaviour. SUPERADMIN always sees everything regardless of org.
-  // Example values: "youseed", "anak_bijak". Free-form so new brands
-  // can be onboarded without a code change.
-  org          String?
+  // Tenant / organisation membership. Users sharing an orgId are one team:
+  // any ADMIN in that org sees every teammate's leads + passkeys + users.
+  // NULL orgId = no team (solo scope). SUPERADMIN sees everything.
+  // See src/lib/tenant-scope.ts for the query helpers.
+  orgId        String?
+  org          Organization? @relation(fields: [orgId], references: [id])
   active       Boolean  @default(true)
   createdAt    DateTime @default(now())
 
   passkeys     Passkey[]
   leads        Lead[]
 
-  @@index([org])
+  @@index([orgId])
+}
+
+// ─── Organisation / tenant ──────────────────────────────────────────────
+// A brand / customer that owns a set of tutors + their students. First-class
+// so it can carry a display name, branding, per-org test restrictions and a
+// passkey prefix. Adding a new org = one row (no code change).
+model Organization {
+  id            String   @id @default(cuid())
+  slug          String   @unique
+  name          String
+  active        Boolean  @default(true)
+  logoUrl       String?
+  brandColor    String?
+  passkeyPrefix String?
+  allowedTests  String?
+  createdAt     DateTime @default(now())
+
+  users         User[]
 }
 
 model Test {

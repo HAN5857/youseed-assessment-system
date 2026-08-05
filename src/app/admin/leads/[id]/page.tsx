@@ -30,11 +30,11 @@ export default async function LeadDetailPage({
     where: { id },
     include: {
       test: { select: { title: true, subject: true, level: true, duration: true } },
-      tutor: { select: { name: true, email: true, org: true } },
+      tutor: { select: { name: true, email: true, orgId: true } },
     },
   });
   if (!lead) notFound();
-  if (!(await canAccessTutorResource(session, lead.tutorId, lead.tutor?.org))) {
+  if (!(await canAccessTutorResource(session, lead.tutorId, lead.tutor?.orgId))) {
     return <div className="p-10 text-center text-sm text-red-600">Forbidden.</div>;
   }
 

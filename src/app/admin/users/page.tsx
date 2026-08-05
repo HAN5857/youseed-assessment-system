@@ -9,40 +9,52 @@ export default async function UsersPage() {
   const session = await getSession();
   if (!session) redirect("/admin/login");
   const isSuper = session.role === "SUPERADMIN";
-  const isOrgAdmin = session.role === "ADMIN" && !!session.org;
+  const isOrgAdmin = session.role === "ADMIN" && !!session.orgId;
   if (!isSuper && !isOrgAdmin) {
     // TUTORs + orphan ADMINs (no org) don't see anyone else.
     redirect("/admin");
   }
 
   // SUPERADMIN sees every user; org-admin sees teammates.
-  const where = isSuper ? {} : { org: session.org ?? undefined };
-  const users = await prisma.user.findMany({
-    where,
-    orderBy: [{ active: "desc" }, { createdAt: "desc" }],
-    select: {
-      id: true,
-      email: true,
-      name: true,
-      role: true,
-      org: true,
-      active: true,
-      createdAt: true,
-      _count: { select: { passkeys: true, leads: true } },
-    },
-  });
+  const where = isSuper ? {} : { orgId: session.orgId ?? undefined };
+  const [users, orgs] = await Promise.all([
+    prisma.user.findMany({
+      where,
+      orderBy: [{ active: "desc" }, { createdAt: "desc" }],
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        role: true,
+        orgId: true,
+        org: { select: { slug: true, name: true } },
+        active: true,
+        createdAt: true,
+        _count: { select: { passkeys: true, leads: true } },
+      },
+    }),
+    // Org dropdown source — only SUPERADMIN can reassign orgs, so only they
+    // need the list. Org-admins always create within their own org.
+    isSuper
+      ? prisma.organization.findMany({
+          where: { active: true },
+          select: { id: true, slug: true, name: true },
+          orderBy: { name: "asc" },
+        })
+      : Promise.resolve([]),
+  ]);
 
   return (
     <div className="mx-auto max-w-6xl px-6 py-8">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">
-            Users {isOrgAdmin && <span className="ml-2 rounded bg-indigo-50 px-2 py-0.5 text-sm font-semibold text-indigo-700">{session.org}</span>}
+            Users {isOrgAdmin && <span className="ml-2 rounded bg-indigo-50 px-2 py-0.5 text-sm font-semibold text-indigo-700">{session.orgSlug}</span>}
           </h1>
           <p className="mt-1 text-sm text-slate-600">
             {isSuper
               ? "Create tutor accounts across every organisation. Each tutor sees only their own students."
-              : <>Manage tutors on your <b>{session.org}</b> team. New tutors join this org automatically.</>}
+              : <>Manage tutors on your <b>{session.orgSlug}</b> team. New tutors join this org automatically.</>}
           </p>
         </div>
         <span className="text-xs text-slate-500">
@@ -54,13 +66,16 @@ export default async function UsersPage() {
       <UsersManager
         currentUserId={session.uid}
         isSuper={isSuper}
-        callerOrg={session.org ?? null}
+        callerOrgSlug={session.orgSlug ?? null}
+        orgs={orgs}
         initial={users.map((u) => ({
           id: u.id,
           email: u.email,
           name: u.name,
           role: u.role,
-          org: u.org,
+          orgId: u.orgId,
+          orgName: u.org?.name ?? null,
+          orgSlug: u.org?.slug ?? null,
           active: u.active,
           createdAt: u.createdAt.toISOString(),
           passkeyCount: u._count.passkeys,

@@ -8,12 +8,16 @@ type UserRow = {
   email: string;
   name: string;
   role: string;
-  org: string | null;
+  orgId: string | null;
+  orgName: string | null;
+  orgSlug: string | null;
   active: boolean;
   createdAt: string;
   passkeyCount: number;
   leadCount: number;
 };
+
+type OrgLite = { id: string; slug: string; name: string };
 
 type RevealedPassword = {
   userId: string;
@@ -26,12 +30,14 @@ export function UsersManager({
   initial,
   currentUserId,
   isSuper,
-  callerOrg,
+  callerOrgSlug,
+  orgs,
 }: {
   initial: UserRow[];
   currentUserId: string;
   isSuper: boolean;
-  callerOrg: string | null;
+  callerOrgSlug: string | null;
+  orgs: OrgLite[];
 }) {
   const router = useRouter();
   const [users, setUsers] = useState<UserRow[]>(initial);
@@ -47,8 +53,9 @@ export function UsersManager({
   const [formEmail, setFormEmail] = useState("");
   const [formRole, setFormRole] = useState<"TUTOR" | "ADMIN">("TUTOR");
   const [formPassword, setFormPassword] = useState("");
-  // SUPERADMIN can pick any org label; org-admin has this pre-filled + locked.
-  const [formOrg, setFormOrg] = useState<string>(isSuper ? "" : callerOrg ?? "");
+  // SUPERADMIN picks an org from the dropdown (empty = solo). Org-admins
+  // don't see the field — the server forces new users into their org.
+  const [formOrgId, setFormOrgId] = useState<string>("");
   // Note: SUPERADMIN can only be assigned via direct DB edit, never via this
   // form — by design, to prevent accidental privilege escalation.
   const [formBusy, setFormBusy] = useState(false);
@@ -69,9 +76,9 @@ export function UsersManager({
           // Only send an initialPassword if the admin actually typed one.
           // Empty string / whitespace → server auto-generates.
           initialPassword: formPassword.trim() ? formPassword : undefined,
-          // SuperAdmin can set any org; server ignores this for org-admins
+          // SuperAdmin can assign an org; server ignores this for org-admins
           // (they're always forced into their own org).
-          org: formOrg.trim() ? formOrg.trim() : null,
+          orgId: formOrgId || null,
         }),
       });
       const data = await res.json();
@@ -104,7 +111,7 @@ export function UsersManager({
       setFormEmail("");
       setFormRole("TUTOR");
       setFormPassword("");
-      setFormOrg(isSuper ? "" : callerOrg ?? "");
+      setFormOrgId("");
       setFormOpen(false);
     } catch (err: any) {
       setFormError(err?.message ?? "Network error");
@@ -162,22 +169,23 @@ export function UsersManager({
     }
   }
 
-  // Assign / change / clear a user's org (SUPERADMIN only — the endpoint
-  // rejects org-admins for set-org). Empty string clears the org (solo scope).
-  async function submitSetOrg(user: UserRow, org: string) {
+  // Assign / change / clear a user's org (SUPERADMIN only). Empty = solo scope.
+  async function submitSetOrg(user: UserRow, orgId: string) {
     setDialogBusy(true);
     try {
       const res = await fetch(`/api/admin/users/${user.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "set-org", org: org.trim() || null }),
+        body: JSON.stringify({ action: "set-org", orgId: orgId || null }),
       });
       const data = await res.json();
       if (!res.ok || !data.ok) {
         alert(data?.message ?? data?.error ?? "Failed to set organisation");
         return;
       }
-      setUsers((prev) => prev.map((u) => (u.id === user.id ? { ...u, org: data.user.org } : u)));
+      setUsers((prev) => prev.map((u) => (u.id === user.id
+        ? { ...u, orgId: data.user.orgId, orgName: data.user.org?.name ?? null, orgSlug: data.user.org?.slug ?? null }
+        : u)));
       setOrgTarget(null);
     } finally {
       setDialogBusy(false);
@@ -238,26 +246,31 @@ export function UsersManager({
                 <option value="ADMIN">Admin — sees every teammate in the org</option>
               </select>
             </label>
-            <label className="block sm:col-span-3">
-              <span className="text-xs font-medium text-slate-600">
-                Organisation / team {isSuper
-                  ? <span className="text-slate-400">(optional — new brands can be typed freely)</span>
-                  : <span className="text-slate-400">(locked to your team)</span>}
-              </span>
-              <input
-                type="text"
-                value={formOrg}
-                onChange={(e) => setFormOrg(e.target.value)}
-                disabled={!isSuper}
-                maxLength={40}
-                placeholder={isSuper ? "e.g. youseed / anak_bijak" : callerOrg ?? ""}
-                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-mono lowercase outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 disabled:bg-slate-100 disabled:text-slate-500"
-              />
-              <p className="mt-1 text-[11px] text-slate-500">
-                Users sharing the same organisation label form one team — any ADMIN in that team sees all teammates&apos; leads &amp; passkeys.
-                {isSuper && " Leave blank if the tutor is unaffiliated (they'll see only their own records)."}
+            {isSuper ? (
+              <label className="block sm:col-span-3">
+                <span className="text-xs font-medium text-slate-600">
+                  Organisation <span className="text-slate-400">(optional — leave blank for an unaffiliated user)</span>
+                </span>
+                <select
+                  value={formOrgId}
+                  onChange={(e) => setFormOrgId(e.target.value)}
+                  className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+                >
+                  <option value="">— none (solo scope) —</option>
+                  {orgs.map((o) => (
+                    <option key={o.id} value={o.id}>{o.name} · {o.slug}</option>
+                  ))}
+                </select>
+                <p className="mt-1 text-[11px] text-slate-500">
+                  Users in the same org form one team — an ADMIN there sees all teammates&apos; leads &amp; passkeys.
+                  Manage the org list on the <b>Orgs</b> tab.
+                </p>
+              </label>
+            ) : (
+              <p className="sm:col-span-3 rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-[11px] text-slate-500">
+                New accounts join your <b>{callerOrgSlug}</b> team automatically.
               </p>
-            </label>
+            )}
             <label className="block sm:col-span-3">
               <span className="text-xs font-medium text-slate-600">
                 Initial password <span className="text-slate-400">(optional — leave blank to auto-generate)</span>
@@ -349,9 +362,9 @@ export function UsersManager({
                         title="Assign / change organisation"
                         className="group inline-flex items-center gap-1"
                       >
-                        {u.org ? (
-                          <span className="rounded bg-slate-100 px-2 py-0.5 font-mono text-[11px] font-semibold text-slate-800 group-hover:bg-indigo-100 group-hover:text-indigo-800">
-                            {u.org}
+                        {u.orgId ? (
+                          <span className="rounded bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-800 group-hover:bg-indigo-100 group-hover:text-indigo-800">
+                            {u.orgName ?? u.orgSlug}
                           </span>
                         ) : (
                           <span className="rounded border border-dashed border-slate-300 px-2 py-0.5 text-[11px] italic text-slate-400 group-hover:border-indigo-300 group-hover:text-indigo-600">
@@ -441,23 +454,60 @@ export function UsersManager({
 
       {/* Set-org dialog (SUPERADMIN) — move a user between organisations. */}
       {orgTarget && (
-        <MiniPromptDialog
-          title={`Organisation — ${orgTarget.name}`}
-          subtitle={
-            <>Assign <b>{orgTarget.email}</b> to a team. Everyone sharing a label is one org; any ADMIN in it sees the whole team.</>
-          }
-          label="Organisation label"
-          hint="Lowercase letters, numbers, _ and - only. Leave blank to remove from any org (solo scope)."
-          placeholder="e.g. anak_bijak"
-          confirmLabel="Save organisation"
-          initialValue={orgTarget.org ?? ""}
-          allowEmpty
-          mono
+        <SetOrgDialog
+          user={orgTarget}
+          orgs={orgs}
           busy={dialogBusy}
           onCancel={() => setOrgTarget(null)}
-          onSubmit={(v) => submitSetOrg(orgTarget, v)}
+          onSubmit={(orgId) => submitSetOrg(orgTarget, orgId)}
         />
       )}
+    </div>
+  );
+}
+
+// ─── Set-org dialog — pick from the Organizations list ────────────────────
+function SetOrgDialog({ user, orgs, busy, onCancel, onSubmit }: {
+  user: UserRow; orgs: OrgLite[]; busy: boolean;
+  onCancel: () => void; onSubmit: (orgId: string) => void;
+}) {
+  const [orgId, setOrgId] = useState(user.orgId ?? "");
+  return (
+    <div className="fixed inset-0 z-50 grid place-items-center px-4" role="dialog" aria-modal="true">
+      <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" onClick={busy ? undefined : onCancel} />
+      <div className="relative w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl">
+        <h3 className="text-lg font-bold text-slate-900">Organisation — {user.name}</h3>
+        <p className="mt-1 text-sm text-slate-600">
+          Assign <b>{user.email}</b> to a team. Everyone in an org is one team; any ADMIN there sees the whole team.
+        </p>
+        <label className="mt-4 block">
+          <span className="text-xs font-semibold uppercase tracking-wider text-slate-600">Organisation</span>
+          <select
+            value={orgId}
+            onChange={(e) => setOrgId(e.target.value)}
+            autoFocus
+            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+          >
+            <option value="">— none (solo scope) —</option>
+            {orgs.map((o) => (
+              <option key={o.id} value={o.id}>{o.name} · {o.slug}</option>
+            ))}
+          </select>
+          {orgs.length === 0 && (
+            <p className="mt-1 text-[11px] text-amber-700">No organisations yet — create one on the <b>Orgs</b> tab first.</p>
+          )}
+        </label>
+        <div className="mt-6 flex justify-end gap-3">
+          <button type="button" onClick={onCancel} disabled={busy}
+            className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50">
+            Cancel
+          </button>
+          <button type="button" onClick={() => onSubmit(orgId)} disabled={busy}
+            className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-50">
+            {busy ? "Saving…" : "Save organisation"}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

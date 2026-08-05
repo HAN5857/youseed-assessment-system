@@ -47,7 +47,7 @@ export default async function LeadsListPage({
   // Tenant-aware tutor set — SUPERADMIN → null (all), ADMIN+org → whole
   // team, others → self. See src/lib/tenant-scope.ts.
   const visibleIds = await tenantVisibleTutorIds(session);
-  const canShowTutorFilter = isSuper || (session.role === "ADMIN" && !!session.org);
+  const canShowTutorFilter = isSuper || (session.role === "ADMIN" && !!session.orgId);
 
   // Build the Prisma where clause from URL params.
   const where: Prisma.LeadWhereInput = {};
@@ -81,7 +81,7 @@ export default async function LeadsListPage({
       where,
       include: {
         test: { select: { title: true, subject: true, level: true } },
-        tutor: { select: { id: true, name: true, email: true, org: true } },
+        tutor: { select: { id: true, name: true, email: true } },
       },
       orderBy: { startedAt: "desc" },
       take: 500,
@@ -93,7 +93,7 @@ export default async function LeadsListPage({
             active: true,
             role: { in: ["TUTOR", "ADMIN"] },
             // For an org-scoped admin, only show teammates in the dropdown.
-            ...(isSuper ? {} : { org: session.org ?? undefined }),
+            ...(isSuper ? {} : { orgId: session.orgId ?? undefined }),
           },
           select: { id: true, name: true, email: true },
           orderBy: { name: "asc" },
@@ -116,8 +116,8 @@ export default async function LeadsListPage({
           <h1 className="text-2xl font-bold tracking-tight">Leads</h1>
           <p className="text-sm text-slate-600">
             {hasActiveFilter
-              ? `${leads.length} matching ${isSuper ? "across all prospects" : canShowTutorFilter ? `across ${session.org}` : "of your prospects"}.`
-              : `${leads.length} most recent ${isSuper ? "across all prospects" : canShowTutorFilter ? `across ${session.org}` : "of your prospects"}.`}
+              ? `${leads.length} matching ${isSuper ? "across all prospects" : canShowTutorFilter ? `across ${session.orgSlug}` : "of your prospects"}.`
+              : `${leads.length} most recent ${isSuper ? "across all prospects" : canShowTutorFilter ? `across ${session.orgSlug}` : "of your prospects"}.`}
           </p>
         </div>
         <a

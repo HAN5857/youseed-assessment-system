@@ -13,18 +13,13 @@ const patchSchema = z.object({
   action: z.enum(["toggle-active", "reset-password", "rename", "set-org"]).optional(),
   active: z.boolean().optional(),
   name: z.string().min(1).max(120).optional(),
-  org: z.string().max(40).optional().nullable(),
+  // Organization.id (or null to remove from any org). SUPERADMIN only.
+  orgId: z.string().optional().nullable(),
   // Optional specific password for the reset-password action. When omitted,
   // a strong random one is generated (existing behaviour). Min 8 lets an
   // admin set an easy-to-remember password for a tutor.
   newPassword: z.string().min(8).max(200).optional(),
 });
-
-function cleanOrg(raw: string | null | undefined): string | null {
-  if (raw == null) return null;
-  const s = String(raw).trim().toLowerCase().replace(/\s+/g, "_").replace(/[^a-z0-9_-]/g, "");
-  return s.length === 0 ? null : s.slice(0, 40);
-}
 
 export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }> }) {
   let session;
@@ -34,7 +29,7 @@ export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }>
     return NextResponse.json({ ok: false, error: "UNAUTHORIZED" }, { status: 401 });
   }
   // SUPERADMIN can touch anyone; ADMIN+org can touch teammates; others 403.
-  const canOrgManage = session.role === "SUPERADMIN" || (session.role === "ADMIN" && !!session.org);
+  const canOrgManage = session.role === "SUPERADMIN" || (session.role === "ADMIN" && !!session.orgId);
   if (!canOrgManage) {
     return NextResponse.json({ ok: false, error: "FORBIDDEN" }, { status: 403 });
   }
@@ -52,7 +47,7 @@ export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }>
   if (!target) return NextResponse.json({ ok: false, error: "NOT_FOUND" }, { status: 404 });
   // ADMIN can only touch users in their org (never SUPERADMIN, never other orgs).
   if (session.role !== "SUPERADMIN") {
-    if (target.role === "SUPERADMIN" || target.org !== session.org) {
+    if (target.role === "SUPERADMIN" || target.orgId !== session.orgId) {
       return NextResponse.json({ ok: false, error: "FORBIDDEN" }, { status: 403 });
     }
   }
@@ -96,20 +91,30 @@ export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }>
     nextActive = parsed.data.active;
   }
 
-  // Org set action (SUPERADMIN only, already gated above).
-  const nextOrg =
-    parsed.data.action === "set-org"
-      ? cleanOrg(parsed.data.org)
-      : undefined;
+  // Org set action (SUPERADMIN only, already gated above). Validate the
+  // target org exists before assigning to avoid dangling FKs.
+  let nextOrgId: string | null | undefined;
+  if (parsed.data.action === "set-org") {
+    nextOrgId = parsed.data.orgId?.trim() || null;
+    if (nextOrgId) {
+      const exists = await prisma.organization.findUnique({ where: { id: nextOrgId }, select: { id: true } });
+      if (!exists) {
+        return NextResponse.json({ ok: false, error: "ORG_NOT_FOUND" }, { status: 400 });
+      }
+    }
+  }
 
   const user = await prisma.user.update({
     where: { id },
     data: {
       ...(typeof nextActive === "boolean" ? { active: nextActive } : {}),
       ...(parsed.data.name ? { name: parsed.data.name.trim() } : {}),
-      ...(nextOrg !== undefined ? { org: nextOrg } : {}),
+      ...(nextOrgId !== undefined ? { orgId: nextOrgId } : {}),
     },
-    select: { id: true, email: true, name: true, role: true, org: true, active: true, createdAt: true },
+    select: {
+      id: true, email: true, name: true, role: true, orgId: true,
+      org: { select: { slug: true, name: true } }, active: true, createdAt: true,
+    },
   });
   return NextResponse.json({ ok: true, user });
 }

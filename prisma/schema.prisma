@@ -18,18 +18,40 @@ model User {
   passwordHash String
   name         String
   role         String   // "TUTOR" | "ADMIN" | "SUPERADMIN"
-  // Tenant / organisation. Users with the same non-null `org` are one
-  // team: any ADMIN in an org sees every tutor + lead + passkey owned by
-  // users in that org. NULL means "no team" — user is scoped to their
-  // own records only. See src/lib/tenant-scope.ts for the query helpers.
-  org          String?
+  // Tenant / organisation membership. Users sharing an orgId are one team:
+  // any ADMIN in that org sees every teammate's leads + passkeys + users.
+  // NULL orgId = no team (solo scope). SUPERADMIN sees everything.
+  // See src/lib/tenant-scope.ts for the query helpers.
+  orgId        String?
+  org          Organization? @relation(fields: [orgId], references: [id])
   active       Boolean  @default(true)
   createdAt    DateTime @default(now())
 
   passkeys     Passkey[]
   leads        Lead[]
 
-  @@index([org])
+  @@index([orgId])
+}
+
+// ─── Organisation / tenant ──────────────────────────────────────────────
+// A brand / customer that owns a set of tutors + their students. First-class
+// so it can carry a display name, branding, per-org test restrictions and a
+// passkey prefix. Adding a new org = one row (no code change).
+model Organization {
+  id            String   @id @default(cuid())
+  slug          String   @unique          // "anak_bijak" — used in filters/labels
+  name          String                    // "Anak Bijak" — display name
+  active        Boolean  @default(true)    // disable to freeze a whole org
+  logoUrl       String?                    // shown on their students' test pages
+  brandColor    String?                    // hex accent, e.g. "#D9403C"
+  passkeyPrefix String?                    // auto-prefix for this org's passkeys
+  // JSON array of "subject/level" strings a tutor in this org may generate
+  // passkeys for, e.g. ["english/standard-1","chinese/standard-2"]. NULL =
+  // every active test is allowed.
+  allowedTests  String?
+  createdAt     DateTime @default(now())
+
+  users         User[]
 }
 
 // ─── Test content ───────────────────────────────────────────────────────────

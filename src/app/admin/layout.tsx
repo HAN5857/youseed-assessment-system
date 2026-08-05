@@ -23,7 +23,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const session = await getSession();
   // Pass only the safe fields down to the client nav — never the JWT.
   const navSession = session
-    ? { name: session.name, role: session.role, org: session.org ?? null }
+    ? { name: session.name, role: session.role, orgId: session.orgId ?? null, orgSlug: session.orgSlug ?? null }
     : null;
   return (
     <div className="min-h-screen bg-slate-50">

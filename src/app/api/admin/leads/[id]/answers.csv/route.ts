@@ -29,11 +29,11 @@ export async function GET(req: Request, ctx: { params: Promise<{ id: string }> }
     where: { id },
     include: {
       test: { select: { title: true, subject: true, level: true } },
-      tutor: { select: { name: true, email: true, org: true } },
+      tutor: { select: { name: true, email: true, orgId: true } },
     },
   });
   if (!lead) return new Response("Not found", { status: 404 });
-  if (!(await canAccessTutorResource(session, lead.tutorId, lead.tutor?.org))) {
+  if (!(await canAccessTutorResource(session, lead.tutorId, lead.tutor?.orgId))) {
     return new Response("Forbidden", { status: 403 });
   }
 

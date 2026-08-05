@@ -12,10 +12,10 @@ export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }>
   const body = await req.json().catch(() => ({}));
   const pk = await prisma.passkey.findUnique({
     where: { id },
-    include: { tutor: { select: { org: true } } },
+    include: { tutor: { select: { orgId: true } } },
   });
   if (!pk) return NextResponse.json({ ok: false, error: "NOT_FOUND" }, { status: 404 });
-  if (!(await canAccessTutorResource(session, pk.tutorId, pk.tutor?.org))) {
+  if (!(await canAccessTutorResource(session, pk.tutorId, pk.tutor?.orgId))) {
     return NextResponse.json({ ok: false, error: "FORBIDDEN" }, { status: 403 });
   }
   const updated = await prisma.passkey.update({

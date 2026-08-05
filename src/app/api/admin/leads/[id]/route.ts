@@ -17,10 +17,10 @@ export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }>
   const { id } = await ctx.params;
   const lead = await prisma.lead.findUnique({
     where: { id },
-    include: { tutor: { select: { org: true } } },
+    include: { tutor: { select: { orgId: true } } },
   });
   if (!lead) return NextResponse.json({ ok: false, error: "NOT_FOUND" }, { status: 404 });
-  if (!(await canAccessTutorResource(session, lead.tutorId, lead.tutor?.org))) {
+  if (!(await canAccessTutorResource(session, lead.tutorId, lead.tutor?.orgId))) {
     return NextResponse.json({ ok: false, error: "FORBIDDEN" }, { status: 403 });
   }
   const body = await req.json().catch(() => ({}));

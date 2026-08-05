@@ -16,7 +16,10 @@ export async function POST(req: Request) {
     if (!parsed.success) {
       return NextResponse.json({ ok: false, error: "Invalid credentials" }, { status: 400 });
     }
-    const user = await prisma.user.findUnique({ where: { email: parsed.data.email.toLowerCase() } });
+    const user = await prisma.user.findUnique({
+      where: { email: parsed.data.email.toLowerCase() },
+      include: { org: { select: { id: true, slug: true, active: true } } },
+    });
     if (!user || !user.active) {
       return NextResponse.json({ ok: false, error: "Invalid credentials" }, { status: 401 });
     }
@@ -24,11 +27,15 @@ export async function POST(req: Request) {
     if (!ok) {
       return NextResponse.json({ ok: false, error: "Invalid credentials" }, { status: 401 });
     }
+    // If the user's org has been disabled, treat them as unaffiliated
+    // (solo scope) rather than leaking a frozen org's data.
+    const orgActive = user.org?.active ?? false;
     const token = signSession({
       uid: user.id,
       role: user.role as any,
       name: user.name,
-      org: (user as any).org ?? null,
+      orgId: orgActive ? user.orgId ?? null : null,
+      orgSlug: orgActive ? user.org?.slug ?? null : null,
     });
     await setSessionCookie(token);
     return NextResponse.json({ ok: true, role: user.role });
