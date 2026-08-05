@@ -3,7 +3,7 @@ import { Reorder, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import type { RendererProps } from "./index";
 import { sound } from "@/lib/sounds";
-import { useUiTheme } from "@/lib/ui-theme";
+import { useIsChineseTheme, useUiTheme } from "@/lib/ui-theme";
 
 const COLOURS_PLAYFUL = [
   "from-pink-100 to-rose-100 border-pink-300",
@@ -33,6 +33,7 @@ type ChipItem = { id: number; text: string };
  */
 export function MatchingDndRenderer({ prompt, content, value, onChange }: RendererProps) {
   const theme = useUiTheme();
+  const chinese = useIsChineseTheme();
   const calm = theme === "calm";
   const colours = calm ? COLOURS_CALM : COLOURS_PLAYFUL;
   const rawLeft: LeftItem[] = content?.left ?? [];
@@ -72,12 +73,12 @@ export function MatchingDndRenderer({ prompt, content, value, onChange }: Render
   const chipHandle = calm ? "text-emerald-400" : "text-violet-400";
 
   return (
-    <div>
+    <div className={chinese ? "mandarin-matching" : ""}>
       <p className="mb-4 whitespace-pre-wrap text-2xl font-bold leading-snug text-slate-800 sm:text-3xl">
         {prompt}
       </p>
       <p className={hintChip}>
-        ✋ Drag the right cards to match each sentence!
+        {chinese ? "拖动右边的词卡，让每一对意思相遇。" : "✋ Drag the right cards to match each sentence!"}
       </p>
 
       <div className="grid grid-cols-[1fr_auto_1fr] gap-3 sm:gap-4">

@@ -14,7 +14,8 @@ const RANK_COLORS_CALM = ["bg-emerald-400", "bg-teal-400", "bg-lime-400", "bg-gr
  * Otherwise falls back to the legacy up/down arrow UI.
  */
 export function OrderingRenderer(props: RendererProps) {
-  if (props.content?.dragDrop === true) {
+  const chinese = hasCJK(props.prompt) || (props.content?.items ?? []).some((item: string) => hasCJK(item));
+  if (props.content?.dragDrop === true || chinese) {
     return <OrderingDndRenderer {...props} />;
   }
   return <OrderingLegacyRenderer {...props} />;

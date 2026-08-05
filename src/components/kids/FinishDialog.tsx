@@ -5,6 +5,7 @@ import { Mascot } from "./Mascot";
 import { sound } from "@/lib/sounds";
 import { useUiTier, useUiSubject } from "@/lib/ui-theme";
 import { runnerCopy } from "@/lib/runner-i18n";
+import { CheckGlyph, MandarinCompanion } from "@/components/mandarin/MandarinGlyphs";
 
 export function FinishDialog({
   open,
@@ -141,6 +142,30 @@ function CalmFinishDialog({
   const upper = tier === "upper-primary";
   const subject = useUiSubject();
   const t = runnerCopy(subject);
+  const chinese = ["chinese", "zh", "zh-cn"].includes(String(subject).toLowerCase());
+
+  if (chinese) {
+    return (
+      <div className="mandarin-finish-layer" role="dialog" aria-modal="true" aria-labelledby="mandarin-finish-title">
+        <button className="mandarin-finish-backdrop" onClick={onCancel} aria-label="返回检查" />
+        <div className="mandarin-finish-dialog">
+          <MandarinCompanion mood={allAnswered ? "celebrate" : "ready"} className="mandarin-finish-mascot" />
+          <span className="mandarin-kicker"><CheckGlyph className="h-5 w-5" /> 旅程来到最后一页</span>
+          <h2 id="mandarin-finish-title">{allAnswered ? "每一站都留下足迹了" : "还有几站没有留下答案"}</h2>
+          <p>{allAnswered ? "可以完成这段旅程，也可以回头读一读刚才的想法。" : `还有 ${total - answered} 个小任务未完成。你可以继续探索，也可以保留现在的足迹。`}</p>
+          <div className="mandarin-finish-progress">
+            <div><span>已点亮</span><strong>{answered}<small> / {total}</small></strong></div>
+            <div><span>旅程进度</span><strong>{pct}<small>%</small></strong></div>
+            <div className="mandarin-finish-track"><i style={{ width: `${Math.max(4, pct)}%` }} /></div>
+          </div>
+          <div className="mandarin-finish-actions">
+            <button type="button" className="mandarin-secondary-button" onClick={() => { sound().play("click"); onCancel(); }}>回去看一看</button>
+            <button type="button" className="mandarin-primary-button" onClick={() => { sound().play("click"); onConfirm(); }}>完成华文旅程</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div

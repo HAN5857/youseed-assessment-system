@@ -14,6 +14,7 @@ import type { RendererProps } from "./index";
 import { useUiTheme, useUiTier } from "@/lib/ui-theme";
 import { PassageCard } from "@/components/kids/PassageCard";
 import { hasCJK, countWordsSmart } from "@/lib/cjk";
+import Image from "next/image";
 
 export function ShortRenderer({ prompt, content, value, onChange }: RendererProps) {
   const theme = useUiTheme();
@@ -26,28 +27,8 @@ export function ShortRenderer({ prompt, content, value, onChange }: RendererProp
   const passage: string | undefined = content?.passage;
 
   const text: string = value?.text ?? "";
-  // CJK-aware unit counting.
-  // Chinese has no spaces, so we count "字" (characters) instead of words.
-  // Detection: if the prompt or the student's text contains any CJK codepoint,
-  // switch to character-counting mode. Otherwise standard English word-split.
-  // Mixed text (Chinese + Latin) is supported: each CJK char = 1 unit,
-  // each latin whitespace-separated chunk = 1 unit.
-  const cjkRe = /[㐀-鿿豈-﫿]/;
-  const isCJK = cjkRe.test(text) || cjkRe.test(prompt || "");
-  const wordCount = (() => {
-    if (text.trim() === "") return 0;
-    if (isCJK) {
-      const cjkChars = (text.match(/[㐀-鿿豈-﫿]/g) ?? []).length;
-      // Latin chunks: strip CJK + punctuation, then split by whitespace.
-      const latin = text
-        .replace(/[㐀-鿿豈-﫿]/g, " ")
-        .replace(/[　-〿＀-￯]/g, " ")
-        .trim();
-      const latinChunks = latin === "" ? 0 : latin.split(/\s+/).length;
-      return cjkChars + latinChunks;
-    }
-    return text.trim().split(/\s+/).length;
-  })();
+  const isCJK = hasCJK(text) || hasCJK(prompt || "");
+  const wordCount = countWordsSmart(text);
   const charCount = text.length;
   const unitLabel = (n: number) => isCJK ? `${n} 字` : `${n} word${n === 1 ? "" : "s"}`;
 
@@ -75,6 +56,47 @@ export function ShortRenderer({ prompt, content, value, onChange }: RendererProp
   const textareaClass = calm
     ? "w-full rounded-2xl border-2 border-[#DDEFE4] bg-white px-5 py-4 text-base font-medium leading-relaxed text-slate-800 outline-none transition focus:border-[#18A65B] focus:ring-4 focus:ring-emerald-100 sm:text-[17px]"
     : "w-full rounded-2xl border-4 border-violet-200 bg-white px-5 py-4 text-base font-medium leading-relaxed text-slate-800 outline-none focus:border-violet-500 focus:ring-4 focus:ring-violet-100 sm:text-[17px]";
+
+  if (isCJK) {
+    const imageUrl: string | undefined = content?.imageUrl;
+    const progressLabel = wordCount === 0 ? "等待起笔" : wordCount < minWords ? "灵感正在成形" : wordCount <= maxWords ? "表达完整" : "可以稍微精简";
+    return (
+      <div className="mandarin-writing-studio">
+        {passage && <div className="mb-5"><PassageCard text={passage} /></div>}
+        {imageUrl && (
+          <figure className="mandarin-writing-image">
+            <Image src={imageUrl} alt="写作题的观察图片" width={900} height={600} sizes="(max-width: 640px) 100vw, 620px" />
+            <figcaption>先观察细节，再把看见的变成句子。</figcaption>
+          </figure>
+        )}
+
+        <StructuredPrompt prompt={prompt} />
+
+        <div className="mandarin-writing-toolbar">
+          <div><span>写作足迹</span><strong>{progressLabel}</strong></div>
+          <div className={`mandarin-character-count state-${state}`} aria-live="polite">
+            <b>{wordCount}</b><span>字</span><small>目标 {minWords}–{maxWords} 字</small>
+          </div>
+        </div>
+
+        <WordProgress wordCount={wordCount} minWords={minWords} maxWords={maxWords} state={state} cjk />
+
+        {template && <div className="mandarin-writing-starter"><span>起笔小帮手</span><p>{template}</p></div>}
+        <textarea
+          value={text}
+          onChange={(e) => onChange({ text: e.target.value })}
+          rows={9}
+          className="mandarin-writing-textarea"
+          placeholder="把你的观察和想法写在这里…"
+          spellCheck
+        />
+        <div className="mandarin-writing-tips">
+          <span>一</span><p>先写完整的一句，再补上人物、地点、动作或原因。</p>
+          <span>二</span><p>每一个汉字都会即时计数，标点不算在字数里。</p>
+        </div>
+      </div>
+    );
+  }
 
   // ── Upper-primary: structured writing card ──────────────────────────────
   if (upper) {
@@ -306,11 +328,13 @@ function WordProgress({
   minWords,
   maxWords,
   state,
+  cjk = false,
 }: {
   wordCount: number;
   minWords: number;
   maxWords: number;
   state: "empty" | "under" | "ontarget" | "over";
+  cjk?: boolean;
 }) {
   // Cap visual fill at 100%; once you hit minWords the bar is full.
   const pct = Math.min(100, (wordCount / minWords) * 100);
@@ -329,7 +353,7 @@ function WordProgress({
         aria-valuemin={0}
         aria-valuemax={maxWords}
         aria-valuenow={wordCount}
-        aria-label={`${wordCount} of ${minWords}–${maxWords} words`}
+        aria-label={cjk ? `已写 ${wordCount} 字，目标 ${minWords} 至 ${maxWords} 字` : `${wordCount} of ${minWords}–${maxWords} words`}
       />
     </div>
   );

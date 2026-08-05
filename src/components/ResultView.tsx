@@ -10,6 +10,7 @@ import { useS1Edu } from "@/lib/s1-edu-flag";
 import { getStickerPool } from "@/lib/s1-stickers";
 import { EndOfQuestScene } from "@/components/edu-s1/EndOfQuestScene";
 import { StickerAlbum } from "@/components/edu-s1/StickerAlbum";
+import { MandarinResultView } from "@/components/mandarin/MandarinResultView";
 
 type LeadLite = {
   id: string;
@@ -44,6 +45,18 @@ const KID_LABELS: Record<string, { label: string; blurb: string }> = {
 };
 
 export function ResultView({
+  lead, test, mode,
+}: {
+  lead: LeadLite;
+  test: TestLite;
+  mode: "student" | "internal";
+}) {
+  const chinese = ["chinese", "zh", "zh-cn"].includes(String(test.subject).toLowerCase());
+  if (mode === "student" && chinese) return <MandarinResultView lead={lead} test={test} />;
+  return <DefaultResultView lead={lead} test={test} mode={mode} />;
+}
+
+function DefaultResultView({
   lead, test, mode,
 }: {
   lead: LeadLite;

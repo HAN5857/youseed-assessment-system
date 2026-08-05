@@ -44,6 +44,7 @@ function MatchingLegacyRenderer({ prompt, content, value, onChange }: RendererPr
   const tier = useUiTier();
   const subject = useUiSubject();
   const T = runnerCopy(subject);
+  const chinese = ["chinese", "zh", "zh-cn"].includes(String(subject).toLowerCase());
   const upper = theme === "calm" && tier === "upper-primary";
 
   const rawLeft: LeftItem[] = content?.left ?? [];
@@ -60,18 +61,18 @@ function MatchingLegacyRenderer({ prompt, content, value, onChange }: RendererPr
   // Shows the meanings as an A/B/C key at the top, then each word row with
   // letter buttons on the right. Matches the DOCX printed-test format more
   // closely than the legacy dropdown UI.
-  if (upper) {
+  if (upper || chinese) {
     const { instruction, body } = splitPrompt(prompt);
     const LETTERS = ["A", "B", "C", "D", "E", "F"];
     return (
-      <div>
+      <div className={chinese ? "mandarin-letter-match" : ""}>
         {instruction && <InstructionHint text={instruction} />}
         <QuestionBody text={body} />
 
         {/* Meanings key (right-hand options) */}
         <div className="mb-5 mt-5 rounded-xl border border-[#DDEFE4] bg-[#F7FBF8] p-4">
           <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#138a4a]">
-            Meanings
+            {chinese ? "词义卡" : "Meanings"}
           </p>
           <ul className="space-y-2">
             {right.map((r, i) => (
@@ -93,7 +94,7 @@ function MatchingLegacyRenderer({ prompt, content, value, onChange }: RendererPr
             return (
               <div
                 key={i}
-                className={`flex flex-wrap items-center gap-3 rounded-xl border p-3 transition sm:p-4 ${
+                className={chinese ? `mandarin-match-row ${selectedIdx != null ? "is-selected" : ""}` : `flex flex-wrap items-center gap-3 rounded-xl border p-3 transition sm:p-4 ${
                   selectedIdx != null
                     ? "border-[#18A65B] bg-[#F7FBF8]"
                     : "border-[#DDEFE4] bg-white"
@@ -110,7 +111,7 @@ function MatchingLegacyRenderer({ prompt, content, value, onChange }: RendererPr
                 <span className="min-w-0 flex-1 break-words text-[17px] font-semibold text-[#1F2937] sm:text-[19px]">
                   {item.text}
                 </span>
-                <div className="flex gap-2" role="group" aria-label={`Pick the meaning for ${item.text}`}>
+                <div className="flex gap-2" role="group" aria-label={chinese ? `为${item.text}选择词义` : `Pick the meaning for ${item.text}`}>
                   {right.map((_, ri) => {
                     const isSelected = selectedIdx === ri;
                     return (
@@ -119,9 +120,11 @@ function MatchingLegacyRenderer({ prompt, content, value, onChange }: RendererPr
                         type="button"
                         onClick={() => setPair(i, ri)}
                         aria-pressed={isSelected}
-                        aria-label={`Match ${item.text} to meaning ${LETTERS[ri]}`}
+                        aria-label={chinese ? `把${item.text}配对到${LETTERS[ri]}` : `Match ${item.text} to meaning ${LETTERS[ri]}`}
                         className={
-                          isSelected
+                          chinese
+                            ? `mandarin-letter-button ${isSelected ? "is-selected" : ""}`
+                            : isSelected
                             ? "h-10 w-10 rounded-lg bg-[#18A65B] text-base font-bold text-white shadow-md ring-2 ring-[#18A65B]/30 transition active:translate-y-px"
                             : "h-10 w-10 rounded-lg border border-[#DDEFE4] bg-white text-base font-semibold text-[#138a4a] transition hover:-translate-y-0.5 hover:border-[#18A65B] hover:bg-[#F7FBF8]"
                         }

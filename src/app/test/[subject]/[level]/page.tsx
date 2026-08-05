@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getSubject, getLevel } from "@/lib/subjects-config";
 import { PasskeyForm } from "./PasskeyForm";
+import { MandarinPasskeyForm } from "@/components/mandarin/MandarinPasskeyForm";
 
 export const dynamic = "force-dynamic";
 
@@ -30,6 +31,16 @@ export default async function PasskeyEntryPage({
           </a>
         </div>
       </main>
+    );
+  }
+
+  if (subject.id === "chinese") {
+    return (
+      <MandarinPasskeyForm
+        levelId={level.id}
+        levelName={level.name}
+        levelUnit={level.unit ?? ""}
+      />
     );
   }
 

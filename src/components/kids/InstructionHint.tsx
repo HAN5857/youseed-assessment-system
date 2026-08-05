@@ -1,5 +1,7 @@
 "use client";
 
+import { useIsChineseTheme } from "@/lib/ui-theme";
+
 // Small supporting-text hint shown above the dominant question body on the
 // upper-primary tier. Visual hierarchy:
 //   1. Question content   (biggest, dominant)
@@ -10,7 +12,16 @@
 // enough to scan, never competes with the question.
 
 export function InstructionHint({ text }: { text: string }) {
+  const chinese = useIsChineseTheme();
   if (!text) return null;
+  if (chinese) {
+    return (
+      <div className="mandarin-instruction-hint">
+        <span aria-hidden>读</span>
+        <p>{text}</p>
+      </div>
+    );
+  }
   return (
     <div className="mb-3 flex items-start gap-2 sm:mb-4">
       <svg

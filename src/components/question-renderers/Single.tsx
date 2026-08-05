@@ -2,7 +2,7 @@
 import type { RendererProps } from "./index";
 import { OptionCard } from "@/components/kids/OptionCard";
 import { PassageCard } from "@/components/kids/PassageCard";
-import { useUiTheme, useUiTier } from "@/lib/ui-theme";
+import { useIsChineseTheme, useUiTheme, useUiTier } from "@/lib/ui-theme";
 import { AudioClipPlayer } from "@/components/kids/AudioClipPlayer";
 import { InstructionHint } from "@/components/kids/InstructionHint";
 import { QuestionBody } from "@/components/kids/QuestionBody";
@@ -14,8 +14,9 @@ const AUDIO_EXT = /\.(mp3|wav|ogg|m4a|mpeg|aac)(\?.*)?$/i;
 export function SingleRenderer({ prompt, mediaUrl, content, value, onChange }: RendererProps) {
   const theme = useUiTheme();
   const tier = useUiTier();
+  const chinese = useIsChineseTheme();
   const upper = theme === "calm" && tier === "upper-primary";
-  const { instruction, body } = upper ? splitPrompt(prompt) : { instruction: undefined as string | undefined, body: prompt };
+  const { instruction, body } = (upper || chinese) ? splitPrompt(prompt) : { instruction: undefined as string | undefined, body: prompt };
   const options: { key: string; text: string }[] = content?.options ?? [];
   const selected = value?.key as string | undefined;
   const hasMedia = typeof mediaUrl === "string" && mediaUrl.length > 0;
@@ -33,8 +34,8 @@ export function SingleRenderer({ prompt, mediaUrl, content, value, onChange }: R
           <PassageCard text={passage} />
         </div>
       )}
-      {upper && instruction && <InstructionHint text={instruction} />}
-      {upper ? (
+      {(upper || chinese) && instruction && <InstructionHint text={instruction} />}
+      {(upper || chinese) ? (
         <div className="mb-4">
           <QuestionBody text={body} />
         </div>
@@ -51,7 +52,9 @@ export function SingleRenderer({ prompt, mediaUrl, content, value, onChange }: R
             loading="lazy"
             decoding="async"
             className={
-              upper
+              chinese
+                ? "mandarin-question-image max-h-60 w-auto object-contain sm:max-h-72"
+                : upper
                 ? "max-h-48 w-auto rounded-xl border border-[#DDEFE4] bg-white object-contain p-1.5 shadow-sm sm:max-h-56"
                 : theme === "calm"
                   ? "max-h-64 w-auto rounded-3xl border-4 border-emerald-200 bg-white p-3 shadow-lg"

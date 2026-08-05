@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getSubject } from "@/lib/subjects-config";
-import { Mascot } from "@/components/kids/Mascot";
 import { SoundToggle } from "@/components/kids/SoundToggle";
+import { MandarinLevelPicker } from "@/components/mandarin/MandarinLevelPicker";
 
 export const dynamic = "force-dynamic";
 
@@ -12,6 +12,10 @@ export default async function LevelPickerPage({
   const { subject: subjectId } = await params;
   const subject = getSubject(subjectId);
   if (!subject) notFound();
+
+  if (subject.id === "chinese") {
+    return <MandarinLevelPicker levels={subject.levels} />;
+  }
 
   return (
     <main className="kid-bg relative min-h-screen px-4 py-10">

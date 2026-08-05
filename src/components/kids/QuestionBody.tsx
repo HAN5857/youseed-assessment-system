@@ -1,5 +1,7 @@
 "use client";
 
+import { useIsChineseTheme } from "@/lib/ui-theme";
+
 // Dominant question body text used by Single/Fill/Reading on the
 // upper-primary tier. Renders the prompt with two specialisations:
 //   1. Runs of 3+ underscores (e.g. "There ______ a big park") are turned
@@ -19,8 +21,13 @@ export function QuestionBody({
   text: string;
   size?: "large" | "medium";
 }) {
+  const chinese = useIsChineseTheme();
   const cls =
-    size === "medium"
+    chinese
+      ? size === "medium"
+        ? "mandarin-question-body whitespace-pre-wrap text-[20px] font-semibold leading-[1.65] sm:text-[23px]"
+        : "mandarin-question-body whitespace-pre-wrap text-[25px] font-semibold leading-[1.6] sm:text-[31px]"
+      : size === "medium"
       ? "whitespace-pre-wrap text-[19px] font-semibold leading-snug text-[#1F2937] sm:text-[22px]"
       : "whitespace-pre-wrap text-[24px] font-semibold leading-snug text-[#1F2937] sm:text-[30px]";
 
@@ -31,8 +38,8 @@ export function QuestionBody({
         /^_{3,}$/.test(p) ? (
           <span
             key={i}
-            className="kid-blank inline-block min-w-[3.5em] translate-y-[-2px] select-none border-b-[3px] border-[#18A65B] text-transparent"
-            aria-label="blank to fill in"
+            className={chinese ? "kid-blank inline-block min-w-[3.5em] translate-y-[-2px] select-none border-b-[3px] border-[#C9473F] text-transparent" : "kid-blank inline-block min-w-[3.5em] translate-y-[-2px] select-none border-b-[3px] border-[#18A65B] text-transparent"}
+            aria-label={chinese ? "需要填写的空格" : "blank to fill in"}
           >
             {p}
           </span>

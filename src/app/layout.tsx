@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Fredoka, Noto_Sans_SC } from "next/font/google";
 import "./globals.css";
+import "./mandarin.css";
 import { AudioAutoplay } from "@/components/kids/AudioAutoplay";
 
 const fredoka = Fredoka({

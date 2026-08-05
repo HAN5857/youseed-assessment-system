@@ -33,6 +33,8 @@ import { PracticeRound } from "@/components/edu-s1/PracticeRound";
 import { ChapterInterstitial, type ChapterId } from "@/components/edu-s1/ChapterInterstitial";
 import { UiThemeProvider } from "@/lib/ui-theme";
 import { runnerCopy, isChineseSubject } from "@/lib/runner-i18n";
+import { ArrowGlyph } from "@/components/mandarin/MandarinGlyphs";
+import { MandarinJourneyFooterNote, MandarinJourneyHeader, MandarinQuestHeading } from "@/components/mandarin/MandarinJourneyChrome";
 
 type Q = {
   id: string; type: string; dimension: string; score: number;
@@ -277,7 +279,7 @@ export function CalmExamRunner({
         setMilestone(m);
         sound().play("success");
         // Sticker burst only on primary tier — older students find it noisy.
-        if (!upper) {
+        if (!upper && !isChinese) {
           setStickerBurst((b) => b + 1);
           setShowStickers(true);
         }
@@ -288,7 +290,7 @@ export function CalmExamRunner({
       }
     }
     prevAnsweredRef.current = answeredCount;
-  }, [answeredCount, questions.length, upper]);
+  }, [answeredCount, questions.length, upper, isChinese]);
 
   useEffect(() => {
     if (!edu.mascotSpeech || !practiceComplete || greetedRef.current) return;
@@ -354,7 +356,13 @@ export function CalmExamRunner({
 
   // Upper-primary uses a slightly more restrained slide + no scale bounce.
   // Primary keeps the original 80px slide + 0.96 scale spring.
-  const pageVariants = upper
+  const pageVariants = isChinese
+    ? {
+        enter:  (dir: 1 | -1) => ({ x: dir === 1 ? 28 : -28, y: 8, opacity: 0 }),
+        center: { x: 0, y: 0, opacity: 1 },
+        exit:   (dir: 1 | -1) => ({ x: dir === 1 ? -22 : 22, y: -4, opacity: 0 }),
+      }
+    : upper
     ? {
         enter:  (dir: 1 | -1) => ({ x: dir === 1 ? 48 : -48, opacity: 0 }),
         center: { x: 0, opacity: 1 },
@@ -365,7 +373,9 @@ export function CalmExamRunner({
         center: { x: 0, opacity: 1, scale: 1 },
         exit:   (dir: 1 | -1) => ({ x: dir === 1 ? -60 : 60, opacity: 0, scale: 0.97 }),
       };
-  const pageTransition = upper
+  const pageTransition = isChinese
+    ? { type: "spring" as const, stiffness: 300, damping: 34, mass: .85 }
+    : upper
     ? { type: "spring" as const, stiffness: 280, damping: 32 }
     : { type: "spring" as const, stiffness: 220, damping: 26 };
 
@@ -380,10 +390,20 @@ export function CalmExamRunner({
           "relative flex min-h-screen flex-col",
         ].filter(Boolean).join(" ")}
       >
-        <StickerExplosion show={showStickers} key={`burst-${stickerBurst}`} pool={stickerPool} />
+        {!isChinese && <StickerExplosion show={showStickers} key={`burst-${stickerBurst}`} pool={stickerPool} />}
 
         {/* Top bar */}
-        <header className={`sticky top-0 z-10 backdrop-blur ${upper ? "border-b border-[#DDEFE4] bg-white/90" : "border-b-4 border-white/60 bg-white/80"}`}>
+        {isChinese ? (
+          <MandarinJourneyHeader
+            title={title}
+            current={idx}
+            total={questions.length}
+            answered={answeredSet}
+            minutes={mm}
+            seconds={ss}
+            timeLow={timeLow}
+          />
+        ) : <header className={`sticky top-0 z-10 backdrop-blur ${upper ? "border-b border-[#DDEFE4] bg-white/90" : "border-b-4 border-white/60 bg-white/80"}`}>
           <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-3">
             <div className="flex min-w-0 items-center gap-3">
               <div className="hidden sm:block">
@@ -430,11 +450,11 @@ export function CalmExamRunner({
               <StarProgress total={questions.length} answered={answeredSet} current={idx} />
             )}
           </div>
-        </header>
+        </header>}
 
         {/* Body */}
-        <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-6">
-          {edu.practiceRound && !practiceComplete ? (
+        <main className={`mx-auto w-full flex-1 px-4 py-6 ${isChinese ? "max-w-4xl sm:py-8" : "max-w-3xl"}`}>
+          {edu.practiceRound && !practiceComplete && !isChinese ? (
             <PracticeRound onComplete={completePractice} />
           ) : (
           <>
@@ -449,20 +469,24 @@ export function CalmExamRunner({
                 exit="exit"
                 transition={pageTransition}
                 className={
-                  upper
+                  isChinese
+                    ? "mandarin-question-scroll relative overflow-visible"
+                    : upper
                     ? `relative overflow-visible rounded-2xl border border-[#DDEFE4] bg-white p-6 shadow-[0_2px_8px_rgba(15,23,42,0.04),0_16px_40px_rgba(15,23,42,0.06)] sm:p-8`
                     : `relative overflow-visible rounded-[28px] border-4 border-white bg-gradient-to-br ${theme.bg} p-5 shadow-[0_10px_0_rgba(0,0,0,0.04),0_20px_50px_rgba(15,23,42,0.1)] sm:p-8`
                 }
               >
                 {/* Top ribbon — same shine animation in both tiers; thinner + monochrome on upper. */}
-                {upper ? (
+                {isChinese ? (
+                  <div className="mandarin-scroll-rod" aria-hidden><span /><span /></div>
+                ) : upper ? (
                   <div className="absolute -top-px left-8 right-8 h-1 rounded-b-full bg-[#18A65B]" />
                 ) : (
                   <div className={`kid-ribbon-shine absolute -top-1 left-6 right-6 h-2 rounded-b-full bg-gradient-to-r ${theme.gradient}`} />
                 )}
 
                 {/* Corner stickers — only for primary tier. */}
-                {!upper && (
+                {!upper && !isChinese && (
                   <>
                     <span
                       className="pointer-events-none absolute -right-2 -top-4 select-none text-3xl kid-float"
@@ -485,7 +509,7 @@ export function CalmExamRunner({
                     shadow, entry bounce + gentle float. Driven by content.topicIcon
                     so questions with their own media/passage (audio, reading) skip
                     the decoration. */}
-                {upper && q.content?.topicIcon && (
+                {upper && !isChinese && q.content?.topicIcon && (
                   <div
                     key={`topic-${idx}`}
                     className="pointer-events-none absolute right-5 top-5 kid-float"
@@ -497,7 +521,14 @@ export function CalmExamRunner({
                   </div>
                 )}
 
-                <div className={`mb-4 flex flex-wrap items-center gap-2 ${upper && q.content?.topicIcon ? "min-h-[60px] pr-20 sm:min-h-[68px] sm:pr-24" : ""}`}>
+                {isChinese ? (
+                  <MandarinQuestHeading
+                    dimension={q.dimension}
+                    type={q.type}
+                    score={q.score}
+                    topicLabel={q.content?.topicLabel}
+                  />
+                ) : <div className={`mb-4 flex flex-wrap items-center gap-2 ${upper && q.content?.topicIcon ? "min-h-[60px] pr-20 sm:min-h-[68px] sm:pr-24" : ""}`}>
                   {upper ? (
                     <>
                       <span className="inline-flex items-center gap-1.5 rounded-full bg-[#EAF8F0] px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-[#138a4a]">
@@ -523,7 +554,7 @@ export function CalmExamRunner({
                       </span>
                     </>
                   )}
-                </div>
+                </div>}
 
                 <Renderer
                   prompt={q.prompt}
@@ -536,20 +567,27 @@ export function CalmExamRunner({
             </AnimatePresence>
           </div>
 
-          <div className="mt-6 flex items-center justify-between gap-3">
+          {isChinese && <MandarinJourneyFooterNote />}
+          <div className={`mt-6 flex items-center justify-between gap-3 ${isChinese ? "mandarin-journey-actions" : ""}`}>
             <button
               onClick={goPrev}
               disabled={idx === 0}
               className={
-                upper
+                isChinese
+                  ? "mandarin-secondary-button"
+                  : upper
                   ? "rounded-full border border-[#DDEFE4] bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-[#F7FBF8] disabled:cursor-not-allowed disabled:opacity-40"
                   : "rounded-full border-2 border-slate-300 bg-white px-5 py-3 text-sm font-bold text-slate-600 shadow hover:bg-slate-50 disabled:opacity-40"
               }
             >
-              {t.back}
+              {isChinese ? <><ArrowGlyph direction="left" className="h-5 w-5" /> 上一站</> : t.back}
             </button>
             {idx < questions.length - 1 ? (
-              upper ? (
+              isChinese ? (
+                <button onClick={goNext} className="mandarin-primary-button">
+                  继续探索 <ArrowGlyph className="h-5 w-5" />
+                </button>
+              ) : upper ? (
                 <button
                   onClick={goNext}
                   className="inline-flex items-center gap-2 rounded-full bg-[#18A65B] px-6 py-2.5 text-sm font-semibold text-white shadow-md transition hover:brightness-110 active:translate-y-px"
@@ -563,7 +601,15 @@ export function CalmExamRunner({
                 <button onClick={goNext} className="kid-btn kid-btn-green">{t.next}</button>
               )
             ) : (
-              upper ? (
+              isChinese ? (
+                <button
+                  onClick={() => { sound().play("click"); setShowFinish(true); }}
+                  disabled={submitting}
+                  className="mandarin-primary-button"
+                >
+                  {submitting ? t.submitting : <>完成这段旅程 <ArrowGlyph className="h-5 w-5" /></>}
+                </button>
+              ) : upper ? (
                 <button
                   onClick={() => { sound().play("click"); setShowFinish(true); }}
                   disabled={submitting}
@@ -586,7 +632,7 @@ export function CalmExamRunner({
           )}
         </main>
 
-        {edu.mascotSpeech && (
+        {edu.mascotSpeech && !isChinese && (
           <MascotSpeechBubble
             message={seedyMessage}
             onDismiss={() => setSpeechAnchor(null)}
@@ -594,7 +640,7 @@ export function CalmExamRunner({
           />
         )}
 
-        {edu.chapterInterstitial && (
+        {edu.chapterInterstitial && !isChinese && (
           <ChapterInterstitial
             chapter={activeChapter}
             onDismiss={() => setActiveChapter(null)}
@@ -605,7 +651,9 @@ export function CalmExamRunner({
           {toast && (
             <motion.div
               className={
-                upper
+                isChinese
+                  ? "mandarin-answer-toast pointer-events-none fixed left-1/2 top-28 z-50 -translate-x-1/2"
+                  : upper
                   ? "pointer-events-none fixed left-1/2 top-24 z-50 -translate-x-1/2 rounded-full bg-[#18A65B] px-5 py-1.5 text-xs font-semibold text-white shadow-lg"
                   : "pointer-events-none fixed left-1/2 top-28 z-50 -translate-x-1/2 rounded-full bg-gradient-to-r from-emerald-500 to-green-500 px-6 py-2 text-sm font-black text-white shadow-xl"
               }
@@ -614,7 +662,7 @@ export function CalmExamRunner({
               exit={{ y: -20, opacity: 0, scale: 0.9 }}
               transition={{ type: "spring", stiffness: 350, damping: 22 }}
             >
-              {upper ? toast : `${t.toastPrefix}${toast}${t.toastSuffix}`}
+              {isChinese ? toast : upper ? toast : `${t.toastPrefix}${toast}${t.toastSuffix}`}
             </motion.div>
           )}
         </AnimatePresence>
@@ -629,7 +677,9 @@ export function CalmExamRunner({
               transition={{ type: "spring", stiffness: 240, damping: 18 }}
             >
               <div className={
-                upper
+                isChinese
+                  ? "mandarin-milestone"
+                  : upper
                   ? "rounded-2xl border border-[#DDEFE4] bg-white px-5 py-2.5 text-center text-sm font-semibold text-[#138a4a] shadow-xl"
                   : "rounded-3xl bg-gradient-to-r from-lime-400 via-green-500 to-emerald-500 px-6 py-3 text-center text-base font-black text-white shadow-2xl sm:text-lg"
               }>

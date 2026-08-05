@@ -22,6 +22,21 @@ export function PassageCard({
   const subject = useUiSubject();
   const t = runnerCopy(subject);
   const resolvedHint = hint ?? t.passageHint;
+  const chinese = ["chinese", "zh", "zh-cn"].includes(String(subject).toLowerCase());
+
+  if (chinese) {
+    return (
+      <div className="mandarin-passage-wrap">
+        <div className="mandarin-passage-title"><span>阅</span><strong>文字小天地</strong></div>
+        <div className="mandarin-passage-paper">
+          <div className="mandarin-passage-corner top" aria-hidden />
+          <div className="mandarin-passage-corner bottom" aria-hidden />
+          <MandarinSmartPassage text={text} />
+        </div>
+        {resolvedHint && <div className="mandarin-passage-hint">慢慢读，重要的线索常藏在句子之间。</div>}
+      </div>
+    );
+  }
 
   if (theme === "calm" && tier === "upper-primary") {
     return (
@@ -316,4 +331,38 @@ function SmartPassage({ text }: { text: string }) {
   });
 
   return <div className="space-y-1">{nodes}</div>;
+}
+
+function MandarinSmartPassage({ text }: { text: string }) {
+  const lines = text.split("\n");
+  let firstContentSeen = false;
+  return (
+    <div className="mandarin-passage-content">
+      {lines.map((raw, index) => {
+        const line = raw.trim();
+        if (!line) return <div key={index} className="h-3" />;
+
+        if (!firstContentSeen) {
+          firstContentSeen = true;
+          const looksLikeTitle = /^《.+》$/.test(line) || (line.length <= 12 && !/[。！？：]/u.test(line));
+          if (looksLikeTitle) return <h3 key={index}>{line}</h3>;
+        }
+
+        const speaker = line.match(/^([\p{Script=Han}]{1,5})[：:]\s*(.+)$/u);
+        if (speaker) {
+          return <p key={index} className="mandarin-dialogue"><b>{speaker[1]}</b><span>{speaker[2]}</span></p>;
+        }
+
+        const field = line.match(/^([\p{Script=Han}]{2,8})[：:]\s*(.+)$/u);
+        if (field && field[2].length < 40) {
+          return <p key={index} className="mandarin-field-line"><b>{field[1]}</b><span>{field[2]}</span></p>;
+        }
+
+        const bullet = line.match(/^[•·\-*]\s*(.+)$/u);
+        if (bullet) return <p key={index} className="mandarin-passage-bullet"><i aria-hidden /><span>{bullet[1]}</span></p>;
+
+        return <p key={index}>{line}</p>;
+      })}
+    </div>
+  );
 }

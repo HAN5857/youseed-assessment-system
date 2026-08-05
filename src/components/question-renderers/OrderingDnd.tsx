@@ -18,11 +18,11 @@ export function OrderingDndRenderer({ prompt, content, value, onChange }: Render
   const items: string[] = content?.items ?? [];
   const isCJK = items.some((t) => hasCJK(t)) || hasCJK(prompt);
   const L = {
-    hint:       isCJK ? "✋ 点选一个词加入句子，再点一次取消。" : "✋ Tap a word to add it. Tap again to remove it.",
-    bank:       isCJK ? "📦 词语库"      : "📦 Word Bank",
+    hint:       isCJK ? "点选词语，让它落到句子里；再点一次可以取回。" : "✋ Tap a word to add it. Tap again to remove it.",
+    bank:       isCJK ? "待选词语"      : "📦 Word Bank",
     left:       (n: number) => isCJK ? `还剩 ${n} 个` : `${n} left`,
-    empty:      isCJK ? "已经全部选完啦！✨" : "Empty — all words placed! ✨",
-    zone:       isCJK ? "✍️ 你的句子" : "✍️ Your Sentence",
+    empty:      isCJK ? "词语都找到位置了。" : "Empty — all words placed! ✨",
+    zone:       isCJK ? "句子工坊" : "✍️ Your Sentence",
     zoneHint:   isCJK ? "点上面的词开始造句…" : "Tap a word above to start building your sentence…",
     tapRemove:  isCJK ? "点一下移除" : "Tap to remove",
     readback:   isCJK ? "目前的句子" : "Your sentence so far",
@@ -68,7 +68,7 @@ export function OrderingDndRenderer({ prompt, content, value, onChange }: Render
 
   return (
     <LayoutGroup>
-      <div>
+      <div className={isCJK ? "mandarin-ordering" : ""}>
         <p className="mb-2 whitespace-pre-wrap text-2xl font-bold leading-snug text-slate-800 sm:text-3xl">
           {prompt}
         </p>

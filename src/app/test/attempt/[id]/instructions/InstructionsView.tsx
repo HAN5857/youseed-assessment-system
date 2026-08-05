@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { sound } from "@/lib/sounds";
 import { SoundToggle } from "@/components/kids/SoundToggle";
+import { MandarinInstructionsView } from "@/components/mandarin/MandarinInstructionsView";
 
 type Lang = "en" | "bm" | "zh";
 
@@ -172,7 +173,7 @@ const COPY: Record<Lang, {
 };
 
 export function InstructionsView({
-  leadId, studentName, testSubject, duration, passingScore, totalQuestions, dimensionCounts,
+  leadId, studentName, testTitle, testSubject, duration, passingScore, totalQuestions, dimensionCounts,
 }: Props) {
   // Default the language chip to match the test's subject so a Chinese
   // student doesn't have to click "中文" every time they open the exam.
@@ -184,6 +185,20 @@ export function InstructionsView({
   })();
   const [lang, setLang] = useState<Lang>(defaultLang);
   const t = COPY[lang];
+
+  if (defaultLang === "zh") {
+    return (
+      <MandarinInstructionsView
+        leadId={leadId}
+        studentName={studentName}
+        testTitle={testTitle}
+        duration={duration}
+        passingScore={passingScore}
+        totalQuestions={totalQuestions}
+        dimensionCounts={dimensionCounts}
+      />
+    );
+  }
 
   return (
     <div className="rules-ui" lang={lang === "zh" ? "zh" : lang === "bm" ? "ms" : "en"}>
@@ -207,6 +222,7 @@ export function InstructionsView({
                 <button
                   key={l}
                   type="button"
+                  role="tab"
                   className={lang === l ? "active" : ""}
                   aria-selected={lang === l}
                   onClick={() => { sound().play("click"); setLang(l); }}
