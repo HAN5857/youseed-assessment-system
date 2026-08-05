@@ -34,7 +34,7 @@ import { ChapterInterstitial, type ChapterId } from "@/components/edu-s1/Chapter
 import { UiThemeProvider } from "@/lib/ui-theme";
 import { runnerCopy, isChineseSubject } from "@/lib/runner-i18n";
 import { ArrowGlyph } from "@/components/mandarin/MandarinGlyphs";
-import { MandarinJourneyFooterNote, MandarinJourneyHeader, MandarinQuestHeading } from "@/components/mandarin/MandarinJourneyChrome";
+import { MandarinEnglishGuide, MandarinJourneyFooterNote, MandarinJourneyHeader, MandarinQuestHeading } from "@/components/mandarin/MandarinJourneyChrome";
 
 type Q = {
   id: string; type: string; dimension: string; score: number;
@@ -56,7 +56,7 @@ const ENCOURAGE_UPPER_ZH = [
 
 export function CalmExamRunner({
   leadId, title, subject, level, studentName, remainingSec, questions, initialResponses,
-  tier = "primary",
+  tier = "primary", brand = null,
 }: {
   leadId: string;
   title: string;
@@ -66,6 +66,8 @@ export function CalmExamRunner({
   remainingSec: number;
   questions: Q[];
   initialResponses: Record<string, any>;
+  /** Per-organisation branding for the student (logo + accent colour). */
+  brand?: { name: string; logoUrl: string | null; brandColor: string | null } | null;
   /**
    * "primary" (S1-S3): playful decorations, corner stickers, ✨ toasts, ⭐ chips,
    *   bouncier spring transitions.
@@ -92,6 +94,7 @@ export function CalmExamRunner({
   const [toast, setToast] = useState<string | null>(null);
   const [milestone, setMilestone] = useState<string | null>(null);
   const [showFinish, setShowFinish] = useState(false);
+  const [englishSupport, setEnglishSupport] = useState(true);
 
   const [mascotReaction, setMascotReaction] = useState<Reaction>("idle");
   const [mascotPulse, setMascotPulse] = useState(0);
@@ -114,6 +117,20 @@ export function CalmExamRunner({
   const submittedRef = useRef(false);
   const prevAnsweredRef = useRef(0);
   const prevResponseSerialRef = useRef<string>("");
+
+  useEffect(() => {
+    if (!isChinese || typeof window === "undefined") return;
+    setEnglishSupport(localStorage.getItem("mandarin_english_support") !== "0");
+  }, [isChinese]);
+
+  function toggleEnglishSupport() {
+    setEnglishSupport((current) => {
+      const next = !current;
+      localStorage.setItem("mandarin_english_support", next ? "1" : "0");
+      sound().play("click");
+      return next;
+    });
+  }
 
   useEffect(() => {
     (async () => {
@@ -389,7 +406,27 @@ export function CalmExamRunner({
           isChinese ? "chinese-ui zh-cn kid-bg-chinese" : "kid-bg-green",
           "relative flex min-h-screen flex-col",
         ].filter(Boolean).join(" ")}
+        style={brand?.brandColor ? ({ ["--org-brand" as any]: brand.brandColor }) : undefined}
       >
+        {/* Per-org brand strip — shown above the runner header when the
+            student's tutor belongs to a branded organisation. Thin bar with
+            the org logo + name, tinted with the org's accent colour. */}
+        {brand && (brand.logoUrl || brand.name) && (
+          <div
+            className="relative z-20 flex items-center justify-center gap-2 border-b px-4 py-1.5 text-xs font-semibold"
+            style={{
+              borderColor: brand.brandColor ?? "#e5e7eb",
+              background: brand.brandColor ? `${brand.brandColor}12` : "rgba(255,255,255,0.6)",
+              color: brand.brandColor ?? "#334155",
+            }}
+          >
+            {brand.logoUrl && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={brand.logoUrl} alt="" className="h-5 w-auto object-contain" />
+            )}
+            <span>{brand.name}</span>
+          </div>
+        )}
         {!isChinese && <StickerExplosion show={showStickers} key={`burst-${stickerBurst}`} pool={stickerPool} />}
 
         {/* Top bar */}
@@ -402,6 +439,8 @@ export function CalmExamRunner({
             minutes={mm}
             seconds={ss}
             timeLow={timeLow}
+            englishSupport={englishSupport}
+            onToggleEnglish={toggleEnglishSupport}
           />
         ) : <header className={`sticky top-0 z-10 backdrop-blur ${upper ? "border-b border-[#DDEFE4] bg-white/90" : "border-b-4 border-white/60 bg-white/80"}`}>
           <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-3">
@@ -522,12 +561,27 @@ export function CalmExamRunner({
                 )}
 
                 {isChinese ? (
-                  <MandarinQuestHeading
-                    dimension={q.dimension}
-                    type={q.type}
-                    score={q.score}
-                    topicLabel={q.content?.topicLabel}
-                  />
+                  <>
+                    <MandarinQuestHeading
+                      dimension={q.dimension}
+                      type={q.type}
+                      score={q.score}
+                      topicLabel={q.content?.topicLabel}
+                    />
+                    <AnimatePresence initial={false}>
+                      {englishSupport && (
+                        <motion.div
+                          key="english-guide"
+                          initial={{ opacity: 0, y: -6 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -4 }}
+                          transition={{ duration: .2, ease: "easeOut" }}
+                        >
+                          <MandarinEnglishGuide dimension={q.dimension} type={q.type} />
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </>
                 ) : <div className={`mb-4 flex flex-wrap items-center gap-2 ${upper && q.content?.topicIcon ? "min-h-[60px] pr-20 sm:min-h-[68px] sm:pr-24" : ""}`}>
                   {upper ? (
                     <>
@@ -580,12 +634,12 @@ export function CalmExamRunner({
                   : "rounded-full border-2 border-slate-300 bg-white px-5 py-3 text-sm font-bold text-slate-600 shadow hover:bg-slate-50 disabled:opacity-40"
               }
             >
-              {isChinese ? <><ArrowGlyph direction="left" className="h-5 w-5" /> 上一站</> : t.back}
+              {isChinese ? <><ArrowGlyph direction="left" className="h-5 w-5" /><span className="mandarin-action-label">上一站<small>Back</small></span></> : t.back}
             </button>
             {idx < questions.length - 1 ? (
               isChinese ? (
                 <button onClick={goNext} className="mandarin-primary-button">
-                  继续探索 <ArrowGlyph className="h-5 w-5" />
+                  <span className="mandarin-action-label">继续探索<small>Continue</small></span> <ArrowGlyph className="h-5 w-5" />
                 </button>
               ) : upper ? (
                 <button
@@ -607,7 +661,7 @@ export function CalmExamRunner({
                   disabled={submitting}
                   className="mandarin-primary-button"
                 >
-                  {submitting ? t.submitting : <>完成这段旅程 <ArrowGlyph className="h-5 w-5" /></>}
+                  {submitting ? t.submitting : <><span className="mandarin-action-label">完成这段旅程<small>Finish journey</small></span> <ArrowGlyph className="h-5 w-5" /></>}
                 </button>
               ) : upper ? (
                 <button

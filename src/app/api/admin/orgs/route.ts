@@ -10,15 +10,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { requireSuperAdmin } from "@/lib/auth";
-
-// Slug: lowercase, [a-z0-9_-], 2–40 chars. Used in labels + passkey defaults.
-export function cleanSlug(raw: string): string {
-  return String(raw ?? "")
-    .trim().toLowerCase()
-    .replace(/\s+/g, "_")
-    .replace(/[^a-z0-9_-]/g, "")
-    .slice(0, 40);
-}
+import { cleanSlug } from "@/lib/org-access";
 
 const createSchema = z.object({
   name: z.string().min(1).max(120),

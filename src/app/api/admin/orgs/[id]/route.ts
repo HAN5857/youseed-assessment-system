@@ -10,7 +10,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { requireSuperAdmin } from "@/lib/auth";
-import { cleanSlug } from "../route";
+import { cleanSlug } from "@/lib/org-access";
 
 const patchSchema = z.object({
   action: z.enum(["update", "toggle-active"]).default("update"),

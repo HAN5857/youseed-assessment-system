@@ -34,6 +34,7 @@ const CORNER_STICKERS = ["⭐", "🌈", "🎈", "🎀", "🌟", "✨", "💫", "
 
 export function ExamRunner({
   leadId, title, subject, level, studentName, remainingSec, questions, initialResponses,
+  brand = null,
 }: {
   leadId: string;
   title: string;
@@ -46,6 +47,8 @@ export function ExamRunner({
   // Accepted for prop-shape parity with CalmExamRunner — playful runner is
   // S2/S3-only via current gating, so tier is always "primary" here.
   tier?: "primary" | "upper-primary";
+  /** Per-org branding — accepted for parity; rendered as a top strip. */
+  brand?: { name: string; logoUrl: string | null; brandColor: string | null } | null;
 }) {
   // S1 Edutainment flags — when subject/level isn't S1-English, every flag is false.
   const edu = useS1Edu({ test: { subject: subject ?? null, level: level ?? null } });
@@ -350,6 +353,22 @@ export function ExamRunner({
 
   return (
     <div className="kid-bg relative flex min-h-screen flex-col">
+      {brand && (brand.logoUrl || brand.name) && (
+        <div
+          className="relative z-20 flex items-center justify-center gap-2 border-b px-4 py-1.5 text-xs font-semibold"
+          style={{
+            borderColor: brand.brandColor ?? "#e5e7eb",
+            background: brand.brandColor ? `${brand.brandColor}12` : "rgba(255,255,255,0.6)",
+            color: brand.brandColor ?? "#334155",
+          }}
+        >
+          {brand.logoUrl && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={brand.logoUrl} alt="" className="h-5 w-auto object-contain" />
+          )}
+          <span>{brand.name}</span>
+        </div>
+      )}
       {/* Sticker explosion overlay (mounted at root so it covers full viewport) */}
       <StickerExplosion show={showStickers} key={`burst-${stickerBurst}`} pool={stickerPool} />
 

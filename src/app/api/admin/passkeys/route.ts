@@ -3,6 +3,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { requireSession } from "@/lib/auth";
 import { tenantWhereTutor } from "@/lib/tenant-scope";
+import { getCallerOrg, isTestAllowed } from "@/lib/org-access";
 import { customAlphabet } from "nanoid";
 
 const generate = customAlphabet("ABCDEFGHJKLMNPQRSTUVWXYZ23456789", 8);
@@ -51,30 +52,42 @@ export async function POST(req: Request) {
   const test = await prisma.test.findUnique({ where: { id: testId } });
   if (!test) return NextResponse.json({ ok: false, error: "TEST_NOT_FOUND" }, { status: 404 });
 
-  // Passkey-code generation rules (per tutor feedback, 2026-07):
-  //   • count === 1 AND prefix given → use prefix AS-IS (upper-cased,
-  //     sanitised) as the code. No random suffix. So tutor types
-  //     "ooi_eng_s2" and hands out exactly "OOI_ENG_S2".
-  //   • count > 1                     → prefix + "-" + random suffix
-  //     (guarantees uniqueness across the batch).
-  //   • no prefix                     → random suffix alone.
-  // Duplicate-code collisions in the "clean prefix" case surface as a
-  // 409 CODE_TAKEN so the tutor knows to pick a different prefix.
-  const clean = prefix?.trim()
-    .toUpperCase()
-    // Passkeys are entered by kids on-device — restrict to a-z A-Z 0-9,
-    // underscore, hyphen. Anything else stripped silently. Spaces → dash.
-    .replace(/\s+/g, "-")
-    .replace(/[^A-Z0-9_-]/g, "") || "";
+  // Per-org test restriction — a tutor in a restricted org can't mint
+  // passkeys for a test their org isn't allowed to use.
+  const callerOrg = await getCallerOrg(session);
+  if (!isTestAllowed(callerOrg, test.subject, test.level)) {
+    return NextResponse.json(
+      { ok: false, error: "TEST_NOT_ALLOWED",
+        message: `Your organisation isn't enabled for "${test.title}". Ask the system admin to add it.` },
+      { status: 403 },
+    );
+  }
 
+  // Passkey-code generation rules:
+  //   • EXPLICIT prefix + count 1 → that prefix IS the code, verbatim
+  //     (tutor types "ooi_eng_s2" → hands out "OOI_ENG_S2").
+  //   • EXPLICIT prefix + count >1 → prefix-SUFFIX per code (uniqueness).
+  //   • No explicit prefix but the org has a passkeyPrefix → orgPrefix is a
+  //     NAMESPACE: always orgPrefix-SUFFIX (even count 1), so single codes
+  //     stay unique + attributable (ANAKBIJAK-7QK3M9XZ).
+  //   • Otherwise → random suffix alone.
+  const explicit = (prefix ?? "").trim()
+    .toUpperCase().replace(/\s+/g, "-").replace(/[^A-Z0-9_-]/g, "");
+  const orgPrefix = (callerOrg?.passkeyPrefix ?? "")
+    .toUpperCase().replace(/\s+/g, "-").replace(/[^A-Z0-9_-]/g, "");
+
+  // `clean` = the base used for the exact-code path (explicit only).
+  const clean = explicit;
   const useCleanPrefix = count === 1 && clean.length > 0;
+  // Namespace applied to the suffix path (explicit wins over org prefix).
+  const nsPrefix = explicit || orgPrefix;
 
   const created: any[] = [];
   try {
     for (let i = 0; i < count; i++) {
       const code = useCleanPrefix
         ? clean
-        : `${clean ? clean + "-" : ""}${generate()}`;
+        : `${nsPrefix ? nsPrefix + "-" : ""}${generate()}`;
       const pk = await prisma.passkey.create({
         data: {
           code,

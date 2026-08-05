@@ -25,6 +25,8 @@ export default async function ExamPage({
           },
         },
       },
+      // The owning tutor's organisation supplies per-brand student branding.
+      tutor: { include: { org: { select: { name: true, logoUrl: true, brandColor: true, active: true } } } },
     },
   });
   if (!lead) notFound();
@@ -58,6 +60,14 @@ export default async function ExamPage({
   const Runner = isCalm ? CalmExamRunner : ExamRunner;
   const tier = isCalm ? levelTier(lead.test.level) : "primary";
 
+  // Per-org branding — only when the org is active + actually has a logo or
+  // colour set. Otherwise the shared YouSeed look is used.
+  const org = lead.tutor?.org;
+  const brand =
+    org && org.active && (org.logoUrl || org.brandColor)
+      ? { name: org.name, logoUrl: org.logoUrl ?? null, brandColor: org.brandColor ?? null }
+      : null;
+
   return (
     <Runner
       leadId={lead.id}
@@ -69,6 +79,7 @@ export default async function ExamPage({
       questions={questions}
       initialResponses={savedResponses ?? {}}
       tier={tier}
+      brand={brand}
     />
   );
 }
