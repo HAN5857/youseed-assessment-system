@@ -61,7 +61,6 @@ export function MandarinEnglishGuide({ dimension, type }: { dimension: string; t
         <strong>{copy.title}</strong>
         <p>{copy.description}</p>
       </div>
-      <small>Guidance only · Mandarin remains the assessment language</small>
     </aside>
   );
 }
@@ -85,8 +84,8 @@ export function MandarinQuestHeading({
         <span>{meta.mark}</span>
       </motion.div>
       <div className="mandarin-quest-title">
-        <span>{meta.kicker}</span>
-        <strong>{meta.title}</strong>
+        <span>{meta.kicker}<small>{meta.englishKicker}</small></span>
+        <strong>{meta.title}<small>{meta.englishTitle}</small></strong>
       </div>
       <div className="mandarin-quest-tags">
         {topicLabel && <span>{topicLabel}</span>}
@@ -97,7 +96,7 @@ export function MandarinQuestHeading({
 }
 
 export function MandarinJourneyFooterNote() {
-  return <div className="mandarin-journey-footnote"><BambooGlyph className="h-4 w-4" /> 答案会悄悄保存，放心探索。</div>;
+  return <div className="mandarin-journey-footnote"><BambooGlyph className="h-4 w-4" /><span>答案会悄悄保存，放心探索。<small>Your answers are saved automatically.</small></span></div>;
 }
 
 function journeyPhase(current: number, total: number) {
@@ -109,14 +108,14 @@ function journeyPhase(current: number, total: number) {
 }
 
 function questMeta(dimension: string, type: string) {
-  if (/LISTEN/i.test(type) || dimension === "LISTENING") return { mark: "听", kicker: "静心听一听", title: "声音里藏着什么？", icon: SoundWavesGlyph };
-  if (/ORDER/i.test(type)) return { mark: "组", kicker: "动手排一排", title: "句子工坊", icon: InkBrushGlyph };
-  if (/MATCH/i.test(type)) return { mark: "连", kicker: "观察再连接", title: "图文寻友", icon: CompassGlyph };
-  if (dimension === "READING" || type === "READING") return { mark: "读", kicker: "走进文字世界", title: "阅读探境", icon: ScrollGlyph };
-  if (dimension === "WRITING" || type === "SHORT") return { mark: "写", kicker: "轮到你来创作", title: "小作家天地", icon: InkBrushGlyph };
-  if (dimension === "GRAMMAR") return { mark: "句", kicker: "发现表达规律", title: "句子研究所", icon: BambooGlyph };
-  if (dimension === "PHONICS") return { mark: "音", kicker: "听清每个音节", title: "拼音小径", icon: SoundWavesGlyph };
-  return { mark: "寻", kicker: "看一看，想一想", title: "字词寻宝", icon: CompassGlyph };
+  if (/LISTEN/i.test(type) || dimension === "LISTENING") return { mark: "听", kicker: "静心听一听", englishKicker: "Listen with care", title: "声音里藏着什么？", englishTitle: "Discover the sound clue", icon: SoundWavesGlyph };
+  if (/ORDER/i.test(type)) return { mark: "组", kicker: "动手排一排", englishKicker: "Arrange the clues", title: "句子工坊", englishTitle: "Sentence workshop", icon: InkBrushGlyph };
+  if (/MATCH/i.test(type)) return { mark: "连", kicker: "观察再连接", englishKicker: "Look and connect", title: "图文寻友", englishTitle: "Picture-word matching", icon: CompassGlyph };
+  if (dimension === "READING" || type === "READING") return { mark: "读", kicker: "走进文字世界", englishKicker: "Step into the story", title: "阅读探境", englishTitle: "Reading discovery", icon: ScrollGlyph };
+  if (dimension === "WRITING" || type === "SHORT") return { mark: "写", kicker: "轮到你来创作", englishKicker: "Create with your ideas", title: "小作家天地", englishTitle: "Young writer's studio", icon: InkBrushGlyph };
+  if (dimension === "GRAMMAR") return { mark: "句", kicker: "发现表达规律", englishKicker: "Discover how sentences work", title: "句子研究所", englishTitle: "Sentence laboratory", icon: BambooGlyph };
+  if (dimension === "PHONICS") return { mark: "音", kicker: "听清每个音节", englishKicker: "Notice every sound", title: "拼音小径", englishTitle: "Pinyin pathway", icon: SoundWavesGlyph };
+  return { mark: "寻", kicker: "看一看，想一想", englishKicker: "Look, think and discover", title: "字词寻宝", englishTitle: "Word treasure hunt", icon: CompassGlyph };
 }
 
 function englishGuide(dimension: string, type: string) {

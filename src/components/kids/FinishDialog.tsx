@@ -150,17 +150,18 @@ function CalmFinishDialog({
         <button className="mandarin-finish-backdrop" onClick={onCancel} aria-label="返回检查" />
         <div className="mandarin-finish-dialog">
           <MandarinCompanion mood={allAnswered ? "celebrate" : "ready"} className="mandarin-finish-mascot" />
-          <span className="mandarin-kicker"><CheckGlyph className="h-5 w-5" /> 旅程来到最后一页</span>
+          <span className="mandarin-kicker"><CheckGlyph className="h-5 w-5" /><span>旅程来到最后一页<small>The final page of your journey</small></span></span>
           <h2 id="mandarin-finish-title">{allAnswered ? "每一站都留下足迹了" : "还有几站没有留下答案"}</h2>
-          <p>{allAnswered ? "可以完成这段旅程，也可以回头读一读刚才的想法。" : `还有 ${total - answered} 个小任务未完成。你可以继续探索，也可以保留现在的足迹。`}</p>
+          <small className="mandarin-finish-title-en">{allAnswered ? "Every stop now holds your answer" : "A few stops still need an answer"}</small>
+          <p>{allAnswered ? "可以完成这段旅程，也可以回头读一读刚才的想法。" : `还有 ${total - answered} 个小任务未完成。你可以继续探索，也可以保留现在的足迹。`}<small>{allAnswered ? "You can finish now or look back through your ideas once more." : `${total - answered} mini tasks are unanswered. You may keep exploring or finish with your current progress.`}</small></p>
           <div className="mandarin-finish-progress">
-            <div><span>已点亮</span><strong>{answered}<small> / {total}</small></strong></div>
-            <div><span>旅程进度</span><strong>{pct}<small>%</small></strong></div>
+            <div><span>已点亮<small>Answered</small></span><strong>{answered}<small> / {total}</small></strong></div>
+            <div><span>旅程进度<small>Journey progress</small></span><strong>{pct}<small>%</small></strong></div>
             <div className="mandarin-finish-track"><i style={{ width: `${Math.max(4, pct)}%` }} /></div>
           </div>
           <div className="mandarin-finish-actions">
-            <button type="button" className="mandarin-secondary-button" onClick={() => { sound().play("click"); onCancel(); }}>回去看一看</button>
-            <button type="button" className="mandarin-primary-button" onClick={() => { sound().play("click"); onConfirm(); }}>完成华文旅程</button>
+            <button type="button" className="mandarin-secondary-button" onClick={() => { sound().play("click"); onCancel(); }}><span className="mandarin-bilingual-action"><strong>回去看一看</strong><small>Review my answers</small></span></button>
+            <button type="button" className="mandarin-primary-button" onClick={() => { sound().play("click"); onConfirm(); }}><span className="mandarin-bilingual-action"><strong>完成华文旅程</strong><small>Complete my journey</small></span></button>
           </div>
         </div>
       </div>

@@ -90,6 +90,25 @@
   letter-spacing: .005em;
 }
 .mandarin-english-subline.light { color: rgba(255,255,255,.72) !important; }
+.mandarin-heading-translation { margin-top: 5px !important; color: #777167 !important; font-family: var(--font-fredoka), system-ui, sans-serif; font-size: 13px !important; font-weight: 600; line-height: 1.45 !important; }
+
+/* Shared bilingual hierarchy: Mandarin carries the meaning and visual weight;
+   English stays directly below as an accessible support layer. */
+.mandarin-bilingual-action { display: flex; flex-direction: column; align-items: inherit; gap: 2px; line-height: 1.1; }
+.mandarin-bilingual-action strong { font-size: 16px; font-weight: 800; }
+.mandarin-bilingual-action small,
+.mandarin-eyebrow small,
+.mandarin-kicker small {
+  display: block;
+  margin-top: 2px;
+  font-family: var(--font-fredoka), system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .01em;
+  opacity: .74;
+}
+.mandarin-eyebrow > span,
+.mandarin-kicker > span { display: block; }
 
 .mandarin-primary-button,
 .mandarin-secondary-button {
@@ -187,24 +206,30 @@
 .mandarin-onboarding-aside { position: relative; overflow: hidden; padding: 36px 32px; background: linear-gradient(150deg, var(--md-jade-900), #246f54 65%, #398867); color: white; }
 .mandarin-onboarding-aside::after { content: ""; position: absolute; width: 230px; height: 230px; right: -110px; bottom: -100px; border: 1px solid rgba(255,255,255,.18); border-radius: 50%; box-shadow: 0 0 0 26px rgba(255,255,255,.04), 0 0 0 52px rgba(255,255,255,.03); }
 .mandarin-onboarding-mascot { display: block; width: 150px; margin: 28px auto 10px; filter: drop-shadow(0 16px 24px rgba(0,0,0,.18)); animation: mandarin-breathe 4.5s ease-in-out infinite; }
-.mandarin-onboarding-aside h2 { font-size: 24px; font-weight: 800; text-align: center; }
-.mandarin-onboarding-aside > p { margin-top: 8px; color: rgba(255,255,255,.78); font-size: 14px; line-height: 1.75; text-align: center; }
+.mandarin-onboarding-aside h2 { font-size: 26px; font-weight: 800; line-height: 1.35; text-align: center; }
+.mandarin-onboarding-aside h2 small { display: block; margin-top: 4px; color: rgba(255,255,255,.72); font-family: var(--font-fredoka), system-ui, sans-serif; font-size: 12px; font-weight: 500; }
+.mandarin-onboarding-aside > p { margin-top: 8px; color: rgba(255,255,255,.86); font-size: 16px; line-height: 1.75; text-align: center; }
+.mandarin-onboarding-aside > p small { display: block; margin-top: 5px; color: rgba(255,255,255,.66); font-family: var(--font-fredoka), system-ui, sans-serif; font-size: 11px; line-height: 1.5; }
 .mandarin-step-list { display: grid; gap: 10px; margin-top: 28px; }
 .mandarin-step-line { display: flex; align-items: center; gap: 10px; color: rgba(255,255,255,.52); font-size: 13px; }
 .mandarin-step-line > span { display: grid; width: 28px; height: 28px; place-items: center; border: 1px solid rgba(255,255,255,.28); border-radius: 50%; font-size: 12px; }
 .mandarin-step-line.active, .mandarin-step-line.done { color: white; }
 .mandarin-step-line.active > span { border-color: var(--md-gold-400); background: var(--md-gold-400); color: var(--md-jade-900); }
 .mandarin-step-line.done > span { border-color: #8fd0aa; color: #8fd0aa; }
+.mandarin-step-line strong { font-size: 15px; line-height: 1.25; }
+.mandarin-step-line strong small { display: block; margin-top: 2px; font-family: var(--font-fredoka), system-ui, sans-serif; font-size: 10px; font-weight: 500; opacity: .72; }
 .mandarin-onboarding-main { padding: 48px clamp(26px,5vw,58px); }
 .mandarin-onboarding-main h1 { margin-top: 12px; font-size: clamp(29px,5vw,42px); font-weight: 800; line-height: 1.2; letter-spacing: -.03em; }
 .mandarin-onboarding-main h1 span { color: var(--md-red-500); }
 .mandarin-form-intro { margin-top: 10px; color: var(--md-muted); font-size: 15px; line-height: 1.7; }
 .mandarin-form-unit { margin-top: 5px; color: var(--md-jade-700); font-size: 12px; font-weight: 600; }
-.mandarin-key-label { display: block; color: var(--md-jade-900); font-size: 13px; font-weight: 700; }
+.mandarin-key-label { display: block; color: var(--md-jade-900); font-size: 16px; font-weight: 800; }
+.mandarin-key-label small { display: block; margin-top: 2px; color: #777167; font-family: var(--font-fredoka), system-ui, sans-serif; font-size: 11px; font-weight: 500; }
 .mandarin-key-input { width: 100%; min-height: 62px; border: 1px solid var(--md-line); border-radius: 15px; background: #fffaf0; padding: 15px 18px; color: var(--md-ink); font-size: clamp(18px,4vw,23px); font-weight: 800; letter-spacing: .09em; text-align: center; outline: none; transition: border-color .2s, box-shadow .2s, background .2s; }
 .mandarin-key-input:focus { border-color: var(--md-gold-400); background: white; box-shadow: 0 0 0 4px rgba(214,164,59,.15); }
 .mandarin-form-error { border: 1px solid #e7aca7; border-radius: 11px; background: #fff0ee; padding: 11px 13px; color: #8f2d29; font-size: 13px; font-weight: 600; line-height: 1.5; }
-.mandarin-privacy-note { margin-top: 16px; color: #8b857a; font-size: 11px; text-align: center; }
+.mandarin-privacy-note { margin-top: 16px; color: #716c63; font-size: 13px; line-height: 1.5; text-align: center; }
+.mandarin-privacy-note small { display: block; margin-top: 3px; color: #8b857a; font-family: var(--font-fredoka), system-ui, sans-serif; font-size: 10px; }
 .mandarin-profile-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px; margin-top: 24px; }
 .mandarin-field > span { display: flex; flex-wrap: wrap; align-items: baseline; gap: 5px; margin-bottom: 7px; color: #555147; font-size: 14px; font-weight: 700; }
 .mandarin-field > span b { color: var(--md-red-500); }
@@ -226,35 +251,43 @@
 .mandarin-stat > span { display: grid; width: 42px; height: 42px; place-items: center; border-radius: 13px; background: var(--md-jade-100); color: var(--md-jade-700); }
 .mandarin-stat strong { display: block; color: var(--md-ink); font-size: 25px; line-height: 1; }
 .mandarin-stat strong small { margin-left: 3px; color: var(--md-muted); font-size: 11px; }
-.mandarin-stat p { margin-top: 5px; color: var(--md-muted); font-size: 11px; font-weight: 600; }
+.mandarin-stat p { margin-top: 5px; color: var(--md-ink); font-size: 14px; font-weight: 700; line-height: 1.25; }
+.mandarin-stat p small { display: block; margin-top: 3px; color: var(--md-muted); font-family: var(--font-fredoka), system-ui, sans-serif; font-size: 10px; font-weight: 500; }
 .mandarin-briefing-panel,
 .mandarin-result-panel { border: 1px solid var(--md-line); border-radius: 24px; background: rgba(255,253,247,.9); padding: 26px; box-shadow: 0 12px 34px rgba(87,63,24,.06); }
 .mandarin-briefing-panel.compact { padding: 24px; }
 .mandarin-section-heading { display: flex; align-items: center; gap: 13px; margin-bottom: 19px; }
 .mandarin-section-heading.small { margin-bottom: 15px; }
 .mandarin-section-icon { display: grid; width: 46px; height: 46px; flex: none; place-items: center; border-radius: 14px; background: var(--md-red-100); color: var(--md-red-700); }
-.mandarin-section-heading span { color: var(--md-red-700); font-size: 10px; font-weight: 700; letter-spacing: .12em; }
-.mandarin-section-heading h2 { margin-top: 2px; font-size: 21px; font-weight: 800; }
+.mandarin-section-heading span { color: var(--md-red-700); font-size: 13px; font-weight: 700; letter-spacing: .06em; }
+.mandarin-section-heading span small,
+.mandarin-section-heading h2 small { display: block; margin-top: 2px; color: #7b756a; font-family: var(--font-fredoka), system-ui, sans-serif; font-size: 10px; font-weight: 500; letter-spacing: .01em; }
+.mandarin-section-heading h2 { margin-top: 3px; font-size: 24px; font-weight: 800; line-height: 1.3; }
+.mandarin-section-heading h2 small { font-size: 12px; }
 .mandarin-skill-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; }
 .mandarin-skill-card { display: flex; align-items: flex-start; gap: 14px; border: 1px solid #eadfc8; border-radius: 17px; background: white; padding: 15px; transition: transform .2s, border-color .2s, box-shadow .2s; }
 .mandarin-skill-card:hover { transform: translateY(-2px); border-color: var(--md-gold-400); box-shadow: 0 10px 22px rgba(87,63,24,.08); }
 .mandarin-skill-seal { display: grid; width: 40px; height: 40px; flex: none; place-items: center; border: 2px solid var(--md-red-500); border-radius: 10px; color: var(--md-red-700); font-size: 18px; font-weight: 800; transform: rotate(-2deg); }
-.mandarin-skill-card h3 { color: var(--md-ink); font-size: 17px; font-weight: 800; }
+.mandarin-skill-card h3 { color: var(--md-ink); font-size: 19px; font-weight: 800; }
 .mandarin-skill-card h3 small { display: block; margin-top: 2px; color: #777167; font-family: var(--font-fredoka), system-ui, sans-serif; font-size: 11px; font-weight: 500; }
-.mandarin-skill-card p { margin-top: 5px; color: var(--md-muted); font-size: 14px; line-height: 1.6; }
-.mandarin-skill-card div > small { display: inline-block; margin-top: 8px; color: var(--md-jade-700); font-size: 12px; font-weight: 700; }
+.mandarin-skill-card p { margin-top: 6px; color: var(--md-muted); font-size: 15px; line-height: 1.6; }
+.mandarin-skill-card p small { display: block; margin-top: 3px; color: #827c72; font-family: var(--font-fredoka), system-ui, sans-serif; font-size: 10px; line-height: 1.45; }
+.mandarin-task-count { display: inline-block; margin-top: 8px; color: var(--md-jade-700); font-size: 13px; font-weight: 700; }
+.mandarin-task-count small { display: block; margin-top: 1px; font-family: var(--font-fredoka), system-ui, sans-serif; font-size: 9px; font-weight: 500; opacity: .75; }
 .mandarin-briefing-columns,
 .mandarin-result-columns { display: grid; grid-template-columns: minmax(0,1.35fr) minmax(250px,.65fr); gap: 16px; margin-top: 16px; }
 .mandarin-reminder-list { display: grid; gap: 10px; counter-reset: reminder; }
-.mandarin-reminder-list li { display: grid; grid-template-columns: 68px 1fr; gap: 12px; align-items: baseline; border-bottom: 1px dashed #e6d9c0; padding-bottom: 9px; }
+.mandarin-reminder-list li { display: grid; grid-template-columns: 112px 1fr; gap: 14px; align-items: start; border-bottom: 1px dashed #e6d9c0; padding-bottom: 11px; }
 .mandarin-reminder-list li:last-child { border-bottom: 0; padding-bottom: 0; }
-.mandarin-reminder-list b { color: var(--md-jade-700); font-size: 13px; }
-.mandarin-reminder-list span { color: var(--md-muted); font-size: 13px; line-height: 1.55; }
+.mandarin-reminder-list b { color: var(--md-jade-700); font-size: 16px; line-height: 1.4; }
+.mandarin-reminder-list span { color: var(--md-muted); font-size: 15px; line-height: 1.55; }
+.mandarin-reminder-list small,
+.mandarin-listening-note small { display: block; margin-top: 2px; font-family: var(--font-fredoka), system-ui, sans-serif; font-size: 10px; font-weight: 500; line-height: 1.45; opacity: .72; }
 .mandarin-listening-note { border-radius: 24px; background: linear-gradient(150deg, var(--md-jade-900), var(--md-jade-700)); padding: 26px; color: white; box-shadow: 0 14px 30px rgba(23,78,61,.18); }
 .mandarin-listening-note > svg { color: #f1cf7b; }
-.mandarin-listening-note h2 { margin-top: 18px; font-size: 20px; font-weight: 800; }
-.mandarin-listening-note > p { margin-top: 8px; color: rgba(255,255,255,.76); font-size: 13px; line-height: 1.7; }
-.mandarin-ink-quote { margin-top: 20px; border-top: 1px solid rgba(255,255,255,.15); padding-top: 17px; color: #fff2cc; font-size: 14px; font-weight: 700; }
+.mandarin-listening-note h2 { margin-top: 18px; font-size: 22px; font-weight: 800; }
+.mandarin-listening-note > p { margin-top: 8px; color: rgba(255,255,255,.86); font-size: 15px; line-height: 1.7; }
+.mandarin-ink-quote { margin-top: 20px; border-top: 1px solid rgba(255,255,255,.15); padding-top: 17px; color: #fff2cc; font-size: 16px; font-weight: 700; }
 .mandarin-briefing-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 22px; }
 
 /* In-experience journey */
@@ -294,15 +327,16 @@
 .mandarin-quest-heading { display: flex; align-items: center; gap: 13px; margin-bottom: 24px; border-bottom: 1px dashed #e2d0ae; padding-bottom: 17px; }
 .mandarin-quest-emblem { display: grid; width: 48px; height: 48px; flex: none; place-items: center; border: 2px solid var(--md-red-500); border-radius: 12px; color: var(--md-red-700); font-size: 22px; font-weight: 800; transform: rotate(-2deg); }
 .mandarin-quest-title { min-width: 0; flex: 1; }
-.mandarin-quest-title span { display: block; color: var(--md-muted); font-size: 12px; font-weight: 600; letter-spacing: .1em; }
-.mandarin-quest-title strong { display: block; margin-top: 2px; color: var(--md-ink); font-size: 20px; font-weight: 800; }
+.mandarin-quest-title span { display: block; color: var(--md-muted); font-size: 14px; font-weight: 700; letter-spacing: .06em; }
+.mandarin-quest-title strong { display: block; margin-top: 3px; color: var(--md-ink); font-size: 23px; font-weight: 800; }
+.mandarin-quest-title span small,
+.mandarin-quest-title strong small { display: block; margin-top: 2px; color: #817b70; font-family: var(--font-fredoka), system-ui, sans-serif; font-size: 10px; font-weight: 500; letter-spacing: .01em; }
 .mandarin-quest-tags { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 7px; }
 .mandarin-quest-tags span { display: inline-flex; align-items: center; gap: 5px; border: 1px solid #d9e6dd; border-radius: 99px; background: var(--md-jade-100); padding: 6px 10px; color: var(--md-jade-700); font-size: 12px; font-weight: 700; }
-.mandarin-english-guide { display: grid; grid-template-columns: 38px minmax(0,1fr) auto; align-items: center; gap: 11px; margin: -9px 0 22px; border: 1px solid #d8e5dc; border-radius: 14px; background: linear-gradient(135deg,#f3f8f4,#fffdf8); padding: 11px 13px; color: var(--md-ink); }
+.mandarin-english-guide { display: grid; grid-template-columns: 38px minmax(0,1fr); align-items: center; gap: 11px; margin: -9px 0 22px; border: 1px solid #d8e5dc; border-radius: 14px; background: linear-gradient(135deg,#f3f8f4,#fffdf8); padding: 11px 13px; color: var(--md-ink); }
 .mandarin-english-guide > span { display: grid; width: 36px; height: 36px; place-items: center; border-radius: 10px; background: var(--md-jade-700); color: white; font-family: var(--font-fredoka), system-ui, sans-serif; font-size: 12px; font-weight: 800; }
 .mandarin-english-guide strong { display: block; font-family: var(--font-fredoka), system-ui, sans-serif; font-size: 15px; font-weight: 700; }
 .mandarin-english-guide p { margin-top: 2px; color: #625f58; font-family: var(--font-fredoka), system-ui, sans-serif; font-size: 13px; line-height: 1.5; }
-.mandarin-english-guide > small { max-width: 150px; color: #7d776d; font-family: var(--font-fredoka), system-ui, sans-serif; font-size: 10px; line-height: 1.35; text-align: right; }
 .mandarin-question-body { color: var(--md-ink); letter-spacing: .015em; }
 .mandarin-instruction-hint { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 12px; color: var(--md-muted); }
 .mandarin-instruction-hint > span { display: grid; width: 23px; height: 23px; flex: none; place-items: center; border: 1px solid #e0bd77; border-radius: 7px; color: var(--md-gold-600); font-size: 10px; font-weight: 800; }
@@ -319,7 +353,8 @@
 .mandarin-option-state > span { width: 8px; height: 8px; border-radius: 50%; background: #ded4c0; }
 .mandarin-option-state svg { width: 16px; height: 16px; }
 .mandarin-option-card.is-selected .mandarin-option-state { border-color: var(--md-jade-700); background: var(--md-jade-700); }
-.mandarin-journey-footnote { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 18px; color: var(--md-muted); font-size: 13px; }
+.mandarin-journey-footnote { display: flex; align-items: flex-start; justify-content: center; gap: 6px; margin-top: 18px; color: var(--md-muted); font-size: 14px; line-height: 1.4; text-align: center; }
+.mandarin-journey-footnote small { display: block; color: #888176; font-family: var(--font-fredoka), system-ui, sans-serif; font-size: 10px; }
 .mandarin-journey-actions { border-top: 1px solid rgba(230,210,172,.7); padding-top: 18px; }
 .mandarin-action-label { display: flex; flex-direction: column; align-items: inherit; gap: 2px; line-height: 1.05; }
 .mandarin-action-label small { font-family: var(--font-fredoka), system-ui, sans-serif; font-size: 10px; font-weight: 500; opacity: .76; }
@@ -421,10 +456,13 @@
 .mandarin-finish-backdrop { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: rgba(32,29,23,.58); backdrop-filter: blur(7px); }
 .mandarin-finish-dialog { position: relative; width: min(100%,480px); border: 1px solid var(--md-line); border-radius: 24px; background: var(--md-paper); padding: 34px 30px 28px; box-shadow: 0 28px 90px rgba(26,22,16,.3); animation: mandarin-dialog-in .3s ease-out; }
 .mandarin-finish-mascot { position: absolute; width: 110px; right: 20px; top: -63px; filter: drop-shadow(0 12px 18px rgba(21,49,37,.18)); }
-.mandarin-finish-dialog h2 { margin-top: 10px; max-width: 330px; font-size: 25px; font-weight: 800; line-height: 1.3; }
-.mandarin-finish-dialog > p { margin-top: 9px; color: var(--md-muted); font-size: 14px; line-height: 1.7; }
+.mandarin-finish-dialog h2 { margin-top: 10px; max-width: 350px; font-size: 28px; font-weight: 800; line-height: 1.3; }
+.mandarin-finish-title-en { display: block; max-width: 350px; margin-top: 4px; color: #777167; font-family: var(--font-fredoka), system-ui, sans-serif; font-size: 12px; font-weight: 600; }
+.mandarin-finish-dialog > p { margin-top: 12px; color: var(--md-muted); font-size: 16px; line-height: 1.7; }
+.mandarin-finish-dialog > p small { display: block; margin-top: 4px; color: #827c72; font-family: var(--font-fredoka), system-ui, sans-serif; font-size: 11px; line-height: 1.5; }
 .mandarin-finish-progress { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 20px; border: 1px solid var(--md-line); border-radius: 16px; background: var(--md-paper-warm); padding: 16px; }
-.mandarin-finish-progress span { color: var(--md-muted); font-size: 10px; font-weight: 600; }
+.mandarin-finish-progress span { color: var(--md-ink); font-size: 14px; font-weight: 700; }
+.mandarin-finish-progress span small { display: block; margin-top: 2px; color: var(--md-muted); font-family: var(--font-fredoka), system-ui, sans-serif; font-size: 9px; font-weight: 500; }
 .mandarin-finish-progress strong { display: block; color: var(--md-jade-900); font-size: 25px; }
 .mandarin-finish-progress strong small { color: var(--md-muted); font-size: 12px; }
 .mandarin-finish-track { grid-column: 1 / -1; height: 7px; overflow: hidden; border-radius: 99px; background: #eadfc9; }
@@ -441,38 +479,53 @@
 .mandarin-result-seal { display: grid; width: 108px; height: 108px; place-items: center; border: 3px double var(--md-red-500); border-radius: 20px; color: var(--md-red-700); transform: rotate(-2deg); }
 .mandarin-result-seal span { font-size: 45px; font-weight: 800; line-height: 1; }
 .mandarin-result-seal small { font-size: 9px; font-weight: 700; letter-spacing: .15em; }
-.mandarin-result-stage > span { color: var(--md-red-700); font-size: 10px; font-weight: 700; letter-spacing: .14em; }
-.mandarin-result-stage h2 { margin-top: 3px; font-size: 28px; font-weight: 800; }
-.mandarin-result-stage p { margin-top: 7px; color: var(--md-muted); font-size: 13px; line-height: 1.7; }
+.mandarin-result-stage > span { color: var(--md-red-700); font-size: 13px; font-weight: 700; letter-spacing: .08em; }
+.mandarin-result-stage > span small,
+.mandarin-result-stage h2 small,
+.mandarin-result-stage p small { display: block; margin-top: 2px; color: #7e776c; font-family: var(--font-fredoka), system-ui, sans-serif; font-size: 10px; font-weight: 500; letter-spacing: .01em; }
+.mandarin-result-stage h2 { margin-top: 5px; font-size: 30px; font-weight: 800; line-height: 1.25; }
+.mandarin-result-stage h2 small { font-size: 12px; }
+.mandarin-result-stage p { margin-top: 9px; color: var(--md-muted); font-size: 16px; line-height: 1.7; }
 .mandarin-result-score { border-left: 1px solid var(--md-line); padding-left: 25px; text-align: right; }
 .mandarin-result-score strong { display: block; color: var(--md-jade-700); font-size: 50px; line-height: 1; }
 .mandarin-result-score strong small { font-size: 18px; }
-.mandarin-result-score span { display: block; margin-top: 7px; color: var(--md-muted); font-size: 11px; }
+.mandarin-result-score span { display: block; margin-top: 7px; color: var(--md-muted); font-size: 13px; }
+.mandarin-result-score span small { display: block; margin-top: 2px; font-family: var(--font-fredoka), system-ui, sans-serif; font-size: 10px; }
 .mandarin-result-panel { margin-top: 16px; }
-.mandarin-result-intro { margin: -7px 0 18px 59px; color: var(--md-muted); font-size: 12px; line-height: 1.6; }
+.mandarin-result-intro { margin: -5px 0 20px 59px; color: var(--md-muted); font-size: 15px; line-height: 1.7; }
+.mandarin-result-intro small { display: block; margin-top: 4px; color: #817b70; font-family: var(--font-fredoka), system-ui, sans-serif; font-size: 11px; line-height: 1.5; }
 .mandarin-result-dimensions { display: grid; gap: 10px; }
 .mandarin-result-dimensions article { display: grid; grid-template-columns: 42px minmax(0,1fr) minmax(130px,.45fr); align-items: center; gap: 14px; border: 1px solid #e8dcc5; border-radius: 15px; background: white; padding: 13px 15px; }
 .mandarin-dimension-mark { display: grid; width: 40px; height: 40px; place-items: center; border: 2px solid var(--md-red-500); border-radius: 10px; color: var(--md-red-700); font-weight: 800; }
-.mandarin-dimension-copy h3 { font-size: 14px; font-weight: 800; }
-.mandarin-dimension-copy p { margin-top: 2px; color: var(--md-muted); font-size: 11px; }
+.mandarin-dimension-copy h3 { font-size: 18px; font-weight: 800; line-height: 1.35; }
+.mandarin-dimension-copy h3 small,
+.mandarin-dimension-copy p small { display: block; margin-top: 2px; color: #817b70; font-family: var(--font-fredoka), system-ui, sans-serif; font-size: 10px; font-weight: 500; }
+.mandarin-dimension-copy p { margin-top: 5px; color: var(--md-muted); font-size: 14px; line-height: 1.5; }
 .mandarin-dimension-score { text-align: right; }
 .mandarin-dimension-score strong { color: var(--md-jade-700); font-size: 17px; }
 .mandarin-dimension-score > span { display: block; height: 6px; margin-top: 4px; overflow: hidden; border-radius: 99px; background: #ece4d5; }
 .mandarin-dimension-score i { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg,var(--md-jade-500),var(--md-gold-400)); }
 .mandarin-result-panel.next-step { margin-top: 0; }
-.mandarin-result-panel.next-step > p { color: var(--md-muted); font-size: 13px; line-height: 1.7; }
+.mandarin-result-panel.next-step > p { color: var(--md-muted); font-size: 15px; line-height: 1.7; }
+.mandarin-result-panel.next-step > p small { display: block; margin-top: 4px; color: #817b70; font-family: var(--font-fredoka), system-ui, sans-serif; font-size: 11px; line-height: 1.5; }
 .mandarin-result-panel.next-step ul { display: grid; gap: 8px; margin-top: 15px; }
-.mandarin-result-panel.next-step li { display: flex; align-items: center; gap: 8px; color: var(--md-ink); font-size: 12px; font-weight: 600; }
+.mandarin-result-panel.next-step li { display: flex; align-items: flex-start; gap: 8px; color: var(--md-ink); font-size: 15px; font-weight: 700; }
 .mandarin-result-panel.next-step li svg { color: var(--md-jade-700); }
+.mandarin-result-panel.next-step li small { display: block; margin-top: 2px; color: #817b70; font-family: var(--font-fredoka), system-ui, sans-serif; font-size: 10px; font-weight: 500; }
 .mandarin-result-contact { border-radius: 24px; background: linear-gradient(145deg,var(--md-red-500),var(--md-red-700)); padding: 27px; color: white; box-shadow: 0 14px 30px rgba(157,48,45,.18); }
 .mandarin-result-contact > svg { color: #f4cf7d; }
-.mandarin-result-contact > span { display: block; margin-top: 17px; color: #f7db9f; font-size: 10px; font-weight: 700; letter-spacing: .12em; }
-.mandarin-result-contact h2 { margin-top: 4px; font-size: 20px; font-weight: 800; line-height: 1.4; }
-.mandarin-result-contact p { margin-top: 9px; color: rgba(255,255,255,.78); font-size: 12px; line-height: 1.75; }
+.mandarin-result-contact > span { display: block; margin-top: 17px; color: #f7db9f; font-size: 13px; font-weight: 700; letter-spacing: .08em; }
+.mandarin-result-contact > span small,
+.mandarin-result-contact h2 small,
+.mandarin-result-contact p small { display: block; margin-top: 2px; color: rgba(255,255,255,.7); font-family: var(--font-fredoka), system-ui, sans-serif; font-size: 10px; font-weight: 500; letter-spacing: .01em; }
+.mandarin-result-contact h2 { margin-top: 6px; font-size: 23px; font-weight: 800; line-height: 1.4; }
+.mandarin-result-contact p { margin-top: 11px; color: rgba(255,255,255,.88); font-size: 15px; line-height: 1.75; }
 .mandarin-result-footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 17px; border-top: 1px solid var(--md-line); padding: 18px 3px 0; }
-.mandarin-result-footer > div { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; color: var(--md-muted); font-size: 11px; }
+.mandarin-result-footer > div { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; color: var(--md-muted); font-size: 13px; }
 .mandarin-result-footer > div svg { color: var(--md-jade-700); }
 .mandarin-result-footer > div b { color: var(--md-jade-700); }
+.mandarin-result-footer > div span small,
+.mandarin-result-footer > div b small { display: block; margin-top: 2px; color: #817b70; font-family: var(--font-fredoka), system-ui, sans-serif; font-size: 9px; font-weight: 500; }
 
 @keyframes mandarin-breathe { 0%,100% { transform: translateY(0) rotate(-.4deg); } 50% { transform: translateY(-6px) rotate(.4deg); } }
 @keyframes mandarin-spin { to { transform: rotate(360deg); } }
@@ -529,7 +582,8 @@
   .mandarin-english-guide { grid-template-columns: 36px minmax(0,1fr); margin-bottom: 18px; padding: 10px; }
   .mandarin-english-guide strong { font-size: 14px; }
   .mandarin-english-guide p { font-size: 12px; }
-  .mandarin-english-guide > small { grid-column: 2; max-width: none; text-align: left; }
+  .mandarin-reminder-list li { grid-template-columns: 96px 1fr; gap: 10px; }
+  .mandarin-result-intro { margin-left: 0; }
   .mandarin-option-card { min-height: 58px; padding: 11px; }
   .mandarin-option-text { font-size: 17px; }
   .mandarin-journey-actions { position: sticky; bottom: 0; z-index: 12; margin-left: -16px; margin-right: -16px; border: 1px solid rgba(214,183,118,.6); border-radius: 16px 16px 0 0; background: rgba(255,253,247,.94); padding: 12px 16px max(12px,env(safe-area-inset-bottom)); backdrop-filter: blur(14px); }
