@@ -23,6 +23,8 @@ export function ShortRenderer({ prompt, content, value, onChange }: RendererProp
   const upper = calm && tier === "upper-primary";
   const minWords: number = content?.minWords ?? 30;
   const maxWords: number = content?.maxWords ?? 50;
+  const countOnly = content?.countOnly === true;
+  const minimumOnly = content?.minimumOnly === true;
   const template: string | undefined = content?.template;
   const passage: string | undefined = content?.passage;
   const passageImage: string | undefined = content?.passageImage;
@@ -38,8 +40,9 @@ export function ShortRenderer({ prompt, content, value, onChange }: RendererProp
   // Word count state: under / on-target / over.
   const state =
     wordCount === 0 ? "empty"
+    : countOnly ? "ontarget"
     : wordCount < minWords ? "under"
-    : wordCount > maxWords ? "over"
+    : !minimumOnly && wordCount > maxWords ? "over"
     : "ontarget";
 
   const counterStyle = calm
@@ -62,7 +65,15 @@ export function ShortRenderer({ prompt, content, value, onChange }: RendererProp
 
   if (isCJK) {
     const imageUrl: string | undefined = content?.imageUrl;
-    const progressLabel = wordCount === 0 ? "等待起笔" : wordCount < minWords ? "灵感正在成形" : wordCount <= maxWords ? "表达完整" : "可以稍微精简";
+    const progressLabel = wordCount === 0
+      ? "等待起笔"
+      : countOnly
+        ? "字数已记录"
+        : wordCount < minWords
+          ? "灵感正在成形"
+          : minimumOnly || wordCount <= maxWords
+            ? "表达完整"
+            : "可以稍微精简";
     return (
       <div className="mandarin-writing-studio">
         {passage && (
@@ -90,11 +101,12 @@ export function ShortRenderer({ prompt, content, value, onChange }: RendererProp
         <div className="mandarin-writing-toolbar">
           <div><span>写作足迹</span><strong>{progressLabel}</strong></div>
           <div className={`mandarin-character-count state-${state}`} aria-live="polite">
-            <b>{wordCount}</b><span>字</span><small>目标 {minWords}–{maxWords} 字</small>
+            <b>{wordCount}</b><span>字</span>
+            <small>{countOnly ? "实时字数" : minimumOnly ? `至少 ${minWords} 字` : `目标 ${minWords}–${maxWords} 字`}</small>
           </div>
         </div>
 
-        <WordProgress wordCount={wordCount} minWords={minWords} maxWords={maxWords} state={state} cjk />
+        {!countOnly && <WordProgress wordCount={wordCount} minWords={minWords} maxWords={maxWords} state={state} cjk minimumOnly={minimumOnly} />}
 
         {template && <div className="mandarin-writing-starter"><span>起笔小帮手</span><p>{template}</p></div>}
         <textarea
@@ -395,12 +407,14 @@ function WordProgress({
   maxWords,
   state,
   cjk = false,
+  minimumOnly = false,
 }: {
   wordCount: number;
   minWords: number;
   maxWords: number;
   state: "empty" | "under" | "ontarget" | "over";
   cjk?: boolean;
+  minimumOnly?: boolean;
 }) {
   // Cap visual fill at 100%; once you hit minWords the bar is full.
   const pct = Math.min(100, (wordCount / minWords) * 100);
@@ -417,9 +431,11 @@ function WordProgress({
         style={{ width: `${pct}%` }}
         role="progressbar"
         aria-valuemin={0}
-        aria-valuemax={maxWords}
+        aria-valuemax={minimumOnly ? minWords : maxWords}
         aria-valuenow={wordCount}
-        aria-label={cjk ? `已写 ${wordCount} 字，目标 ${minWords} 至 ${maxWords} 字` : `${wordCount} of ${minWords}–${maxWords} words`}
+        aria-label={cjk
+          ? minimumOnly ? `已写 ${wordCount} 字，至少 ${minWords} 字` : `已写 ${wordCount} 字，目标 ${minWords} 至 ${maxWords} 字`
+          : minimumOnly ? `${wordCount} words, at least ${minWords}` : `${wordCount} of ${minWords}–${maxWords} words`}
       />
     </div>
   );

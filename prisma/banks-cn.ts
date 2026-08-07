@@ -47,7 +47,7 @@ export function chineseStandard1Questions(): QData[] {
       content: { options: [
         { key: "A", text: "苹果" }, { key: "B", text: "香蕉" },
         { key: "C", text: "西瓜" }, { key: "D", text: "草莓" },
-      ], topicLabel: "字词" },
+      ] },
       answer: { key: "A" } },
 
     // Q2 · 看图选词 — 医生
@@ -57,21 +57,20 @@ export function chineseStandard1Questions(): QData[] {
       content: { options: [
         { key: "A", text: "爸爸" }, { key: "B", text: "老师" },
         { key: "C", text: "医生" }, { key: "D", text: "警察" },
-      ], topicLabel: "职业" },
+      ] },
       answer: { key: "C" } },
 
-    // Q3 · 听音频选词 — 唱歌 (TTS speakText)
+    // Q3 · 听官方音频选词 — 唱歌
     { type: "SINGLE", dimension: "PHONICS", score: 1,
       prompt: "听一听，小朋友正在做什么？",
       mediaUrl: "/audio/chinese-standard-1/sing.mp3",
       content: {
-        speakText: "唱歌", lang: "zh-CN", maxPlays: 3,
+        lang: "zh-CN", maxPlays: 3,
         imageUrl: "/questions/chinese-standard-1/q03-audio-action.jpg",
         options: [
           { key: "A", text: "跑步" }, { key: "B", text: "游泳" },
           { key: "C", text: "画画" }, { key: "D", text: "唱歌" },
         ],
-        topicLabel: "听音辨词",
       },
       answer: { key: "D" } },
 
@@ -80,13 +79,12 @@ export function chineseStandard1Questions(): QData[] {
       prompt: "听一听，这是什么动物？",
       mediaUrl: "/audio/chinese-standard-1/tiger.mp3",
       content: {
-        speakText: "老虎", lang: "zh-CN", maxPlays: 3,
+        lang: "zh-CN", maxPlays: 3,
         imageUrl: "/questions/chinese-standard-1/q04-audio-animal.jpg",
         options: [
           { key: "A", text: "老虎" }, { key: "B", text: "狮子" },
           { key: "C", text: "大象" }, { key: "D", text: "长颈鹿" },
         ],
-        topicLabel: "动物",
       },
       answer: { key: "A" } },
 
@@ -99,15 +97,13 @@ export function chineseStandard1Questions(): QData[] {
           { text: "快乐" }, { text: "干净" }, { text: "勤劳" }, { text: "热闹" },
         ],
         right: [
-          "心里很高兴",             // B → 快乐 (index 0 in left maps to index 0 in right after re-order below)
-          "没有脏，整整齐齐",        // D → 干净
-          "很用功，不偷懒",          // C → 勤劳
-          "很多人，很有生气",        // A → 热闹
+          "很多人，很有生气",        // A
+          "心里很高兴",              // B
+          "很用功，不偷懒",          // C
+          "没有脏，整整齐齐",        // D
         ],
       },
-      // Left indices → right indices:
-      // 快乐(0)→心里很高兴(0) · 干净(1)→没有脏(1) · 勤劳(2)→很用功(2) · 热闹(3)→很多人(3)
-      answer: { pairs: { "0": 0, "1": 1, "2": 2, "3": 3 } } },
+      answer: { pairs: { "0": 1, "1": 3, "2": 2, "3": 0 } } },
 
     // Q9 · 拼音选择 — 每个词独立成页，降低一年级学生的视觉负担
     { type: "SINGLE", dimension: "PHONICS", score: 1,
@@ -130,7 +126,7 @@ export function chineseStandard1Questions(): QData[] {
     { type: "SINGLE", dimension: "PHONICS", score: 1,
       prompt: "圈出正确的笔画数。\n\n「门」有几画？",
       content: { options: [{ key: "A", text: "3 画" }, { key: "B", text: "4 画" }] },
-      answer: { key: "B" } },
+      answer: { key: "A" } },
     { type: "SINGLE", dimension: "PHONICS", score: 1,
       prompt: "圈出正确的笔画数。\n\n「校」有几画？",
       content: { options: [{ key: "A", text: "9 画" }, { key: "B", text: "10 画" }] },
@@ -146,14 +142,14 @@ export function chineseStandard1Questions(): QData[] {
     { type: "SINGLE", dimension: "GRAMMAR", score: 1,
       prompt: "圈出括号里正确的词语。\n\n弟弟（________）一本故事书。",
       mediaUrl: "/questions/chinese-standard-1/q11-brother-book.jpg",
-      content: { options: [{ key: "A", text: "是" }, { key: "B", text: "有" }], topicLabel: "语法" },
+      content: { options: [{ key: "A", text: "是" }, { key: "B", text: "有" }] },
       answer: { key: "B" } },
 
     // Q12 · 妈妈(在/有)厨房里煮饭 → 在
     { type: "SINGLE", dimension: "GRAMMAR", score: 1,
       prompt: "圈出括号里正确的词语。\n\n妈妈（________）厨房里煮饭。",
       mediaUrl: "/questions/chinese-standard-1/q12-mother-cook.jpg",
-      content: { options: [{ key: "A", text: "在" }, { key: "B", text: "有" }], topicLabel: "方位" },
+      content: { options: [{ key: "A", text: "在" }, { key: "B", text: "有" }] },
       answer: { key: "A" } },
 
     // Q13 · 我的狗(他/她/它) → 它
@@ -162,7 +158,7 @@ export function chineseStandard1Questions(): QData[] {
       mediaUrl: "/questions/chinese-standard-1/q13-dog.jpg",
       content: { options: [
         { key: "A", text: "他" }, { key: "B", text: "她" }, { key: "C", text: "它" },
-      ], topicLabel: "代词" },
+      ] },
       answer: { key: "C" } },
 
     // Q14 · 我用眼睛(看/听/闻)书 → 看
@@ -171,7 +167,7 @@ export function chineseStandard1Questions(): QData[] {
       mediaUrl: "/questions/chinese-standard-1/q14-read.jpg",
       content: { options: [
         { key: "A", text: "看" }, { key: "B", text: "听" }, { key: "C", text: "闻" },
-      ], topicLabel: "动词" },
+      ] },
       answer: { key: "A" } },
 
     // Q15 · 小鸟在树(上/下/里) → 上
@@ -180,7 +176,7 @@ export function chineseStandard1Questions(): QData[] {
       mediaUrl: "/questions/chinese-standard-1/q15-bird-tree.jpg",
       content: { options: [
         { key: "A", text: "上" }, { key: "B", text: "下" }, { key: "C", text: "里" },
-      ], topicLabel: "方位" },
+      ] },
       answer: { key: "A" } },
 
     // Q16 · 句子排序 — "喜欢 我 画画 很" → "我 很 喜欢 画画"
@@ -193,15 +189,16 @@ export function chineseStandard1Questions(): QData[] {
 
     // Q17 · 照样子写句子 — 我喜欢吃___,因为___
     { type: "SHORT", dimension: "WRITING", score: 2,
-      prompt: "照着例句的格式，写出你自己的句子。\n\n例句：我喜欢吃香蕉，因为它又甜又好吃。\n\n请写：我喜欢吃 __________，因为 __________。",
+      prompt: "照样子写句子。\n\n我喜欢吃 __________，因为 __________。",
       content: {
-        minWords: 4,
-        maxWords: 30,
+        minWords: 1,
+        maxWords: 1000,
+        countOnly: true,
         template: "我喜欢吃 __________，因为 __________。",
         imageUrl: "/questions/chinese-standard-1/q17-food.jpg",
         lang: "zh",
       },
-      answer: { rubric: "结构：我喜欢吃 X，因为 Y。 · X 是食物 · Y 是原因（好吃 / 甜 / 有营养 等）。" } },
+      answer: { rubric: "依据题目句式作答：我喜欢吃___________，因为_______________________。" } },
 
     // ─── 丙组 阅读与写话 (Q18–20) ──────────────────────────────────
 
@@ -240,13 +237,14 @@ export function chineseStandard1Questions(): QData[] {
     { type: "SHORT", dimension: "WRITING", score: 2,
       prompt: "看图，用下面的句式写 1–2 句话。\n\n句式参考：\n  • 图里有 __________。\n  • 他们在 __________。",
       content: {
-        minWords: 6,
-        maxWords: 40,
+        minWords: 1,
+        maxWords: 1000,
+        countOnly: true,
         imageUrl: "/questions/chinese-standard-1/q20-park.jpg",
-        template: "图里有 __________ 和 __________。他们在 __________。",
+        template: "图里有 __________。\n他们在 __________。",
         lang: "zh",
       },
-      answer: { rubric: "至少 1 句：图里有小朋友 / 花 / 树 / 秋千等。至少 1 句描述动作：他们在玩耍 / 滑滑梯 / 荡秋千。" } },
+      answer: { rubric: "依据公园图片和题目提供的两个句式作答。" } },
   ];
 }
 
@@ -263,15 +261,11 @@ export function chineseStandard1Questions(): QData[] {
 //   • 看图造句    (writing prompts with an image + a guided template)
 //
 // Design choices vs S1:
-//   • Every 形近字 question uses `topicLabel` to surface the character
-//     pair being distinguished, so students see e.g. "木 / 本 / 末" as a
-//     labelled chip next to the question — turns it into a mini flash-card.
 //   • ORDERING questions opt into `dragDrop: true` (tap-to-place) rather
 //     than the arrow UI, which feels dated for S2 students.
 //   • READING with sub-questions is used for both 词语意思配对 (Q5, 4 subs)
 //     and 短文阅读 (Q16, 2 subs) — richer than a plain SINGLE array.
-//   • Listen-and-choose (Q3/Q4) uses TTS in zh-CN via speakText, same
-//     pattern as S1 Q3/Q4, but with 形近字 options.
+//   • Listen-and-choose (Q3/Q4) uses the teacher-supplied MP3 clips.
 //   • Two SHORT writing prompts (Q19, Q20) with image + template so the
 //     writing counter shows 6–30 字 targets suited for S2.
 export function chineseStandard2Questions(): QData[] {
@@ -309,11 +303,8 @@ export function chineseStandard2Questions(): QData[] {
           { key: "B", text: "医师" },
           { key: "C", text: "医疗" },
         ],
-        speakText: "医生",
         maxPlays: 3,
         lang: "zh-CN",
-        topicLabel: "听力 · 职业",
-        topicIcon: "🎧",
       },
       answer: { key: "A" } },
 
@@ -327,7 +318,6 @@ export function chineseStandard2Questions(): QData[] {
           { key: "B", text: "游泳" },
           { key: "C", text: "游水" },
         ],
-        speakText: "游泳",
         maxPlays: 3,
         lang: "zh-CN",
         afterHint: "形近字提示：泳（游泳）／永（永远）／冰（冰块）—— 注意三点水和其他部首。",
@@ -346,7 +336,6 @@ export function chineseStandard2Questions(): QData[] {
           "排列得很有秩序",        // 整齐
         ],
         dragDrop: true,
-        topicLabel: "词义配对",
       },
       // left indices → right indices
       // 节约(0)→不浪费(0) · 保护(1)→照顾和守护(2) · 整齐(2)→排列(3) · 分享(3)→给别人(1)
@@ -360,8 +349,6 @@ export function chineseStandard2Questions(): QData[] {
           { key: "A", text: "cháng（长短的长）" },
           { key: "B", text: "zhǎng（成长的长）" },
         ],
-        topicLabel: "多音字 · 长",
-        topicIcon: "🔤",
       },
       answer: { key: "A" } },
 
@@ -373,8 +360,6 @@ export function chineseStandard2Questions(): QData[] {
           { key: "A", text: "cháng（长短的长）" },
           { key: "B", text: "zhǎng（成长的长）" },
         ],
-        topicLabel: "多音字 · 长",
-        topicIcon: "📏",
       },
       answer: { key: "B" } },
 
@@ -401,7 +386,7 @@ export function chineseStandard2Questions(): QData[] {
       content: { options: [
         { key: "A", text: "节约" },
         { key: "B", text: "浪费" },
-      ], topicLabel: "选词填空", topicIcon: "💧" },
+      ] },
       answer: { key: "A" } },
 
     // Q10 · 选词填空 · 合作/争吵
@@ -410,7 +395,7 @@ export function chineseStandard2Questions(): QData[] {
       content: { options: [
         { key: "A", text: "合作" },
         { key: "B", text: "争吵" },
-      ], topicLabel: "选词填空", topicIcon: "🎨" },
+      ] },
       answer: { key: "A" } },
 
     // Q11 · 选词填空 · 哪里/什么
@@ -419,7 +404,7 @@ export function chineseStandard2Questions(): QData[] {
       content: { options: [
         { key: "A", text: "哪里" },
         { key: "B", text: "什么" },
-      ], topicLabel: "疑问词", topicIcon: "❓" },
+      ] },
       answer: { key: "A" } },
 
     // Q12 · 因果关系 CLOZE
@@ -429,19 +414,20 @@ export function chineseStandard2Questions(): QData[] {
         passage: "___ 下雨了，___ 我们不能出去玩。",
         blanks: 2,
         caseSensitive: false,
-        topicLabel: "关联词 · 因果",
       },
       answer: { blanks: [["因为"], ["所以"]] } },
 
-    // Q13 · 拟声 · 闪/亮
-    { type: "SINGLE", dimension: "VOCAB", score: 2,
-      prompt: "选出最恰当的词语：\n\n天上的星星一 ______ 一 ______ 的。（选两个相同的词）",
-      content: { options: [
-        { key: "A", text: "闪 · 闪" },
-        { key: "B", text: "亮 · 亮" },
-        { key: "C", text: "闪 · 亮" },
-      ], topicLabel: "形容词", topicIcon: "⭐" },
-      answer: { key: "A" } },
+    // Q13 · 天上的星星一（闪／亮）一（闪／亮）的
+    { type: "READING", dimension: "VOCAB", score: 2,
+      prompt: "从括号里选出最恰当的词语。",
+      content: {
+        passage: "天上的星星一（　）一（　）的。",
+        subs: [
+          { stem: "第一个空格", options: [{ key: "A", text: "闪" }, { key: "B", text: "亮" }] },
+          { stem: "第二个空格", options: [{ key: "A", text: "闪" }, { key: "B", text: "亮" }] },
+        ],
+      },
+      answer: { keys: ["A", "A"] } },
 
     // Q14 · 词句重组 — 小明每天都努力学习
     { type: "ORDERING", dimension: "GRAMMAR", score: 3,
@@ -449,7 +435,6 @@ export function chineseStandard2Questions(): QData[] {
       content: {
         items: ["努力", "每天", "学习", "小明", "都"],
         dragDrop: true,
-        topicLabel: "词句重组",
       },
       // Correct order: 小明(3) · 每天(1) · 都(4) · 努力(0) · 学习(2)
       answer: { order: [3, 1, 4, 0, 2] } },
@@ -460,7 +445,6 @@ export function chineseStandard2Questions(): QData[] {
       content: {
         items: ["分享", "同学", "把", "给", "她", "糖果"],
         dragDrop: true,
-        topicLabel: "词句重组 · 把字句",
       },
       // Correct: 她(4) · 把(2) · 糖果(5) · 分享(0) · 给(3) · 同学(1)
       answer: { order: [4, 2, 5, 0, 3, 1] } },
@@ -469,9 +453,8 @@ export function chineseStandard2Questions(): QData[] {
     { type: "SINGLE", dimension: "GRAMMAR", score: 2,
       prompt: "把下面的陈述句改写成疑问句（问句）。\n\n原句：小明把糖果分享给同学。\n\n哪一个改写最正确？",
       content: { options: [
-        { key: "A", text: "小明把糖果分享给同学吗。" },
+        { key: "A", text: "小明把糖果分享给同学。" },
         { key: "B", text: "小明把糖果分享给谁了？" },
-        { key: "C", text: "谁把小明分享给同学？" },
       ] },
       answer: { key: "B" } },
 
@@ -501,7 +484,6 @@ export function chineseStandard2Questions(): QData[] {
             { key: "D", text: "因为妹妹不喜欢花" },
           ]},
         ],
-        topicLabel: "阅读理解",
       },
       answer: { keys: ["C", "B"] } },
 
@@ -509,28 +491,26 @@ export function chineseStandard2Questions(): QData[] {
     { type: "SHORT", dimension: "WRITING", score: 3,
       prompt: "根据图意和提供的重点字，写一句完整的话。\n\n重点字：钓鱼",
       content: {
-        minWords: 6,
-        maxWords: 30,
+        minWords: 1,
+        maxWords: 1000,
+        countOnly: true,
         imageUrl: "/questions/chinese-standard-2/q19-fishing.svg",
-        template: "___ 在河边钓鱼。",
+        template: "爷爷在河边钓鱼。",
         lang: "zh",
-        topicLabel: "看图造句",
-        topicIcon: "🎣",
       },
-      answer: { rubric: "示例：爷爷在河边钓鱼。/ 星期天，爷爷在河边钓鱼。\n\n评分要点：句子要有主语（谁）、地点（在哪里）、动作（钓鱼），字数 6–30 字。" } },
+      answer: { rubric: "参考答案：爷爷在河边钓鱼。" } },
 
     // 看图造句 · 喜欢
     { type: "SHORT", dimension: "WRITING", score: 3,
       prompt: "根据图意和提供的重点字，写一句完整的话。\n\n重点字：喜欢",
       content: {
-        minWords: 6,
-        maxWords: 30,
+        minWords: 1,
+        maxWords: 1000,
+        countOnly: true,
         imageUrl: "/questions/chinese-standard-2/q20-watermelon.svg",
-        template: "我喜欢吃 ___，因为 ___。",
+        template: "我喜欢吃西瓜。",
         lang: "zh",
-        topicLabel: "看图造句",
-        topicIcon: "🍉",
       },
-      answer: { rubric: "示例：我喜欢吃西瓜，因为它又甜又多汁。\n\n评分要点：句子要有主语、宾语（吃什么）、原因，字数 6–30 字。" } },
+      answer: { rubric: "参考答案：我喜欢吃西瓜。" } },
   ];
 }

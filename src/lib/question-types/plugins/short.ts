@@ -31,11 +31,15 @@ const shortPlugin: QuestionTypePlugin = {
     const words = countWords(text);
     const min = Number(content?.minWords ?? 30);
     const max = Number(content?.maxWords ?? 50);
+    const countOnly = content?.countOnly === true;
+    const minimumOnly = content?.minimumOnly === true;
 
     if (words === 0) return { score: 0, correct: false, detail: { words, status: "empty" } };
+    if (countOnly)
+      return { score: Math.round(maxScore * 0.7), correct: true, detail: { words, status: "submitted" } };
     if (words < min)
       return { score: Math.round(maxScore * 0.3), correct: false, detail: { words, status: "under" } };
-    if (words > max)
+    if (!minimumOnly && words > max)
       return { score: Math.round(maxScore * 0.6), correct: false, detail: { words, status: "over" } };
     return { score: Math.round(maxScore * 0.7), correct: true, detail: { words, status: "on-target" } };
   },
