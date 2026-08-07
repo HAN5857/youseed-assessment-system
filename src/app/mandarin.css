@@ -324,7 +324,7 @@
 .mandarin-scroll-rod span { position: absolute; width: 13px; height: 18px; top: -10px; border: 2px solid #8e621d; border-radius: 4px; background: #d2a346; }
 .mandarin-scroll-rod span:first-child { left: 18px; }
 .mandarin-scroll-rod span:last-child { right: 18px; }
-.mandarin-quest-heading { display: flex; align-items: center; gap: 13px; margin-bottom: 24px; border-bottom: 1px dashed #e2d0ae; padding-bottom: 17px; }
+.mandarin-quest-heading { display: flex; justify-content: flex-end; margin-bottom: 14px; border-bottom: 1px dashed #e2d0ae; padding-bottom: 12px; }
 .mandarin-quest-emblem { display: grid; width: 48px; height: 48px; flex: none; place-items: center; border: 2px solid var(--md-red-500); border-radius: 12px; color: var(--md-red-700); font-size: 22px; font-weight: 800; transform: rotate(-2deg); }
 .mandarin-quest-title { min-width: 0; flex: 1; }
 .mandarin-quest-title span { display: block; color: var(--md-muted); font-size: 14px; font-weight: 700; letter-spacing: .06em; }
@@ -333,6 +333,7 @@
 .mandarin-quest-title strong small { display: block; margin-top: 2px; color: #817b70; font-family: var(--font-fredoka), system-ui, sans-serif; font-size: 10px; font-weight: 500; letter-spacing: .01em; }
 .mandarin-quest-tags { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 7px; }
 .mandarin-quest-tags span { display: inline-flex; align-items: center; gap: 5px; border: 1px solid #d9e6dd; border-radius: 99px; background: var(--md-jade-100); padding: 6px 10px; color: var(--md-jade-700); font-size: 12px; font-weight: 700; }
+.mandarin-quest-tags small { color: #777167; font-family: var(--font-fredoka), system-ui, sans-serif; font-size: 10px; font-weight: 500; }
 .mandarin-english-guide { display: grid; grid-template-columns: 38px minmax(0,1fr); align-items: center; gap: 11px; margin: -9px 0 22px; border: 1px solid #d8e5dc; border-radius: 14px; background: linear-gradient(135deg,#f3f8f4,#fffdf8); padding: 11px 13px; color: var(--md-ink); }
 .mandarin-english-guide > span { display: grid; width: 36px; height: 36px; place-items: center; border-radius: 10px; background: var(--md-jade-700); color: white; font-family: var(--font-fredoka), system-ui, sans-serif; font-size: 12px; font-weight: 800; }
 .mandarin-english-guide strong { display: block; font-family: var(--font-fredoka), system-ui, sans-serif; font-size: 15px; font-weight: 700; }
@@ -348,7 +349,7 @@
 .mandarin-option-card.is-selected { border-color: var(--md-red-500); background: linear-gradient(135deg,#fff8ee,#fffdf8); box-shadow: 0 0 0 2px rgba(201,71,63,.11), 0 10px 22px rgba(84,61,22,.08); }
 .mandarin-option-badge { display: grid; width: 38px; height: 38px; flex: none; place-items: center; border: 1px solid #dfcba3; border-radius: 10px; background: var(--md-paper-warm); color: var(--md-jade-700); font-size: 14px; font-weight: 800; transition: background .2s, color .2s, transform .2s; }
 .mandarin-option-card.is-selected .mandarin-option-badge { border-color: var(--md-red-500); background: var(--md-red-500); color: white; transform: rotate(-2deg); }
-.mandarin-option-text { flex: 1; font-size: 18px; font-weight: 600; line-height: 1.55; }
+.mandarin-option-text { flex: 1; font-size: 19px; font-weight: 650; line-height: 1.6; }
 .mandarin-option-state { display: grid; width: 28px; height: 28px; flex: none; place-items: center; border: 1px solid #ded4c0; border-radius: 50%; color: white; }
 .mandarin-option-state > span { width: 8px; height: 8px; border-radius: 50%; background: #ded4c0; }
 .mandarin-option-state svg { width: 16px; height: 16px; }
@@ -377,7 +378,7 @@
 .mandarin-passage-corner { position: absolute; width: 34px; height: 34px; border-color: rgba(185,130,32,.25); pointer-events: none; }
 .mandarin-passage-corner.top { right: 8px; top: 8px; border-right: 1px solid; border-top: 1px solid; }
 .mandarin-passage-corner.bottom { left: 8px; bottom: 8px; border-left: 1px solid; border-bottom: 1px solid; }
-.mandarin-passage-content { position: relative; padding-left: 10px; color: var(--md-ink); font-size: 19px; line-height: 2; }
+.mandarin-passage-content { position: relative; padding-left: 10px; color: var(--md-ink); font-size: 21px; line-height: 2; }
 .mandarin-passage-content h3 { margin-bottom: 10px; color: var(--md-red-700); font-size: 23px; font-weight: 800; text-align: center; letter-spacing: .06em; }
 .mandarin-passage-content p { line-height: 2; }
 .mandarin-dialogue, .mandarin-field-line { display: flex; gap: 8px; }
@@ -387,10 +388,21 @@
 .mandarin-passage-bullet i { width: 7px; height: 7px; flex: none; margin-top: 13px; border-radius: 50%; background: var(--md-red-500); }
 .mandarin-passage-hint { display: flex; flex-wrap: wrap; align-items: baseline; gap: 5px 9px; margin-top: 9px; color: var(--md-jade-700); font-size: 13px; font-weight: 600; line-height: 1.5; }
 .mandarin-passage-hint small { color: #777167; font-family: var(--font-fredoka), system-ui, sans-serif; font-size: 11px; font-weight: 500; }
+.mandarin-passage-table-wrap { overflow-x: auto; margin-top: 12px; border: 1px solid var(--md-line); border-radius: 17px; background: white; box-shadow: 0 8px 22px rgba(86,61,20,.06); }
+.mandarin-passage-table { width: 100%; min-width: 780px; border-collapse: collapse; color: var(--md-ink); font-size: 16px; line-height: 1.65; }
+.mandarin-passage-table th { background: var(--md-jade-700); padding: 12px 13px; color: white; font-weight: 750; text-align: left; }
+.mandarin-passage-table td { border-bottom: 1px solid #eadfc9; border-right: 1px solid #eadfc9; padding: 12px 13px; vertical-align: top; }
+.mandarin-passage-table tbody tr:nth-child(even) { background: #fffaf0; }
+.mandarin-passage-table tbody tr:last-child td { border-bottom: 0; }
+.mandarin-passage-table td:last-child, .mandarin-passage-table th:last-child { border-right: 0; }
 .mandarin-reading-question { border: 1px solid #e5d8bf; border-radius: 17px; background: white; padding: 15px; box-shadow: 0 6px 14px rgba(83,61,23,.05); }
-.mandarin-reading-question > p { font-size: 18px; line-height: 1.6; }
+.mandarin-reading-question > p { font-size: 19px; line-height: 1.65; }
 .mandarin-subquestion-badge { display: grid; min-width: 31px; height: 31px; flex: none; place-items: center; border-radius: 9px; background: var(--md-red-500); padding: 0 6px; color: white; font-size: 12px; font-weight: 800; }
-.mandarin-reading-option { display: flex; width: 100%; min-height: 52px; align-items: center; gap: 10px; border: 1px solid #e5d9c2; border-radius: 12px; background: #fffdf8; padding: 11px 12px; color: var(--md-ink); font-size: 16px; font-weight: 600; line-height: 1.5; text-align: left; transition: transform .18s, border-color .18s, background .18s; }
+.mandarin-reading-option { display: flex; width: 100%; min-height: 54px; align-items: center; gap: 10px; border: 1px solid #e5d9c2; border-radius: 12px; background: #fffdf8; padding: 12px 13px; color: var(--md-ink); font-size: 17px; font-weight: 600; line-height: 1.55; text-align: left; transition: transform .18s, border-color .18s, background .18s; }
+.mandarin-focus-character { display: inline-grid; min-width: 1.45em; place-items: center; margin: 0 .08em; border: 1px solid #e2b158; border-radius: .35em; background: #fff2c7; padding: 0 .16em; color: var(--md-red-700); font-weight: 850; text-decoration: none; }
+.mandarin-after-hint { display: flex; align-items: flex-start; gap: 9px; margin-top: 15px; border: 1px solid #ead7ad; border-radius: 12px; background: #fffaf0; padding: 9px 11px; color: var(--md-muted); }
+.mandarin-after-hint span { flex: none; color: var(--md-red-700); font-size: 11px; font-weight: 800; }
+.mandarin-after-hint p { font-size: 13px; line-height: 1.6; }
 .mandarin-reading-option:hover { transform: translateX(2px); border-color: var(--md-gold-400); }
 .mandarin-reading-option.is-selected { border-color: var(--md-red-500); background: var(--md-red-100); }
 .mandarin-reading-option-badge { display: grid; width: 30px; height: 30px; flex: none; place-items: center; border: 1px solid #d9c398; border-radius: 8px; background: white; color: var(--md-jade-700); font-weight: 800; }
@@ -421,6 +433,7 @@
 .mandarin-writing-image img { width: 100%; max-height: 250px; border-radius: 12px; background: white; object-fit: contain; }
 .mandarin-writing-image figcaption { color: var(--md-muted); font-size: 12px; line-height: 1.7; }
 .mandarin-writing-studio h2 { color: var(--md-ink); font-size: clamp(22px,4vw,28px); line-height: 1.55; }
+.mandarin-writing-focus-line { display: inline-flex; border: 1px solid #dfbd74; border-radius: 12px; background: #fff4d9; padding: 9px 13px; color: var(--md-red-700); font-size: clamp(19px,3vw,23px); font-weight: 850; line-height: 1.5; }
 .mandarin-writing-studio ul li { border-color: var(--md-line); background: var(--md-paper-warm); }
 .mandarin-writing-choices { margin: 20px 0 4px; border: 0; padding: 0; }
 .mandarin-writing-choices legend { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 10px; color: var(--md-jade-900); font-size: 15px; font-weight: 800; }
@@ -431,6 +444,7 @@
 .mandarin-writing-choice-grid button.is-selected { border-color: var(--md-red-500); background: var(--md-red-100); box-shadow: 0 0 0 3px rgba(201,71,63,.08); }
 .mandarin-writing-choice-number { display: grid; width: 40px; height: 40px; place-items: center; border: 1px solid #dbc79f; border-radius: 11px; background: white; color: var(--md-red-700); font-size: 20px; }
 .mandarin-writing-choice-copy { min-width: 0; }
+.mandarin-writing-choice-copy em { display: inline-flex; margin-bottom: 4px; border-radius: 99px; background: var(--md-jade-100); padding: 3px 8px; color: var(--md-jade-700); font-size: 11px; font-style: normal; font-weight: 800; }
 .mandarin-writing-choice-copy strong { display: block; font-size: 16px; line-height: 1.4; }
 .mandarin-writing-choice-copy small { display: block; margin-top: 3px; color: var(--md-muted); font-size: 12px; font-weight: 500; line-height: 1.55; }
 .mandarin-writing-choice-check { display: grid; width: 25px; height: 25px; place-items: center; border: 1px solid #d8c9ad; border-radius: 50%; color: white; font-size: 13px; font-weight: 900; }
@@ -593,10 +607,10 @@
   .mandarin-passage-visual figcaption small { display: block; margin-top: 3px; text-align: left; }
   .mandarin-passage-title strong { display: block; }
   .mandarin-passage-title small { display: block; margin-top: 2px; }
-  .mandarin-passage-content { font-size: 18px; line-height: 1.95; }
+  .mandarin-passage-content { font-size: 19px; line-height: 1.95; }
   .mandarin-passage-content h3 { font-size: 21px; }
-  .mandarin-reading-question > p { font-size: 17px; }
-  .mandarin-reading-option { font-size: 16px; }
+  .mandarin-reading-question > p { font-size: 18px; }
+  .mandarin-reading-option { font-size: 17px; }
   .mandarin-reading-question { padding: 12px; }
   .mandarin-writing-image { grid-template-columns: 1fr; }
   .mandarin-writing-image figcaption { text-align: center; }

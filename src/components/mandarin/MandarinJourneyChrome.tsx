@@ -1,8 +1,7 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
 import { SoundToggle } from "@/components/kids/SoundToggle";
-import { BambooGlyph, CompassGlyph, InkBrushGlyph, ScrollGlyph, SoundWavesGlyph } from "./MandarinGlyphs";
+import { BambooGlyph, CompassGlyph, ScrollGlyph } from "./MandarinGlyphs";
 
 export function MandarinJourneyHeader({
   title, current, total, answered, minutes, seconds, timeLow, englishSupport, onToggleEnglish,
@@ -66,30 +65,14 @@ export function MandarinEnglishGuide({ dimension, type }: { dimension: string; t
 }
 
 export function MandarinQuestHeading({
-  dimension, type, score, topicLabel,
+  score,
 }: {
-  dimension: string; type: string; score: number; topicLabel?: string;
+  score: number;
 }) {
-  const reduceMotion = useReducedMotion();
-  const meta = questMeta(dimension, type);
-  const Icon = meta.icon;
   return (
     <div className="mandarin-quest-heading">
-      <motion.div
-        className="mandarin-quest-emblem"
-        initial={reduceMotion ? false : { opacity: 0, scale: .82, rotate: -5 }}
-        animate={{ opacity: 1, scale: 1, rotate: 0 }}
-        transition={{ duration: reduceMotion ? 0 : .28, ease: "easeOut" }}
-      >
-        <span>{meta.mark}</span>
-      </motion.div>
-      <div className="mandarin-quest-title">
-        <span>{meta.kicker}<small>{meta.englishKicker}</small></span>
-        <strong>{meta.title}<small>{meta.englishTitle}</small></strong>
-      </div>
       <div className="mandarin-quest-tags">
-        {topicLabel && <span>{topicLabel}</span>}
-        <span><Icon className="h-4 w-4" /> {score} 成长点</span>
+        <span><CompassGlyph className="h-4 w-4" /> {score} 成长点<small>{score} {score === 1 ? "point" : "points"}</small></span>
       </div>
     </div>
   );
@@ -105,17 +88,6 @@ function journeyPhase(current: number, total: number) {
   if (ratio < .5) return "寻句 · 连接意思";
   if (ratio < .75) return "入文 · 读懂故事";
   return "成章 · 写出想法";
-}
-
-function questMeta(dimension: string, type: string) {
-  if (/LISTEN/i.test(type) || dimension === "LISTENING") return { mark: "听", kicker: "静心听一听", englishKicker: "Listen with care", title: "声音里藏着什么？", englishTitle: "Discover the sound clue", icon: SoundWavesGlyph };
-  if (/ORDER/i.test(type)) return { mark: "组", kicker: "动手排一排", englishKicker: "Arrange the clues", title: "句子工坊", englishTitle: "Sentence workshop", icon: InkBrushGlyph };
-  if (/MATCH/i.test(type)) return { mark: "连", kicker: "观察再连接", englishKicker: "Look and connect", title: "图文寻友", englishTitle: "Picture-word matching", icon: CompassGlyph };
-  if (dimension === "READING" || type === "READING") return { mark: "读", kicker: "走进文字世界", englishKicker: "Step into the story", title: "阅读探境", englishTitle: "Reading discovery", icon: ScrollGlyph };
-  if (dimension === "WRITING" || type === "SHORT") return { mark: "写", kicker: "轮到你来创作", englishKicker: "Create with your ideas", title: "小作家天地", englishTitle: "Young writer's studio", icon: InkBrushGlyph };
-  if (dimension === "GRAMMAR") return { mark: "句", kicker: "发现表达规律", englishKicker: "Discover how sentences work", title: "句子研究所", englishTitle: "Sentence laboratory", icon: BambooGlyph };
-  if (dimension === "PHONICS") return { mark: "音", kicker: "听清每个音节", englishKicker: "Notice every sound", title: "拼音小径", englishTitle: "Pinyin pathway", icon: SoundWavesGlyph };
-  return { mark: "寻", kicker: "看一看，想一想", englishKicker: "Look, think and discover", title: "字词寻宝", englishTitle: "Word treasure hunt", icon: CompassGlyph };
 }
 
 function englishGuide(dimension: string, type: string) {

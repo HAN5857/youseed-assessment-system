@@ -563,10 +563,7 @@ export function CalmExamRunner({
                 {isChinese ? (
                   <>
                     <MandarinQuestHeading
-                      dimension={q.dimension}
-                      type={q.type}
                       score={q.score}
-                      topicLabel={q.content?.topicLabel}
                     />
                     <AnimatePresence initial={false}>
                       {englishSupport && (

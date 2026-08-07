@@ -36,6 +36,7 @@ export function SingleRenderer({ prompt, mediaUrl, content, value, onChange }: R
             text={passage}
             imageUrl={content?.passageImage}
             imageAlt={content?.passageImageAlt}
+            table={content?.passageTable}
           />
         </div>
       )}
@@ -91,6 +92,11 @@ export function SingleRenderer({ prompt, mediaUrl, content, value, onChange }: R
           />
         ))}
       </div>
+      {content?.afterHint && (
+        <aside className="mandarin-after-hint">
+          <span aria-hidden>提示</span><p>{content.afterHint}</p>
+        </aside>
+      )}
     </div>
   );
 }

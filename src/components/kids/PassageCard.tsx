@@ -16,11 +16,13 @@ export function PassageCard({
   hint,
   imageUrl,
   imageAlt,
+  table,
 }: {
   text: string;
   hint?: string;
   imageUrl?: string;
   imageAlt?: string;
+  table?: { columns: string[]; rows: string[][] };
 }) {
   const theme = useUiTheme();
   const tier = useUiTier();
@@ -35,7 +37,7 @@ export function PassageCard({
       <div className="mandarin-passage-wrap">
         <div className="mandarin-passage-title">
           <span>阅</span>
-          <strong>文字小天地<small>Reading story</small></strong>
+          <strong>阅读材料<small>Reading passage</small></strong>
         </div>
         {visual && (
           <figure className="mandarin-passage-visual">
@@ -58,6 +60,18 @@ export function PassageCard({
           <div className="mandarin-passage-corner bottom" aria-hidden />
           <MandarinSmartPassage text={text} />
         </div>
+        {table && table.columns.length > 0 && (
+          <div className="mandarin-passage-table-wrap" role="region" aria-label="阅读资料表格" tabIndex={0}>
+            <table className="mandarin-passage-table">
+              <thead><tr>{table.columns.map((column) => <th key={column} scope="col">{column}</th>)}</tr></thead>
+              <tbody>
+                {table.rows.map((row, rowIndex) => (
+                  <tr key={rowIndex}>{table.columns.map((_, columnIndex) => <td key={columnIndex}>{row[columnIndex] ?? ""}</td>)}</tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
         {resolvedHint && (
           <div className="mandarin-passage-hint">
             <span>慢慢读，重要的线索常藏在句子之间。</span>

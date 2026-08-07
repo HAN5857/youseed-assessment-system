@@ -19,7 +19,14 @@ type Sub = {
   icon?: string;   // optional content-relevant emoji (decorative only — never reveals the answer)
   image?: string;  // optional picture prompt (e.g. /questions/chinese-standard-1/q09a-mother.jpg)
   imageAlt?: string;
+  highlightText?: string;
 };
+
+function HighlightedStem({ text, highlight }: { text: string; highlight?: string }) {
+  if (!highlight || !text.includes(highlight)) return <>{text}</>;
+  const parts = text.split(highlight);
+  return <>{parts.map((part, index) => <span key={index}>{part}{index < parts.length - 1 && <mark className="mandarin-focus-character">{highlight}</mark>}</span>)}</>;
+}
 
 export function ReadingRenderer({ prompt, content, value, onChange }: RendererProps) {
   const theme = useUiTheme();
@@ -71,6 +78,7 @@ export function ReadingRenderer({ prompt, content, value, onChange }: RendererPr
           text={passage}
           imageUrl={content?.passageImage}
           imageAlt={content?.passageImageAlt}
+          table={content?.passageTable}
         />
       </div>
 
@@ -91,7 +99,7 @@ export function ReadingRenderer({ prompt, content, value, onChange }: RendererPr
                   {s.icon}
                 </span>
               )}
-              <span className="min-w-0 flex-1 break-words">{s.stem}</span>
+              <span className="min-w-0 flex-1 break-words"><HighlightedStem text={s.stem} highlight={s.highlightText} /></span>
             </p>
             {s.image && (
               <div className="mb-3 flex justify-center">

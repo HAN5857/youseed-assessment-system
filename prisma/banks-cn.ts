@@ -63,6 +63,7 @@ export function chineseStandard1Questions(): QData[] {
     // Q3 · 听音频选词 — 唱歌 (TTS speakText)
     { type: "SINGLE", dimension: "PHONICS", score: 1,
       prompt: "听一听，小朋友正在做什么？",
+      mediaUrl: "/audio/chinese-standard-1/sing.mp3",
       content: {
         speakText: "唱歌", lang: "zh-CN", maxPlays: 3,
         imageUrl: "/questions/chinese-standard-1/q03-audio-action.jpg",
@@ -77,6 +78,7 @@ export function chineseStandard1Questions(): QData[] {
     // Q4 · 听音频选词 — 老虎
     { type: "SINGLE", dimension: "PHONICS", score: 1,
       prompt: "听一听，这是什么动物？",
+      mediaUrl: "/audio/chinese-standard-1/tiger.mp3",
       content: {
         speakText: "老虎", lang: "zh-CN", maxPlays: 3,
         imageUrl: "/questions/chinese-standard-1/q04-audio-animal.jpg",
@@ -107,52 +109,36 @@ export function chineseStandard1Questions(): QData[] {
       // 快乐(0)→心里很高兴(0) · 干净(1)→没有脏(1) · 勤劳(2)→很用功(2) · 热闹(3)→很多人(3)
       answer: { pairs: { "0": 0, "1": 1, "2": 2, "3": 3 } } },
 
-    // Q9 · 拼音选择 — 3 sub-questions (mā ma / shū / huā), each shown with its picture
-    { type: "READING", dimension: "PHONICS", score: 3,
-      prompt: "看图，选出与图片对应的正确拼音。",
-      content: {
-        passage: "根据下面每个词的图片，圈出正确的拼音。",
-        subs: [
-          { stem: "「妈妈」的拼音是？",
-            image: "/questions/chinese-standard-1/q09a-mother.jpg",
-            imageAlt: "妈妈 mother",
-            options: [
-              { key: "A", text: "mā ma" }, { key: "B", text: "nā na" },
-            ]},
-          { stem: "「书本」的拼音是？",
-            image: "/questions/chinese-standard-1/q09b-book.jpg",
-            imageAlt: "书本 book",
-            options: [
-              { key: "A", text: "sū" }, { key: "B", text: "shū" },
-            ]},
-          { stem: "「花朵」的拼音是？",
-            image: "/questions/chinese-standard-1/q09c-flower.jpg",
-            imageAlt: "花朵 flower",
-            options: [
-              { key: "A", text: "huā" }, { key: "B", text: "hā" },
-            ]},
-        ],
-      },
-      answer: { keys: ["A", "B", "A"] } },
+    // Q9 · 拼音选择 — 每个词独立成页，降低一年级学生的视觉负担
+    { type: "SINGLE", dimension: "PHONICS", score: 1,
+      prompt: "看图，把正确的拼音圈起来。\n\n「妈妈」的拼音是？",
+      mediaUrl: "/questions/chinese-standard-1/q09a-mother.jpg",
+      content: { options: [{ key: "A", text: "mā ma" }, { key: "B", text: "nā na" }] },
+      answer: { key: "A" } },
+    { type: "SINGLE", dimension: "PHONICS", score: 1,
+      prompt: "看图，把正确的拼音圈起来。\n\n「书本」的拼音是？",
+      mediaUrl: "/questions/chinese-standard-1/q09b-book.jpg",
+      content: { options: [{ key: "A", text: "sū" }, { key: "B", text: "shū" }] },
+      answer: { key: "B" } },
+    { type: "SINGLE", dimension: "PHONICS", score: 1,
+      prompt: "看图，把正确的拼音圈起来。\n\n「花朵」的拼音是？",
+      mediaUrl: "/questions/chinese-standard-1/q09c-flower.jpg",
+      content: { options: [{ key: "A", text: "huā" }, { key: "B", text: "hā" }] },
+      answer: { key: "A" } },
 
-    // Q10 · 笔画数 — 3 sub-questions (门4 / 校10 / 草9)
-    { type: "READING", dimension: "PHONICS", score: 3,
-      prompt: "根据词汇，找出正确的笔画数。",
-      content: {
-        passage: "选出下面每个字的正确笔画数。",
-        subs: [
-          { stem: "「门」有几画？", icon: "🚪", options: [
-            { key: "A", text: "3 画" }, { key: "B", text: "4 画" },
-          ]},
-          { stem: "「校」有几画？", icon: "🏫", options: [
-            { key: "A", text: "9 画" }, { key: "B", text: "10 画" },
-          ]},
-          { stem: "「草」有几画？", icon: "🌱", options: [
-            { key: "A", text: "8 画" }, { key: "B", text: "9 画" },
-          ]},
-        ],
-      },
-      answer: { keys: ["B", "B", "B"] } },
+    // Q10 · 笔画数 — 每个汉字独立成页
+    { type: "SINGLE", dimension: "PHONICS", score: 1,
+      prompt: "圈出正确的笔画数。\n\n「门」有几画？",
+      content: { options: [{ key: "A", text: "3 画" }, { key: "B", text: "4 画" }] },
+      answer: { key: "B" } },
+    { type: "SINGLE", dimension: "PHONICS", score: 1,
+      prompt: "圈出正确的笔画数。\n\n「校」有几画？",
+      content: { options: [{ key: "A", text: "9 画" }, { key: "B", text: "10 画" }] },
+      answer: { key: "B" } },
+    { type: "SINGLE", dimension: "PHONICS", score: 1,
+      prompt: "圈出正确的笔画数。\n\n「草」有几画？",
+      content: { options: [{ key: "A", text: "8 画" }, { key: "B", text: "9 画" }] },
+      answer: { key: "B" } },
 
     // ─── 乙组 句子与语法 (Q11–17) ──────────────────────────────────
 
@@ -293,29 +279,30 @@ export function chineseStandard2Questions(): QData[] {
     // ─── 甲组  字词与拼音 ───────────────────────────────────────
     // Q1 · 形近字 看图 · 木/本/末
     { type: "SINGLE", dimension: "VOCAB", score: 2,
-      prompt: "看图，这棵植物的名称是什么？\n\n形近字对比：木（树）· 本（本子）· 末（末尾）",
+      prompt: "看图，这棵植物的名称是什么？",
       mediaUrl: "/questions/chinese-standard-2/q01-papaya.svg",
       content: { options: [
         { key: "A", text: "木瓜" },
         { key: "B", text: "本瓜" },
         { key: "C", text: "末瓜" },
-      ], topicLabel: "形近字 · 木 / 本 / 末", topicIcon: "🌳" },
+      ], afterHint: "形近字提示：木（树木）／本（本子）／末（末日）—— 仔细看每个字的笔画差别。" },
       answer: { key: "A" } },
 
     // Q2 · 形近字 看图 · 土/士
     { type: "SINGLE", dimension: "VOCAB", score: 2,
-      prompt: "看图，小朋友手里拿着什么？\n\n形近字对比：土（泥土）vs 士（士兵）— 上面一横的长短不同！",
+      prompt: "看图，小朋友手里拿着什么？",
       mediaUrl: "/questions/chinese-standard-2/q02-potato.svg",
       content: { options: [
         { key: "A", text: "土地" },
         { key: "B", text: "士兵" },
         { key: "C", text: "土豆" },
-      ], topicLabel: "形近字 · 土 / 士", topicIcon: "🥔" },
+      ], afterHint: "形近字提示：土（泥土）／士（士兵）—— 注意上面一横的长短。" },
       answer: { key: "C" } },
 
     // Q3 · 听音选词 · 职业类
     { type: "SINGLE", dimension: "LISTENING", score: 2,
       prompt: "🔊 听一听，这是什么职业？",
+      mediaUrl: "/audio/chinese-standard-2/doctor.mp3",
       content: {
         options: [
           { key: "A", text: "医生" },
@@ -332,7 +319,8 @@ export function chineseStandard2Questions(): QData[] {
 
     // Q4 · 听音选词 · 形近字 泳/永/氷
     { type: "SINGLE", dimension: "LISTENING", score: 2,
-      prompt: "🔊 听一听，小朋友正在做什么？\n\n形近字提示：泳（三点水，跟水有关）· 永（永远）· 氷（冰）",
+      prompt: "🔊 听一听，小朋友正在做什么？",
+      mediaUrl: "/audio/chinese-standard-2/swimming.mp3",
       content: {
         options: [
           { key: "A", text: "游永" },
@@ -342,8 +330,7 @@ export function chineseStandard2Questions(): QData[] {
         speakText: "游泳",
         maxPlays: 3,
         lang: "zh-CN",
-        topicLabel: "听力 · 形近字",
-        topicIcon: "🏊",
+        afterHint: "形近字提示：泳（游泳）／永（永远）／冰（冰块）—— 注意三点水和其他部首。",
       },
       answer: { key: "B" } },
 
@@ -478,18 +465,15 @@ export function chineseStandard2Questions(): QData[] {
       // Correct: 她(4) · 把(2) · 糖果(5) · 分享(0) · 给(3) · 同学(1)
       answer: { order: [4, 2, 5, 0, 3, 1] } },
 
-    // Q16 · 陈述句改疑问句 — SHORT with rubric
-    { type: "SHORT", dimension: "GRAMMAR", score: 2,
-      prompt: "把下面的陈述句改写成疑问句（问句）。\n\n原句：小明把糖果分享给同学。\n\n提示：可以把「同学」改成「谁」，句尾加上「？」。",
-      content: {
-        minWords: 6,
-        maxWords: 20,
-        template: "小明把糖果分享给 ______？",
-        lang: "zh",
-        topicLabel: "句子改写",
-        topicIcon: "✏️",
-      },
-      answer: { rubric: "示例答案：\n  • 小明把糖果分享给谁了？\n  • 小明把糖果分享给谁？\n\n评分要点：\n  1. 句尾要有问号「？」\n  2. 用了疑问词（谁 / 什么人 / 哪位）\n  3. 保留「把」字句的语序" } },
+    // Q16 · 陈述句改疑问句 — 直接选择，避免低年级键盘输入负担
+    { type: "SINGLE", dimension: "GRAMMAR", score: 2,
+      prompt: "把下面的陈述句改写成疑问句（问句）。\n\n原句：小明把糖果分享给同学。\n\n哪一个改写最正确？",
+      content: { options: [
+        { key: "A", text: "小明把糖果分享给同学吗。" },
+        { key: "B", text: "小明把糖果分享给谁了？" },
+        { key: "C", text: "谁把小明分享给同学？" },
+      ] },
+      answer: { key: "B" } },
 
     // ─── 丙组  阅读与写话 ──────────────────────────────────────
     // Q17 · 阅读理解 — 短文：大自然的礼物 (2 subs)
@@ -521,13 +505,7 @@ export function chineseStandard2Questions(): QData[] {
       },
       answer: { keys: ["C", "B"] } },
 
-    // Q18 · 拼音填写 · 独立题 (as a bonus phonics check)
-    { type: "FILL", dimension: "PHONICS", score: 2,
-      prompt: "输入正确的拼音（用小写字母，中间空格分开）：\n\n【合作】的拼音是？",
-      content: { caseSensitive: false, topicLabel: "拼音填写", topicIcon: "🔤" },
-      answer: { accepted: ["hé zuò", "he zuo", "hé zuò", "hézuò", "hezuo"] } },
-
-    // Q19 · 看图造句 · 钓鱼
+    // 看图造句 · 钓鱼
     { type: "SHORT", dimension: "WRITING", score: 3,
       prompt: "根据图意和提供的重点字，写一句完整的话。\n\n重点字：钓鱼",
       content: {
@@ -541,7 +519,7 @@ export function chineseStandard2Questions(): QData[] {
       },
       answer: { rubric: "示例：爷爷在河边钓鱼。/ 星期天，爷爷在河边钓鱼。\n\n评分要点：句子要有主语（谁）、地点（在哪里）、动作（钓鱼），字数 6–30 字。" } },
 
-    // Q20 · 看图造句 · 喜欢
+    // 看图造句 · 喜欢
     { type: "SHORT", dimension: "WRITING", score: 3,
       prompt: "根据图意和提供的重点字，写一句完整的话。\n\n重点字：喜欢",
       content: {

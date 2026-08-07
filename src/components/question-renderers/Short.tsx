@@ -27,7 +27,7 @@ export function ShortRenderer({ prompt, content, value, onChange }: RendererProp
   const passage: string | undefined = content?.passage;
   const passageImage: string | undefined = content?.passageImage;
   const passageImageAlt: string | undefined = content?.passageImageAlt;
-  const writingChoices: Array<{ key: string; title: string; description?: string; icon?: string }> = content?.writingChoices ?? [];
+  const writingChoices: Array<{ key: string; title: string; description?: string; icon?: string; genre?: string }> = content?.writingChoices ?? [];
 
   const text: string = value?.text ?? "";
   const isCJK = hasCJK(text) || hasCJK(prompt || "");
@@ -67,7 +67,7 @@ export function ShortRenderer({ prompt, content, value, onChange }: RendererProp
       <div className="mandarin-writing-studio">
         {passage && (
           <div className="mb-5">
-            <PassageCard text={passage} imageUrl={passageImage} imageAlt={passageImageAlt} />
+            <PassageCard text={passage} imageUrl={passageImage} imageAlt={passageImageAlt} table={content?.passageTable} />
           </div>
         )}
         {imageUrl && (
@@ -124,7 +124,7 @@ export function ShortRenderer({ prompt, content, value, onChange }: RendererProp
 
         {passage && (
           <div className="mb-5">
-            <PassageCard text={passage} imageUrl={passageImage} imageAlt={passageImageAlt} />
+            <PassageCard text={passage} imageUrl={passageImage} imageAlt={passageImageAlt} table={content?.passageTable} />
           </div>
         )}
 
@@ -185,7 +185,7 @@ export function ShortRenderer({ prompt, content, value, onChange }: RendererProp
     <div>
       {passage && (
         <div className="mb-5">
-          <PassageCard text={passage} imageUrl={passageImage} imageAlt={passageImageAlt} />
+          <PassageCard text={passage} imageUrl={passageImage} imageAlt={passageImageAlt} table={content?.passageTable} />
         </div>
       )}
 
@@ -229,7 +229,7 @@ function MandarinWritingChoices({
   selectedKey,
   onSelect,
 }: {
-  choices: Array<{ key: string; title: string; description?: string; icon?: string }>;
+  choices: Array<{ key: string; title: string; description?: string; icon?: string; genre?: string }>;
   selectedKey?: string;
   onSelect: (key: string) => void;
 }) {
@@ -254,6 +254,7 @@ function MandarinWritingChoices({
                 {choice.icon ?? ["一", "二", "三"][index] ?? "文"}
               </span>
               <span className="mandarin-writing-choice-copy">
+                {choice.genre && <em>{choice.genre}</em>}
                 <strong>{choice.title}</strong>
                 {choice.description && <small>{choice.description}</small>}
               </span>
@@ -276,6 +277,7 @@ function StructuredPrompt({ prompt }: { prompt: string }) {
   const lines = prompt.split("\n").map((l) => l.replace(/\s+$/u, ""));
   type Block =
     | { kind: "headline"; text: string }
+    | { kind: "focus"; text: string }
     | { kind: "include"; text: string }
     | { kind: "bullet"; text: string }
     | { kind: "meta"; text: string }
@@ -294,6 +296,10 @@ function StructuredPrompt({ prompt }: { prompt: string }) {
     if (/^(?:写|目标[:：]?\s*|请写)?\s*[\d]+\s*[-–]\s*[\d]+\s*字\.?$/.test(line)) continue;
     if (/^Include:?$/i.test(line)) {
       blocks.push({ kind: "include", text: line.replace(/:$/, "") });
+      continue;
+    }
+    if (/^(?:重点字|关键词|题目)[:：]/.test(line)) {
+      blocks.push({ kind: "focus", text: line });
       continue;
     }
     const bullet = line.match(/^[•\-\*]\s+(.+)$/);
@@ -341,6 +347,9 @@ function StructuredPrompt({ prompt }: { prompt: string }) {
               {b.text}
             </p>
           );
+        }
+        if (b.kind === "focus") {
+          return <p key={i} className="mandarin-writing-focus-line">{b.text}</p>;
         }
         if (b.kind === "bullets") {
           return (

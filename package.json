@@ -14,6 +14,7 @@
     "db:seed:prod": "tsx prisma/seed.ts",
     "db:seed:prod:s4-s6": "tsx prisma/seed-prod-s4-s6.ts",
     "db:seed:prod:chinese:s3-s6": "tsx prisma/seed-prod-chinese-s3-s6.ts",
+    "db:sync:prod:chinese:feedback": "tsx prisma/sync-prod-chinese-feedback.ts",
     "db:reset": "prisma migrate reset --force",
     "db:studio": "prisma studio",
     "postinstall": "prisma generate"
