@@ -31,6 +31,15 @@ const expectedCardCounts: Record<string, number> = {
   "standard-6": 15,
 };
 
+const expectedMarks: Record<string, number> = {
+  "standard-1": 29,
+  "standard-2": 46,
+  "standard-3": 40,
+  "standard-4": 50,
+  "standard-5": 50,
+  "standard-6": 50,
+};
+
 function assertAsset(path: unknown, context: string) {
   if (typeof path !== "string" || (!path.startsWith("/questions/") && !path.startsWith("/audio/"))) return;
   assert.ok(existsSync(join(process.cwd(), "public", path.replace(/^\/+/, ""))), `${context}: missing asset ${path}`);
@@ -93,6 +102,7 @@ for (const [level, questions] of Object.entries(banks)) {
   assert.equal(questions.length, expectedCardCounts[level], `${level}: interactive card count changed from the source-approved mapping`);
   questions.forEach((question, index) => verifyQuestion(question, `${level} card ${index + 1}`));
   const marks = questions.reduce((sum, question) => sum + (question.score ?? 0), 0);
+  assert.equal(marks, expectedMarks[level], `${level}: total marks changed from the source-approved total`);
   console.log(`✓ ${level}: ${questions.length} interactive cards · ${marks} marks`);
 }
 

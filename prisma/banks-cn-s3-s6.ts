@@ -172,7 +172,7 @@ export function chineseStandard4Questions(): QData[] {
     single("找出下面没有语病的句子。", ["虽然天气很冷，所以我们还是坚持去运动。", "虽然天气很冷，但是我们还是坚持去运动。", "因为天气很冷，但是我们还是坚持去运动。"], "B", "GRAMMAR", 2),
     single("选出括号里正确的关联词。\n\n「（　）你努力练习，（　）一定会进步的。」", ["虽然……但是……", "不但……而且……", "如果……就……"], "C", "GRAMMAR", 2),
     {
-      type: "READING", dimension: "PHONICS", score: 2,
+      type: "READING", dimension: "PHONICS", score: 3,
       prompt: "根据句意选择正确读音。",
       content: { passage: "同一个字放进不同词语里，读音可能会改变。", subs: [
         { stem: "老师教（　）我们做人的道理。", options: choices("jiāo", "jiào") },
@@ -181,7 +181,7 @@ export function chineseStandard4Questions(): QData[] {
       answer: { keys: ["A", "A"] },
     },
     {
-      type: "READING", dimension: "GRAMMAR", score: 2,
+      type: "READING", dimension: "GRAMMAR", score: 3,
       prompt: "判断下列句子使用的修辞手法。",
       content: { passage: "比喻会把一种事物比作另一种；拟人会让事物像人一样行动。", subs: [
         { stem: "弯弯的月亮像一条小船挂在天上。", options: choices("比喻", "拟人") },
