@@ -83,7 +83,9 @@ function verifyQuestion(question: QData, context: string) {
 assert.equal(countWordsSmart("我喜欢学习华文。"), 7, "Chinese punctuation must not count as a 字");
 assert.equal(countWordsSmart("华文 Chinese class"), 4, "Mixed Chinese/English count must remain stable");
 assert.equal(countWordsSmart("，。！？"), 0, "Punctuation-only input must count as zero");
+assert.equal(countWordsSmart("汉".repeat(5000)), 5000, "Long Chinese writing must count every character without truncation");
 assert.deepEqual(shortPlugin.score({}, { text: "华" }, 10, { minWords: 1, maxWords: 1000, countOnly: true }), { score: 7, correct: true, detail: { words: 1, status: "submitted" } }, "count-only writing must accept any non-empty source response without an invented target");
+assert.deepEqual(shortPlugin.score({}, { text: "汉".repeat(5000) }, 10, { minWords: 1, maxWords: 1000, countOnly: true }), { score: 7, correct: true, detail: { words: 5000, status: "submitted" } }, "count-only writing must remain stable for worst-case long input");
 assert.deepEqual(shortPlugin.score({}, { text: "华文" }, 10, { minWords: 3, maxWords: 1000, minimumOnly: true }), { score: 3, correct: false, detail: { words: 2, status: "under" } }, "minimum-only writing must still enforce the source minimum");
 assert.deepEqual(shortPlugin.score({}, { text: "华文好" }, 10, { minWords: 3, maxWords: 1000, minimumOnly: true }), { score: 7, correct: true, detail: { words: 3, status: "on-target" } }, "minimum-only writing must accept text at the source minimum");
 
