@@ -11,6 +11,7 @@ type Props = {
   leadId: string;
   studentName: string;
   testTitle: string;
+  testLevel: string;
   duration: number;
   passingScore: number;
   totalQuestions: number;
@@ -30,10 +31,11 @@ const SKILLS: Record<string, { mark: string; name: string; english: string; desc
 export function MandarinInstructionsView(props: Props) {
   const reduceMotion = useReducedMotion();
   const firstName = props.studentName.trim().split(/\s+/)[0] || props.studentName;
+  const lowerPrimary = /^standard-[123]$/.test(props.testLevel);
 
   return (
     <UiThemeProvider mode="calm" tier="primary" subject="chinese">
-    <main className="mandarin-briefing min-h-dvh px-4 py-8 sm:py-12" lang="zh-Hans">
+    <main className={`mandarin-briefing min-h-dvh px-4 py-8 sm:py-12 ${lowerPrimary ? "mandarin-lower-primary" : ""}`} lang="zh-Hans">
       <div className="fixed right-4 top-4 z-30"><SoundToggle /></div>
       <div className="mandarin-cloud cloud-one" aria-hidden />
       <div className="mandarin-cloud cloud-two" aria-hidden />

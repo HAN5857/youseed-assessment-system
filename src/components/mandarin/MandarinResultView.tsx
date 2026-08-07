@@ -11,7 +11,7 @@ type Lead = {
   name: string; totalScore: number | null; maxScore: number | null; percentage: number | null;
   dimScores: string | null; submittedAt: Date | null; startedAt: Date;
 };
-type Test = { title: string; duration: number };
+type Test = { title: string; duration: number; level?: string | null };
 
 const DIMENSIONS: Record<string, { mark: string; name: string; englishName: string; insight: string; englishInsight: string }> = {
   VOCAB: { mark: "字", name: "字词理解", englishName: "Words & meaning", insight: "辨认词语，并在语境中理解意思", englishInsight: "Recognises words and understands meaning in context." },
@@ -32,6 +32,7 @@ export function MandarinResultView({ lead, test }: { lead: Lead; test: Test }) {
   const minutesUsed = lead.submittedAt
     ? Math.max(1, Math.round((new Date(lead.submittedAt).getTime() - new Date(lead.startedAt).getTime()) / 60000))
     : null;
+  const lowerPrimary = /^standard-[123]$/.test(test.level ?? "");
 
   useEffect(() => {
     celebrate();
@@ -39,7 +40,7 @@ export function MandarinResultView({ lead, test }: { lead: Lead; test: Test }) {
   }, []);
 
   return (
-    <main className="mandarin-result min-h-dvh px-4 py-8 sm:py-12" lang="zh-Hans">
+    <main className={`mandarin-result min-h-dvh px-4 py-8 sm:py-12 ${lowerPrimary ? "mandarin-lower-primary" : ""}`} lang="zh-Hans">
       <div className="mandarin-cloud cloud-one" aria-hidden />
       <div className="mandarin-cloud cloud-two" aria-hidden />
       <section className="relative z-10 mx-auto max-w-5xl">

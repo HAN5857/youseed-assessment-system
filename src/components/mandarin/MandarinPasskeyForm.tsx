@@ -29,6 +29,7 @@ export function MandarinPasskeyForm({
   });
 
   const gradeNum = levelId.match(/\d+/)?.[0] ?? "1";
+  const lowerPrimary = Number(gradeNum) <= 3;
   const displayLevel = `华文${["一", "二", "三", "四", "五", "六"][Number(gradeNum) - 1] ?? gradeNum}年级`;
 
   async function checkPasskey(e: React.FormEvent) {
@@ -76,7 +77,7 @@ export function MandarinPasskeyForm({
 
   return (
     <UiThemeProvider mode="calm" tier={Number(gradeNum) >= 4 ? "upper-primary" : "primary"} subject="chinese">
-    <main className="mandarin-onboarding min-h-dvh px-4 py-8 sm:py-12" lang="zh-Hans">
+    <main className={`mandarin-onboarding min-h-dvh px-4 py-8 sm:py-12 ${lowerPrimary ? "mandarin-lower-primary" : ""}`} lang="zh-Hans">
       <div className="fixed right-4 top-4 z-30"><SoundToggle /></div>
       <div className="mandarin-cloud cloud-one" aria-hidden />
       <div className="mandarin-cloud cloud-two" aria-hidden />

@@ -38,6 +38,7 @@ export default async function InstructionsPage({
       studentName={lead.name}
       testTitle={lead.test.title}
       testSubject={lead.test.subject}
+      testLevel={lead.test.level}
       duration={lead.test.duration}
       passingScore={lead.test.passingScore}
       totalQuestions={lead.test.questions.length}

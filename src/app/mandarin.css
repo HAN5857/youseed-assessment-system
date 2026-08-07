@@ -541,6 +541,103 @@
 .mandarin-result-footer > div span small,
 .mandarin-result-footer > div b small { display: block; margin-top: 2px; color: #817b70; font-family: var(--font-fredoka), system-ui, sans-serif; font-size: 9px; font-weight: 500; }
 
+/* Lower-primary readability layer (Standard 1–3).
+   Chinese remains the dominant reading layer, while English stays directly
+   underneath as optional support. Scoped deliberately so Standard 4–6 keep
+   their denser upper-primary typography. */
+.mandarin-lower-primary {
+  --md-lower-body: 17px;
+  --md-lower-question: 28px;
+  --md-lower-option: 21px;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+.mandarin-lower-primary :where(p, span, strong, small, button, label, input, textarea, th, td) {
+  overflow-wrap: anywhere;
+}
+.mandarin-lower-primary .mandarin-onboarding-aside > p,
+.mandarin-lower-primary .mandarin-form-intro,
+.mandarin-lower-primary .mandarin-briefing-hero > div > p:not(.mandarin-heading-translation):not(.mandarin-english-subline) {
+  font-size: var(--md-lower-body);
+  line-height: 1.8;
+}
+.mandarin-lower-primary .mandarin-step-line { font-size: 15px; }
+.mandarin-lower-primary .mandarin-step-line strong { font-size: 17px; line-height: 1.45; }
+.mandarin-lower-primary .mandarin-key-label { font-size: 18px; line-height: 1.5; }
+.mandarin-lower-primary .mandarin-field > span { font-size: 16px; line-height: 1.5; }
+.mandarin-lower-primary .mandarin-field > small { color: #68635a; font-size: 13px; line-height: 1.6; }
+.mandarin-lower-primary .mandarin-field input { min-height: 52px; font-size: 17px; }
+.mandarin-lower-primary .mandarin-primary-button,
+.mandarin-lower-primary .mandarin-secondary-button { min-height: 52px; }
+.mandarin-lower-primary .mandarin-bilingual-action strong { font-size: 17px; line-height: 1.25; }
+.mandarin-lower-primary .mandarin-bilingual-action small { font-size: 11px; line-height: 1.35; }
+.mandarin-lower-primary .mandarin-stat p { font-size: 16px; line-height: 1.45; }
+.mandarin-lower-primary .mandarin-stat p small { font-size: 11px; }
+.mandarin-lower-primary .mandarin-skill-card h3 { font-size: 21px; line-height: 1.45; }
+.mandarin-lower-primary .mandarin-skill-card h3 small { font-size: 12px; }
+.mandarin-lower-primary .mandarin-skill-card p { color: #625f58; font-size: 16px; line-height: 1.75; }
+.mandarin-lower-primary .mandarin-skill-card p small { font-size: 11px; line-height: 1.5; }
+.mandarin-lower-primary .mandarin-task-count { font-size: 14px; }
+.mandarin-lower-primary .mandarin-reminder-list b { font-size: 17px; line-height: 1.55; }
+.mandarin-lower-primary .mandarin-reminder-list span { color: #625f58; font-size: 16px; line-height: 1.7; }
+.mandarin-lower-primary .mandarin-listening-note > p { font-size: 16px; }
+.mandarin-lower-primary .mandarin-journey-brand strong { font-size: 15px; }
+.mandarin-lower-primary .mandarin-progress-copy { font-size: 13px; }
+.mandarin-lower-primary .mandarin-quest-tags span { font-size: 13px; }
+.mandarin-lower-primary .mandarin-english-guide { grid-template-columns: 40px minmax(0,1fr); padding: 12px 14px; }
+.mandarin-lower-primary .mandarin-english-guide > span { width: 38px; height: 38px; }
+.mandarin-lower-primary .mandarin-english-guide strong { font-size: 15px; line-height: 1.4; }
+.mandarin-lower-primary .mandarin-english-guide p { font-size: 13px; line-height: 1.55; }
+.mandarin-lower-primary .mandarin-instruction-hint { margin-bottom: 14px; }
+.mandarin-lower-primary .mandarin-instruction-hint > span { width: 26px; height: 26px; font-size: 11px; }
+.mandarin-lower-primary .mandarin-instruction-hint p { color: #625f58; font-size: 16px; line-height: 1.7; }
+.mandarin-lower-primary .mandarin-question-body {
+  font-size: var(--md-lower-question) !important;
+  font-weight: 700;
+  line-height: 1.68 !important;
+  letter-spacing: .02em;
+}
+.mandarin-lower-primary .mandarin-option-card { min-height: 72px; gap: 14px; padding: 14px 16px; }
+.mandarin-lower-primary .mandarin-option-badge { width: 42px; height: 42px; font-size: 16px; }
+.mandarin-lower-primary .mandarin-option-text { font-size: var(--md-lower-option); font-weight: 700; line-height: 1.7; }
+.mandarin-lower-primary .mandarin-journey-footnote { color: #625f58; font-size: 15px; line-height: 1.55; }
+.mandarin-lower-primary .mandarin-journey-footnote small { font-size: 11px; line-height: 1.45; }
+.mandarin-lower-primary .mandarin-fill-input { min-height: 64px; font-size: 22px; line-height: 1.5; }
+.mandarin-lower-primary .mandarin-passage-title { font-size: 14px; }
+.mandarin-lower-primary .mandarin-passage-title small { font-size: 11px; }
+.mandarin-lower-primary .mandarin-passage-content { font-size: 23px; line-height: 2.05; letter-spacing: .035em; }
+.mandarin-lower-primary .mandarin-passage-content h3 { font-size: 25px; line-height: 1.55; }
+.mandarin-lower-primary .mandarin-passage-content p { line-height: 2.05; }
+.mandarin-lower-primary .mandarin-passage-visual figcaption { font-size: 14px; line-height: 1.6; }
+.mandarin-lower-primary .mandarin-reading-question { padding: 17px; }
+.mandarin-lower-primary .mandarin-reading-question > p { font-size: 21px; font-weight: 750; line-height: 1.75; }
+.mandarin-lower-primary .mandarin-subquestion-badge { min-width: 34px; height: 34px; font-size: 13px; }
+.mandarin-lower-primary .mandarin-reading-option { min-height: 60px; font-size: 19px; font-weight: 650; line-height: 1.65; }
+.mandarin-lower-primary .mandarin-reading-option-badge { width: 34px; height: 34px; font-size: 15px; }
+.mandarin-lower-primary .mandarin-after-hint p { font-size: 15px; line-height: 1.7; }
+.mandarin-lower-primary .mandarin-cloze-paper { font-size: 22px; line-height: 2.35; }
+.mandarin-lower-primary .mandarin-cloze-input { min-height: 48px; font-size: 20px; }
+.mandarin-lower-primary .mandarin-match-row { min-height: 58px; font-size: 19px; line-height: 1.65; }
+.mandarin-lower-primary .mandarin-letter-button { width: 48px; height: 48px; font-size: 17px; }
+.mandarin-lower-primary .mandarin-ordering > p:first-child,
+.mandarin-lower-primary .mandarin-matching > p:first-child { font-size: clamp(25px,4vw,31px); line-height: 1.65; }
+.mandarin-lower-primary .mandarin-ordering button,
+.mandarin-lower-primary .mandarin-matching [role="listitem"] { min-height: 52px; font-size: 18px; line-height: 1.55; }
+.mandarin-lower-primary .mandarin-writing-studio h2 { font-size: clamp(25px,4vw,30px); line-height: 1.65; }
+.mandarin-lower-primary .mandarin-writing-choice-copy strong { font-size: 18px; line-height: 1.55; }
+.mandarin-lower-primary .mandarin-writing-choice-copy small { font-size: 13px; line-height: 1.65; }
+.mandarin-lower-primary .mandarin-writing-starter p { font-size: 17px; line-height: 1.65; }
+.mandarin-lower-primary .mandarin-writing-textarea { font-size: 19px; line-height: 35px; }
+.mandarin-lower-primary .mandarin-writing-tips { color: #625f58; font-size: 13px; line-height: 1.65; }
+.mandarin-lower-primary .mandarin-finish-dialog > p,
+.mandarin-lower-primary .mandarin-result-stage p,
+.mandarin-lower-primary .mandarin-result-intro,
+.mandarin-lower-primary .mandarin-result-panel.next-step > p,
+.mandarin-lower-primary .mandarin-result-contact p { font-size: 17px; line-height: 1.75; }
+.mandarin-lower-primary .mandarin-dimension-copy h3 { font-size: 20px; }
+.mandarin-lower-primary .mandarin-dimension-copy p,
+.mandarin-lower-primary .mandarin-result-panel.next-step li { font-size: 16px; line-height: 1.6; }
+
 @keyframes mandarin-breathe { 0%,100% { transform: translateY(0) rotate(-.4deg); } 50% { transform: translateY(-6px) rotate(.4deg); } }
 @keyframes mandarin-spin { to { transform: rotate(360deg); } }
 @keyframes mandarin-time-pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(201,71,63,0); } 50% { box-shadow: 0 0 0 5px rgba(201,71,63,.1); } }
@@ -631,6 +728,15 @@
   .mandarin-dimension-score { grid-column: 1 / -1; display: grid; grid-template-columns: 46px 1fr; align-items: center; gap: 9px; text-align: left; }
   .mandarin-result-footer { flex-direction: column; align-items: stretch; }
   .mandarin-result-footer .mandarin-secondary-button { width: 100%; }
+  .mandarin-lower-primary { --md-lower-question: 27px; --md-lower-option: 20px; }
+  .mandarin-lower-primary .mandarin-question-scroll { padding: 27px 18px; }
+  .mandarin-lower-primary .mandarin-question-body { line-height: 1.72 !important; }
+  .mandarin-lower-primary .mandarin-option-card { min-height: 70px; padding: 13px 14px; }
+  .mandarin-lower-primary .mandarin-passage-content { font-size: 21px; line-height: 2; }
+  .mandarin-lower-primary .mandarin-passage-content h3 { font-size: 23px; }
+  .mandarin-lower-primary .mandarin-reading-question > p { font-size: 20px; }
+  .mandarin-lower-primary .mandarin-reading-option { font-size: 18px; }
+  .mandarin-lower-primary .mandarin-reminder-list li { grid-template-columns: 1fr; gap: 3px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

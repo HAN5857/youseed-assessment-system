@@ -403,7 +403,7 @@ export function CalmExamRunner({
         className={[
           "calm-ui",
           upper ? "calm-ui-upper" : "",
-          isChinese ? "chinese-ui zh-cn kid-bg-chinese" : "kid-bg-green",
+          isChinese ? `chinese-ui zh-cn kid-bg-chinese ${upper ? "" : "mandarin-lower-primary"}` : "kid-bg-green",
           "relative flex min-h-screen flex-col",
         ].filter(Boolean).join(" ")}
         style={brand?.brandColor ? ({ ["--org-brand" as any]: brand.brandColor }) : undefined}

@@ -13,6 +13,7 @@ type Props = {
   studentName: string;
   testTitle: string;
   testSubject: string;
+  testLevel: string;
   duration: number;
   passingScore: number;
   totalQuestions: number;
@@ -173,7 +174,7 @@ const COPY: Record<Lang, {
 };
 
 export function InstructionsView({
-  leadId, studentName, testTitle, testSubject, duration, passingScore, totalQuestions, dimensionCounts,
+  leadId, studentName, testTitle, testSubject, testLevel, duration, passingScore, totalQuestions, dimensionCounts,
 }: Props) {
   // Default the language chip to match the test's subject so a Chinese
   // student doesn't have to click "中文" every time they open the exam.
@@ -192,6 +193,7 @@ export function InstructionsView({
         leadId={leadId}
         studentName={studentName}
         testTitle={testTitle}
+        testLevel={testLevel}
         duration={duration}
         passingScore={passingScore}
         totalQuestions={totalQuestions}
