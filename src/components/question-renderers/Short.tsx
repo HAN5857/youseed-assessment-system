@@ -10,11 +10,30 @@
 // Theme-aware via useUiTheme. Functionality untouched — value is stored as
 // { text: string } so the existing autosave + submit pipeline picks it up.
 
+import { useEffect, useRef } from "react";
 import type { RendererProps } from "./index";
 import { useUiTheme, useUiTier } from "@/lib/ui-theme";
 import { PassageCard } from "@/components/kids/PassageCard";
 import { hasCJK, countWordsSmart } from "@/lib/cjk";
 import Image from "next/image";
+
+// Reserve only as much writing space as the answer actually needs, so a
+// single-sentence 造句 doesn't present an essay-sized empty box — which can
+// psychologically signal "I must write a whole essay". The box then
+// auto-grows as the student types (see AutoGrowTextarea).
+//
+// Sizing is driven by the SHAPE of the task, not maxWords — many 造句
+// questions use `countOnly` with maxWords:1000 (no cap), so maxWords is a
+// poor signal. Count-only / sentence tasks start at ~2 lines; targeted
+// essays (minWords ≥ ~20) start a little taller. Everything auto-grows.
+function writingBoxHeights(minWords: number, countOnly: boolean, cjk: boolean): { min: number; max: number } {
+  const perLine = cjk ? 20 : 12;      // approx 字 / words that fit on one line
+  const lineHeight = cjk ? 40 : 32;   // px per line (matches the CSS line-height)
+  const lines = countOnly
+    ? 2
+    : Math.min(6, Math.max(2, Math.ceil((minWords || 0) / perLine) + 1));
+  return { min: lines * lineHeight + 28, max: 480 };
+}
 
 export function ShortRenderer({ prompt, content, value, onChange }: RendererProps) {
   const theme = useUiTheme();
@@ -35,6 +54,8 @@ export function ShortRenderer({ prompt, content, value, onChange }: RendererProp
   const isCJK = hasCJK(text) || hasCJK(prompt || "");
   const wordCount = countWordsSmart(text);
   const charCount = text.length;
+  // Sentence-vs-essay sizing for the writing box (see writingBoxHeights).
+  const box = writingBoxHeights(minWords, countOnly, isCJK);
   const unitLabel = (n: number) => isCJK ? `${n} 字` : `${n} word${n === 1 ? "" : "s"}`;
 
   // Word count state: under / on-target / over.
@@ -109,13 +130,13 @@ export function ShortRenderer({ prompt, content, value, onChange }: RendererProp
         {!countOnly && <WordProgress wordCount={wordCount} minWords={minWords} maxWords={maxWords} state={state} cjk minimumOnly={minimumOnly} />}
 
         {template && <div className="mandarin-writing-starter"><span>起笔小帮手</span><p>{template}</p></div>}
-        <textarea
+        <AutoGrowTextarea
           value={text}
-          onChange={(e) => onChange({ ...(value ?? {}), text: e.target.value })}
-          rows={9}
+          onChange={(v) => onChange({ ...(value ?? {}), text: v })}
           className="mandarin-writing-textarea"
           placeholder="把你的观察和想法写在这里…"
-          spellCheck
+          minHeight={box.min}
+          maxHeight={box.max}
         />
         <div className="mandarin-writing-tips">
           <span>一</span><p>先写完整的一句，再补上人物、地点、动作或原因。</p>
@@ -167,13 +188,13 @@ export function ShortRenderer({ prompt, content, value, onChange }: RendererProp
             the student that the counter is actually responding. */}
         <WordProgress wordCount={wordCount} minWords={minWords} maxWords={maxWords} state={state} />
 
-        <textarea
+        <AutoGrowTextarea
           value={text}
-          onChange={(e) => onChange({ ...(value ?? {}), text: e.target.value })}
-          rows={9}
+          onChange={(v) => onChange({ ...(value ?? {}), text: v })}
           className={textareaClass}
           placeholder={template ?? "Write your answer here…"}
-          spellCheck
+          minHeight={box.min}
+          maxHeight={box.max}
         />
 
         <div className="mt-2 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-xs font-medium text-[#6B7280]">
@@ -217,13 +238,13 @@ export function ShortRenderer({ prompt, content, value, onChange }: RendererProp
         </span>
       </div>
 
-      <textarea
+      <AutoGrowTextarea
         value={text}
-        onChange={(e) => onChange({ ...(value ?? {}), text: e.target.value })}
-        rows={9}
+        onChange={(v) => onChange({ ...(value ?? {}), text: v })}
         className={textareaClass}
         placeholder={template ?? (isCJK ? "在这里写你的答案…" : "Write your answer here…")}
-        spellCheck
+        minHeight={box.min}
+        maxHeight={box.max}
       />
 
       <p className={calm
@@ -233,6 +254,42 @@ export function ShortRenderer({ prompt, content, value, onChange }: RendererProp
         {isCJK ? "小贴士：写完整的句子，用词准确、语法正确。" : "Tip: write in full sentences. Spelling and grammar count."}
       </p>
     </div>
+  );
+}
+
+// ─── Auto-growing writing box ─────────────────────────────────────────────
+// Starts at `minHeight` (sized to the target answer length by
+// writingBoxHeights) so a one-sentence 造句 shows a sentence-sized box, not
+// an essay-sized one. Grows to fit the student's text up to `maxHeight`,
+// then scrolls. The inline min-height also overrides the CSS 230px default
+// on `.mandarin-writing-textarea`.
+function AutoGrowTextarea({
+  value, onChange, className, placeholder, minHeight, maxHeight,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  className: string;
+  placeholder?: string;
+  minHeight: number;
+  maxHeight: number;
+}) {
+  const ref = useRef<HTMLTextAreaElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${Math.min(maxHeight, Math.max(minHeight, el.scrollHeight))}px`;
+  }, [value, minHeight, maxHeight]);
+  return (
+    <textarea
+      ref={ref}
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className={className}
+      placeholder={placeholder}
+      spellCheck
+      style={{ minHeight, maxHeight, overflowY: "auto" }}
+    />
   );
 }
 
