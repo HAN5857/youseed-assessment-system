@@ -58,10 +58,22 @@ export function ReadingRenderer({ prompt, content, value, onChange }: RendererPr
     ? "bg-emerald-100 border-emerald-500 text-emerald-800 kid-bounce-in"
     : "bg-emerald-100 border-emerald-400 text-emerald-800 kid-bounce-in";
 
+  // Two-column reading layout (passage sticky on the left, sub-questions
+  // scrolling on the right) is used ONLY for a substantial text/picture
+  // passage. It is NOT used when:
+  //   • the passage is short (a 词语库 word bank or one-line instruction for a
+  //     量词 / 关联词 set) → cramming options into a half-width column looks
+  //     squeezed; instead show a slim banner on top + a 2-col grid of subs.
+  //   • the passage has a TABLE → a table needs full width to breathe, so the
+  //     passage goes full-width on top with the sub-questions below.
+  const twoColumn =
+    !content?.passageTable &&
+    (passage.trim().length > 80 || !!content?.passageImage);
+
   return (
-    <div className="grid gap-6 lg:grid-cols-2">
-      {/* Passage column */}
-      <div className="lg:sticky lg:top-28 lg:self-start">
+    <div className={twoColumn ? "grid gap-6 lg:grid-cols-2" : "space-y-4"}>
+      {/* Passage / word-bank column */}
+      <div className={twoColumn ? "lg:sticky lg:top-28 lg:self-start" : ""}>
         {prompt && (
           (upper || isCJK) ? (
             <div className="mb-3">
@@ -74,16 +86,20 @@ export function ReadingRenderer({ prompt, content, value, onChange }: RendererPr
             </p>
           )
         )}
-        <PassageCard
-          text={passage}
-          imageUrl={content?.passageImage}
-          imageAlt={content?.passageImageAlt}
-          table={content?.passageTable}
-        />
+        {passage.trim() && (
+          <PassageCard
+            text={passage}
+            imageUrl={content?.passageImage}
+            imageAlt={content?.passageImageAlt}
+            table={content?.passageTable}
+          />
+        )}
       </div>
 
-      {/* Sub-questions column */}
-      <div className="space-y-5">
+      {/* Sub-questions — stacked beside a rich passage; a comfortable
+          2-column grid when the passage is just a short word-bank/instruction
+          (so the cards aren't squeezed into a narrow half-width column). */}
+      <div className={twoColumn ? "space-y-5" : "grid gap-4 sm:grid-cols-2 lg:grid-cols-2"}>
         {subs.map((s, i) => (
           <div key={i} className={isCJK ? "mandarin-reading-question" : "rounded-2xl border-2 border-slate-100 bg-white p-4 shadow-sm"}>
             <p className="mb-3 flex items-start gap-2 text-base font-bold text-slate-800 sm:text-lg">
