@@ -23,11 +23,13 @@ const single = (
   key: string,
   dimension = "GRAMMAR",
   score = 1,
+  mediaUrl?: string,
 ): QData => ({
   type: "SINGLE",
   dimension,
   score,
   prompt,
+  ...(mediaUrl ? { mediaUrl } : {}),
   content: { options: choices(...optionTexts) },
   answer: { key },
 });
@@ -44,11 +46,11 @@ export function chineseStandard3Questions(): QData[] {
   );
 
   return [
-    single("下面哪个词语是「勇敢」的近义词？（意思最相近）", ["胆小", "懦弱", "勇猛", "害怕"], "C", "VOCAB", 1),
-    single("下面哪个词语是「宽阔」的反义词？（意思相反）", ["广阔", "开阔", "狭窄", "宽广"], "C", "VOCAB", 1),
-    single("句子「天黑了，星星（　）在天空中。」填入哪个词语最恰当？", ["爬行", "闪烁", "奔跑", "游动"], "B", "VOCAB", 1),
-    single("弟弟考试得了第一名，妈妈（　）地笑了。", ["难过", "伤心", "开心", "生气"], "C", "VOCAB", 1),
-    single("他做事非常（　），每件事都做得完美无缺。填入哪个词语最恰当？", ["马虎", "粗心", "认真", "懒惰"], "C", "VOCAB", 1),
+    single("下面哪个词语是「勇敢」的近义词？（意思最相近）", ["胆小", "懦弱", "勇猛", "害怕"], "C", "VOCAB", 1, "/questions/chinese-standard-3/q01.webp"),
+    single("下面哪个词语是「宽阔」的反义词？（意思相反）", ["广阔", "开阔", "狭窄", "宽广"], "C", "VOCAB", 1, "/questions/chinese-standard-3/q02.webp"),
+    single("句子「天黑了，星星（　）在天空中。」填入哪个词语最恰当？", ["爬行", "闪烁", "奔跑", "游动"], "B", "VOCAB", 1, "/questions/chinese-standard-3/q03.webp"),
+    single("弟弟考试得了第一名，妈妈（　）地笑了。", ["难过", "伤心", "开心", "生气"], "C", "VOCAB", 1, "/questions/chinese-standard-3/q04.webp"),
+    single("他做事非常（　），每件事都做得完美无缺。填入哪个词语最恰当？", ["马虎", "粗心", "认真", "懒惰"], "C", "VOCAB", 1, "/questions/chinese-standard-3/q05.webp"),
     {
       type: "MATCHING", dimension: "VOCAB", score: 2,
       prompt: "把词语连成正确的搭配。",
@@ -61,9 +63,9 @@ export function chineseStandard3Questions(): QData[] {
       content: {
         passage: "根据图片和意思提示，选择成语中缺少的一个字。",
         subs: [
-          { stem: "成群结（　）—— 好多人或小动物聚在一起", icon: "🐜", options: choices("群", "队", "人") },
-          { stem: "汪洋（　）海 —— 大海无边无际", icon: "🌊", options: choices("大", "小", "阔") },
-          { stem: "分（　）合作 —— 大家分配好工作", icon: "🤝", options: choices("配", "工", "享") },
+          { stem: "成群结（　）—— 好多人或小动物聚在一起", image: "/questions/chinese-standard-3/q07a.webp", options: choices("群", "队", "人") },
+          { stem: "汪洋（　）海 —— 大海无边无际", image: "/questions/chinese-standard-3/q07b.webp", options: choices("大", "小", "阔") },
+          { stem: "分（　）合作 —— 大家分配好工作", image: "/questions/chinese-standard-3/q07c.webp", options: choices("配", "工", "享") },
         ],
       },
       answer: { keys: ["B", "A", "B"] },
@@ -74,38 +76,38 @@ export function chineseStandard3Questions(): QData[] {
       content: {
         passage: "zháo：进入某种状态，如睡着、着火。\nzhuó：穿戴，如穿着、戴着。",
         subs: [
-          { stem: "她睡着了，很快就进入了梦乡。", highlightText: "着", options: choices("zháo", "zhuó") },
-          { stem: "他穿着一件蓝色的外套走进教室。", highlightText: "着", options: choices("zháo", "zhuó") },
+          { stem: "她睡着了，很快就进入了梦乡。", highlightText: "着", image: "/questions/chinese-standard-3/q08a.webp", options: choices("zháo", "zhuó") },
+          { stem: "他穿着一件蓝色的外套走进教室。", highlightText: "着", image: "/questions/chinese-standard-3/q08b.webp", options: choices("zháo", "zhuó") },
         ],
       },
       answer: { keys: ["A", "B"] },
     },
-    single("「清」字的部首是三点水（氵），下面哪个字也有三点水？", ["情", "请", "游", "晴"], "C", "VOCAB", 1),
-    single("「跑」字的部首是足字旁（足），下面哪个字也有足字旁？", ["泡", "炮", "跳", "抱"], "C", "VOCAB", 1),
-    single("为句子选一个正确的标点符号。\n\n你今天为什么迟到了（　）", ["，", "。", "！", "？"], "D", "GRAMMAR", 1),
+    single("「清」字的部首是三点水（氵），下面哪个字也有三点水？", ["情", "请", "游", "晴"], "C", "VOCAB", 1, "/questions/chinese-standard-3/q09.webp"),
+    single("「跑」字的部首是足字旁（足），下面哪个字也有足字旁？", ["泡", "炮", "跳", "抱"], "C", "VOCAB", 1, "/questions/chinese-standard-3/q10.webp"),
+    single("为句子选一个正确的标点符号。\n\n你今天为什么迟到了（　）", ["，", "。", "！", "？"], "D", "GRAMMAR", 1, "/questions/chinese-standard-3/q11.webp"),
     {
       type: "READING", dimension: "GRAMMAR", score: 2,
       prompt: "为每个名词选出合适的量词。",
       content: {
         passage: "从括号里选出最恰当的答案。",
         subs: [
-          { stem: "一（　）建议", options: choices("条", "则") },
-          { stem: "一（　）消息", options: choices("条", "则") },
+          { stem: "一（　）建议", image: "/questions/chinese-standard-3/q12a.webp", options: choices("条", "则") },
+          { stem: "一（　）消息", image: "/questions/chinese-standard-3/q12b.webp", options: choices("条", "则") },
         ],
       },
       answer: { keys: ["A", "B"] },
     },
-    single("根据动作的快慢，选出最恰当的词。\n\n天气很热，我们（　　）地跑回家。", ["急急忙忙", "慢慢吞吞"], "A", "GRAMMAR", 1),
-    single("找出没有语病的句子。", ["昨天下了一场很大的大雨。", "昨天下了一场大雨。"], "B", "GRAMMAR", 1),
-    single("找出没有语病的句子。", ["我们要保护环境卫生。", "我们要保护环境卫生干净。"], "A", "GRAMMAR", 1),
+    single("根据动作的快慢，选出最恰当的词。\n\n天气很热，我们（　　）地跑回家。", ["急急忙忙", "慢慢吞吞"], "A", "GRAMMAR", 1, "/questions/chinese-standard-3/q13.webp"),
+    single("找出没有语病的句子。", ["昨天下了一场很大的大雨。", "昨天下了一场大雨。"], "B", "GRAMMAR", 1, "/questions/chinese-standard-3/q14.webp"),
+    single("找出没有语病的句子。", ["我们要保护环境卫生。", "我们要保护环境卫生干净。"], "A", "GRAMMAR", 1, "/questions/chinese-standard-3/q15.webp"),
     {
       type: "READING", dimension: "GRAMMAR", score: 2,
       prompt: "从词语库中选出最恰当的关联词。",
       content: {
         passage: "词语库：因为……所以…… / 虽然……但是…… / 如果……就…… / 不但……而且……",
         subs: [
-          { stem: "妹妹（　）会唱歌，（　）会跳舞。", options: choices("因为……所以……", "不但……而且……", "如果……就……") },
-          { stem: "（　）小明生病了，（　）他还是坚持来上学。", options: choices("虽然……但是……", "因为……所以……", "不但……而且……") },
+          { stem: "妹妹（　）会唱歌，（　）会跳舞。", image: "/questions/chinese-standard-3/q16.webp", options: choices("因为……所以……", "不但……而且……", "如果……就……") },
+          { stem: "（　）小明生病了，（　）他还是坚持来上学。", image: "/questions/chinese-standard-3/q17.webp", options: choices("虽然……但是……", "因为……所以……", "不但……而且……") },
         ],
       },
       answer: { keys: ["B", "A"] },
@@ -117,8 +119,8 @@ export function chineseStandard3Questions(): QData[] {
       answer: { order: [3, 0, 1, 2, 5, 4, 6] },
       explanation: "正确句子：可爱的小鸟在蓝蓝的天空中自由地飞翔。",
     },
-    single("把陈述句改成感叹句。\n\n原句：这朵花真美丽。\n\n哪一个改写最正确？", ["这朵花真美丽。", "这朵花真美丽啊！"], "B", "GRAMMAR", 2),
-    single("用「把」字改写句子。\n\n原句：我做完了功课。\n\n哪一个改写最正确？", ["我做完了功课。", "我把功课做完了。"], "B", "GRAMMAR", 2),
+    single("把陈述句改成感叹句。\n\n原句：这朵花真美丽。\n\n哪一个改写最正确？", ["这朵花真美丽。", "这朵花真美丽啊！"], "B", "GRAMMAR", 2, "/questions/chinese-standard-3/q19.webp"),
+    single("用「把」字改写句子。\n\n原句：我做完了功课。\n\n哪一个改写最正确？", ["我做完了功课。", "我把功课做完了。"], "B", "GRAMMAR", 2, "/questions/chinese-standard-3/q20.webp"),
     {
       type: "READING", dimension: "READING", score: 8,
       prompt: "阅读下面的短文，然后回答问题。",
