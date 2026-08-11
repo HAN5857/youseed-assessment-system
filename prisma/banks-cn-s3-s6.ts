@@ -166,19 +166,19 @@ export function chineseStandard4Questions(): QData[] {
   );
 
   return [
-    single("下面哪个词语是「勤劳」的反义词？", ["努力", "认真", "懒惰"], "C", "VOCAB", 2),
-    single("下面哪个词语与「关爱」意思最相近？", ["冷漠", "关心", "批评"], "B", "VOCAB", 2),
-    single("「妈妈的声音（　），听了让人心里感到很温暖。」填入哪个词最恰当？", ["刺耳", "沙哑", "温柔"], "C", "VOCAB", 2),
-    single("下面哪个成语可以用来形容一个人非常专心地学习，连睡觉和吃饭都忘了？", ["三心二意", "废寝忘食", "好逸恶劳"], "B", "VOCAB", 2),
-    single("句子「他张牙舞爪地冲了过来，吓得我们连忙躲到一旁。」「张牙舞爪」用来形容什么？", ["一个人动作优雅", "一个人很有礼貌", "一个人凶猛吓人的样子"], "C", "VOCAB", 2),
-    single("找出下面没有语病的句子。", ["虽然天气很冷，所以我们还是坚持去运动。", "虽然天气很冷，但是我们还是坚持去运动。", "因为天气很冷，但是我们还是坚持去运动。"], "B", "GRAMMAR", 2),
-    single("选出括号里正确的关联词。\n\n「（　）你努力练习，（　）一定会进步的。」", ["虽然……但是……", "不但……而且……", "如果……就……"], "C", "GRAMMAR", 2),
+    single("下面哪个词语是「勤劳」的反义词？", ["努力", "认真", "懒惰"], "C", "VOCAB", 2, "/questions/chinese-standard-4/q01.webp"),
+    single("下面哪个词语与「关爱」意思最相近？", ["冷漠", "关心", "批评"], "B", "VOCAB", 2, "/questions/chinese-standard-4/q02.webp"),
+    single("「妈妈的声音（　），听了让人心里感到很温暖。」填入哪个词最恰当？", ["刺耳", "沙哑", "温柔"], "C", "VOCAB", 2, "/questions/chinese-standard-4/q03.webp"),
+    single("下面哪个成语可以用来形容一个人非常专心地学习，连睡觉和吃饭都忘了？", ["三心二意", "废寝忘食", "好逸恶劳"], "B", "VOCAB", 2, "/questions/chinese-standard-4/q04.webp"),
+    single("句子「他张牙舞爪地冲了过来，吓得我们连忙躲到一旁。」「张牙舞爪」用来形容什么？", ["一个人动作优雅", "一个人很有礼貌", "一个人凶猛吓人的样子"], "C", "VOCAB", 2, "/questions/chinese-standard-4/q05.webp"),
+    single("找出下面没有语病的句子。", ["虽然天气很冷，所以我们还是坚持去运动。", "虽然天气很冷，但是我们还是坚持去运动。", "因为天气很冷，但是我们还是坚持去运动。"], "B", "GRAMMAR", 2, "/questions/chinese-standard-4/q06.webp"),
+    single("选出括号里正确的关联词。\n\n「（　）你努力练习，（　）一定会进步的。」", ["虽然……但是……", "不但……而且……", "如果……就……"], "C", "GRAMMAR", 2, "/questions/chinese-standard-4/q07.webp"),
     {
       type: "READING", dimension: "PHONICS", score: 3,
       prompt: "根据句意选择正确读音。",
       content: { passage: "同一个字放进不同词语里，读音可能会改变。", subs: [
-        { stem: "老师教（　）我们做人的道理。", options: choices("jiāo", "jiào") },
-        { stem: "这道数学题真难，我算了很久（　）也算不出。", options: choices("jiǔ", "jiū") },
+        { stem: "老师教（　）我们做人的道理。", image: "/questions/chinese-standard-4/q08a.webp", options: choices("jiāo", "jiào") },
+        { stem: "这道数学题真难，我算了很久（　）也算不出。", image: "/questions/chinese-standard-4/q08b.webp", options: choices("jiǔ", "jiū") },
       ] },
       answer: { keys: ["A", "A"] },
     },
@@ -186,8 +186,8 @@ export function chineseStandard4Questions(): QData[] {
       type: "READING", dimension: "GRAMMAR", score: 3,
       prompt: "判断下列句子使用的修辞手法。",
       content: { passage: "比喻会把一种事物比作另一种；拟人会让事物像人一样行动。", subs: [
-        { stem: "弯弯的月亮像一条小船挂在天上。", options: choices("比喻", "拟人") },
-        { stem: "小鸟在枝头唱着欢快的歌。", options: choices("比喻", "拟人") },
+        { stem: "弯弯的月亮像一条小船挂在天上。", image: "/questions/chinese-standard-4/q09a.webp", options: choices("比喻", "拟人") },
+        { stem: "小鸟在枝头唱着欢快的歌。", image: "/questions/chinese-standard-4/q09b.webp", options: choices("比喻", "拟人") },
       ] },
       answer: { keys: ["A", "B"] },
     },
@@ -195,10 +195,10 @@ export function chineseStandard4Questions(): QData[] {
       type: "READING", dimension: "GRAMMAR", score: 4,
       prompt: "填入正确的量词。",
       content: { passage: "词语库：条 / 阵 / 股 / 首", subs: [
-        { stem: "一（　）微风", options: choices("条", "阵", "股", "首") },
-        { stem: "一（　）香味", options: choices("条", "阵", "股", "首") },
-        { stem: "一（　）河流", options: choices("条", "阵", "股", "首") },
-        { stem: "一（　）诗", options: choices("条", "阵", "股", "首") },
+        { stem: "一（　）微风", image: "/questions/chinese-standard-4/q10a.webp", options: choices("条", "阵", "股", "首") },
+        { stem: "一（　）香味", image: "/questions/chinese-standard-4/q10b.webp", options: choices("条", "阵", "股", "首") },
+        { stem: "一（　）河流", image: "/questions/chinese-standard-4/q10c.webp", options: choices("条", "阵", "股", "首") },
+        { stem: "一（　）诗", image: "/questions/chinese-standard-4/q10d.webp", options: choices("条", "阵", "股", "首") },
       ] },
       answer: { keys: ["B", "C", "A", "D"] },
     },
@@ -264,36 +264,36 @@ export function chineseStandard5Questions(): QData[] {
   );
 
   return [
-    single("句子「他（　）地帮助有需要的人，不求任何回报。」填入哪个词最恰当？（选褒义词）", ["自私", "慷慨", "吝啬", "冷漠"], "B", "VOCAB", 2),
-    single("「他做事很（　），不多加考虑就乱下决定，常常出错。」填入哪个词最恰当？（选贬义词）", ["果断", "勇敢", "鲁莽", "积极"], "C", "VOCAB", 2),
-    single("哪个成语最适合填入下面的段落？\n\n「小明在准备比赛期间，每天练习到深夜，甚至（　），只为了赢得冠军。」", ["三心二意", "废寝忘食", "好逸恶劳", "不劳而获"], "B", "VOCAB", 2),
-    single("如此一来可就惹恼了河底的妖怪，他不允许任何人在河里捉鱼，否则就把捉鱼的人统统吃掉。\n\n哪个词语可以代替上面句子中的「统统」？", ["索性", "真正", "整体", "全部"], "D", "VOCAB", 2),
-    single("「他们一开始（　），后来在老师的鼓励下，终于齐心协力完成了任务。」填入哪个成语最恰当？", ["废寝忘食", "分工合作", "各自为政", "通力合作"], "C", "VOCAB", 1),
+    single("句子「他（　）地帮助有需要的人，不求任何回报。」填入哪个词最恰当？（选褒义词）", ["自私", "慷慨", "吝啬", "冷漠"], "B", "VOCAB", 2, "/questions/chinese-standard-5/q01.webp"),
+    single("「他做事很（　），不多加考虑就乱下决定，常常出错。」填入哪个词最恰当？（选贬义词）", ["果断", "勇敢", "鲁莽", "积极"], "C", "VOCAB", 2, "/questions/chinese-standard-5/q02.webp"),
+    single("哪个成语最适合填入下面的段落？\n\n「小明在准备比赛期间，每天练习到深夜，甚至（　），只为了赢得冠军。」", ["三心二意", "废寝忘食", "好逸恶劳", "不劳而获"], "B", "VOCAB", 2, "/questions/chinese-standard-5/q03.webp"),
+    single("如此一来可就惹恼了河底的妖怪，他不允许任何人在河里捉鱼，否则就把捉鱼的人统统吃掉。\n\n哪个词语可以代替上面句子中的「统统」？", ["索性", "真正", "整体", "全部"], "D", "VOCAB", 2, "/questions/chinese-standard-5/q04.webp"),
+    single("「他们一开始（　），后来在老师的鼓励下，终于齐心协力完成了任务。」填入哪个成语最恰当？", ["废寝忘食", "分工合作", "各自为政", "通力合作"], "C", "VOCAB", 1, "/questions/chinese-standard-5/q05.webp"),
     {
       type: "READING", dimension: "PHONICS", score: 2,
       prompt: "选出正确的读音。",
       content: { passage: "先读完整个句子，再判断多音字在这里表达的意思。", subs: [
-        { stem: "妈妈把破了的衣服缝好了。", highlightText: "缝", options: choices("féng", "fèng") },
-        { stem: "他的成绩在班上数一数二。", highlightText: "数", options: choices("shǔ", "shù") },
+        { stem: "妈妈把破了的衣服缝好了。", highlightText: "缝", image: "/questions/chinese-standard-5/q06a.webp", options: choices("féng", "fèng") },
+        { stem: "他的成绩在班上数一数二。", highlightText: "数", image: "/questions/chinese-standard-5/q06b.webp", options: choices("shǔ", "shù") },
       ] }, answer: { keys: ["A", "A"] },
     },
     {
       type: "READING", dimension: "GRAMMAR", score: 3,
       prompt: "判断下列句子使用的修辞手法。",
       content: { passage: "选择：比喻 / 拟人 / 夸张", subs: [
-        { stem: "教室里静得连一根针掉在地上都能听见。", options: choices("比喻", "拟人", "夸张") },
-        { stem: "春风轻轻地抚摸着大地。", options: choices("比喻", "拟人", "夸张") },
-        { stem: "弯弯的月亮像一只小船挂在天上。", options: choices("比喻", "拟人", "夸张") },
+        { stem: "教室里静得连一根针掉在地上都能听见。", image: "/questions/chinese-standard-5/q07a.webp", options: choices("比喻", "拟人", "夸张") },
+        { stem: "春风轻轻地抚摸着大地。", image: "/questions/chinese-standard-5/q07b.webp", options: choices("比喻", "拟人", "夸张") },
+        { stem: "弯弯的月亮像一只小船挂在天上。", image: "/questions/chinese-standard-5/q07c.webp", options: choices("比喻", "拟人", "夸张") },
       ] }, answer: { keys: ["C", "B", "A"] },
     },
-    single("修改病句。\n\n原句：通过这次活动，使我明白了团结的重要。\n\n哪一个修改最正确？", ["通过这次活动，使我明白了团结的重要。", "这次活动使我明白了团结的重要。"], "B", "GRAMMAR", 2),
-    single("把陈述句改成反问句。\n\n原句：我们不能忘记老师的教导。\n\n哪一个改写最正确？", ["我们不能忘记老师的教导。", "我们怎么能忘记老师的教导呢？"], "B", "GRAMMAR", 2),
+    single("修改病句。\n\n原句：通过这次活动，使我明白了团结的重要。\n\n哪一个修改最正确？", ["通过这次活动，使我明白了团结的重要。", "这次活动使我明白了团结的重要。"], "B", "GRAMMAR", 2, "/questions/chinese-standard-5/q08.webp"),
+    single("把陈述句改成反问句。\n\n原句：我们不能忘记老师的教导。\n\n哪一个改写最正确？", ["我们不能忘记老师的教导。", "我们怎么能忘记老师的教导呢？"], "B", "GRAMMAR", 2, "/questions/chinese-standard-5/q09.webp"),
     {
       type: "READING", dimension: "VOCAB", score: 2,
       prompt: "辨析近义词和同音词，选出最恰当的词。",
       content: { passage: "相近的词，也会因搭配对象不同而有不同用法。", subs: [
-        { stem: "我们要（　）时间，不要白白浪费。", options: choices("爱惜", "爱护") },
-        { stem: "这个故事给了我很大的（　）。", options: choices("启示", "启事") },
+        { stem: "我们要（　）时间，不要白白浪费。", image: "/questions/chinese-standard-5/q10a.webp", options: choices("爱惜", "爱护") },
+        { stem: "这个故事给了我很大的（　）。", image: "/questions/chinese-standard-5/q10b.webp", options: choices("启示", "启事") },
       ] }, answer: { keys: ["A", "A"] },
     },
     {
@@ -355,42 +355,42 @@ export function chineseStandard6Questions(): QData[] {
   );
 
   return [
-    single("你在这里处处都要小心，免得让我牵挂。\n\n哪个词语可以代替上面句子中的「牵挂」？", ["思念", "担忧", "责怪"], "B", "VOCAB", 1),
-    single("每天给的点心钱，他也舍不得花……\n\n哪项的「舍」和上面句子中的「舍」读音相同？", ["退避三舍", "寒舍", "施舍"], "C", "PHONICS", 1),
-    single("哪两个字的韵母相同？", ["幼、会", "庞、红", "再、海"], "C", "PHONICS", 1),
-    single("「他（　）地拒绝了别人的好意，让对方感到很难堪。」选出含有贬义的词。", ["坚定", "果断", "傲慢"], "C", "VOCAB", 1),
-    single("下面哪个句子中，词语使用最为准确？", ["他谦虚地炫耀自己的成绩，让大家都印象深刻。", "她虚伪地表扬了同学，让同学感到非常鼓励。", "他谦虚地说自己还有很多不足，请大家多指教。"], "C", "VOCAB", 1),
-    single("哪个句子有错别字？", ["即使面对再大的风雨，我们也决不向困难低头。", "老师鼓励我们要勇于偿试新的事物，不要害怕失败。", "操场上，同学们正在兴致勃勃地练习踢足球。"], "B", "VOCAB", 2),
+    single("你在这里处处都要小心，免得让我牵挂。\n\n哪个词语可以代替上面句子中的「牵挂」？", ["思念", "担忧", "责怪"], "B", "VOCAB", 1, "/questions/chinese-standard-6/q01.webp"),
+    single("每天给的点心钱，他也舍不得花……\n\n哪项的「舍」和上面句子中的「舍」读音相同？", ["退避三舍", "寒舍", "施舍"], "C", "PHONICS", 1, "/questions/chinese-standard-6/q02.webp"),
+    single("哪两个字的韵母相同？", ["幼、会", "庞、红", "再、海"], "C", "PHONICS", 1, "/questions/chinese-standard-6/q03.webp"),
+    single("「他（　）地拒绝了别人的好意，让对方感到很难堪。」选出含有贬义的词。", ["坚定", "果断", "傲慢"], "C", "VOCAB", 1, "/questions/chinese-standard-6/q04.webp"),
+    single("下面哪个句子中，词语使用最为准确？", ["他谦虚地炫耀自己的成绩，让大家都印象深刻。", "她虚伪地表扬了同学，让同学感到非常鼓励。", "他谦虚地说自己还有很多不足，请大家多指教。"], "C", "VOCAB", 1, "/questions/chinese-standard-6/q05.webp"),
+    single("哪个句子有错别字？", ["即使面对再大的风雨，我们也决不向困难低头。", "老师鼓励我们要勇于偿试新的事物，不要害怕失败。", "操场上，同学们正在兴致勃勃地练习踢足球。"], "B", "VOCAB", 2, "/questions/chinese-standard-6/q06.webp"),
     {
       type: "READING", dimension: "GRAMMAR", score: 4,
       prompt: "判断下列句子的修辞手法。",
       content: { passage: "选择最能解释句子表达效果的修辞。", subs: [
-        { stem: "这么简单的道理，难道你还不明白吗？", options: choices("比喻", "拟人", "夸张", "反问") },
-        { stem: "他饿得能吃下一头牛。", options: choices("比喻", "拟人", "夸张", "反问") },
-        { stem: "溪水哗啦啦地唱着歌，欢快地奔向远方。", options: choices("比喻", "拟人", "夸张", "反问") },
+        { stem: "这么简单的道理，难道你还不明白吗？", image: "/questions/chinese-standard-6/q07a.webp", options: choices("比喻", "拟人", "夸张", "反问") },
+        { stem: "他饿得能吃下一头牛。", image: "/questions/chinese-standard-6/q07b.webp", options: choices("比喻", "拟人", "夸张", "反问") },
+        { stem: "溪水哗啦啦地唱着歌，欢快地奔向远方。", image: "/questions/chinese-standard-6/q07c.webp", options: choices("比喻", "拟人", "夸张", "反问") },
       ] }, answer: { keys: ["D", "C", "B"] },
     },
     {
       type: "READING", dimension: "GRAMMAR", score: 4,
       prompt: "选择保持原意的正确改写。",
       content: { passage: "把下面的句子按照要求改写。", subs: [
-        { stem: "把「小树被大风吹倒了」改成把字句。", options: choices("小树被大风吹倒了。", "大风把小树吹倒了。") },
-        { stem: "把「老师说：『我明天不来上课。』」改成转述句。", options: choices("老师说：『我明天不来上课。』", "老师说，他明天不来上课。") },
+        { stem: "把「小树被大风吹倒了」改成把字句。", image: "/questions/chinese-standard-6/q08a.webp", options: choices("小树被大风吹倒了。", "大风把小树吹倒了。") },
+        { stem: "把「老师说：『我明天不来上课。』」改成转述句。", image: "/questions/chinese-standard-6/q08b.webp", options: choices("老师说：『我明天不来上课。』", "老师说，他明天不来上课。") },
       ] }, answer: { keys: ["B", "B"] },
     },
     {
       type: "READING", dimension: "VOCAB", score: 2,
       prompt: "根据语境选择和完成成语。",
       content: { passage: "成语运用。", subs: [
-        { stem: "老师讲解得（　），我们一听就懂。", options: choices("深入浅出", "囫囵吞枣", "不知所云") },
-        { stem: "（　）不倦", options: choices("孜孜", "恋恋") },
-        { stem: "（　）不舍", options: choices("孜孜", "恋恋") },
+        { stem: "老师讲解得（　），我们一听就懂。", image: "/questions/chinese-standard-6/q09a.webp", options: choices("深入浅出", "囫囵吞枣", "不知所云") },
+        { stem: "（　）不倦", image: "/questions/chinese-standard-6/q09b.webp", options: choices("孜孜", "恋恋") },
+        { stem: "（　）不舍", image: "/questions/chinese-standard-6/q09c.webp", options: choices("孜孜", "恋恋") },
       ] }, answer: { keys: ["A", "A", "B"] },
     },
     {
       type: "SHORT", dimension: "GRAMMAR", score: 3,
       prompt: "修改病句。\n\n为了防止这类事故不再发生，我们必须加强安全教育。",
-      content: { minWords: 1, maxWords: 1000, countOnly: true, lang: "zh", template: "为了防止……" },
+      content: { minWords: 1, maxWords: 1000, countOnly: true, lang: "zh", imageUrl: "/questions/chinese-standard-6/q10.webp", template: "为了防止……" },
       answer: { rubric: "参考：为了防止这类事故再发生，我们必须加强安全教育。删去双重否定中的「不」。" },
     },
     {
