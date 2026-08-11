@@ -460,7 +460,10 @@
 .mandarin-writing-starter { margin: 13px 0 10px; border-left: 3px solid var(--md-gold-400); background: var(--md-gold-100); padding: 10px 13px; }
 .mandarin-writing-starter span { color: var(--md-gold-600); font-size: 10px; font-weight: 800; letter-spacing: .1em; }
 .mandarin-writing-starter p { margin-top: 3px; color: var(--md-ink); font-size: 15px; font-weight: 600; }
-.mandarin-writing-textarea { width: 100%; min-height: 230px; resize: vertical; border: 1px solid var(--md-line); border-radius: 15px; background-color: white; background-image: repeating-linear-gradient(to bottom, transparent 0, transparent 33px, rgba(214,164,59,.16) 33px, rgba(214,164,59,.16) 34px); padding: 15px 17px; color: var(--md-ink); font-size: 17px; font-weight: 500; line-height: 34px; outline: none; transition: border-color .2s, box-shadow .2s; }
+/* min-height kept small (≈2 lines) so a one-sentence 造句 doesn't present an
+   essay-sized empty box. The JS AutoGrowTextarea (Short.tsx) sets the actual
+   height from the task's target length and grows it as the child types. */
+.mandarin-writing-textarea { width: 100%; min-height: 88px; resize: vertical; border: 1px solid var(--md-line); border-radius: 15px; background-color: white; background-image: repeating-linear-gradient(to bottom, transparent 0, transparent 33px, rgba(214,164,59,.16) 33px, rgba(214,164,59,.16) 34px); padding: 15px 17px; color: var(--md-ink); font-size: 17px; font-weight: 500; line-height: 34px; outline: none; transition: border-color .2s, box-shadow .2s; }
 .mandarin-writing-textarea:focus { border-color: var(--md-jade-500); box-shadow: 0 0 0 4px rgba(59,149,108,.12); }
 .mandarin-writing-tips { display: grid; grid-template-columns: 24px 1fr; gap: 6px 8px; margin-top: 10px; color: var(--md-muted); font-size: 11px; line-height: 1.5; }
 .mandarin-writing-tips span { display: grid; width: 20px; height: 20px; place-items: center; border: 1px solid var(--md-line); border-radius: 6px; color: var(--md-red-700); font-size: 9px; font-weight: 800; }
