@@ -91,27 +91,26 @@ export function MandarinPasskeyForm({
 
         <section className="mandarin-onboarding-card">
           <div className="mandarin-onboarding-aside">
-            <div className="mandarin-eyebrow light"><SealGlyph className="h-5 w-5" /><span>探索卷 · {gradeNum}<small>Discovery scroll · {gradeNum}</small></span></div>
+            <div className="mandarin-eyebrow light"><SealGlyph className="h-5 w-5" /><span>探索卷 · {gradeNum}</span></div>
             <MandarinCompanion mood={step === "profile" ? "ready" : "welcome"} className="mandarin-onboarding-mascot" />
-            <h2>{step === "passkey" ? "小墨已经准备好啦" : "让小墨认识你"}<small>{step === "passkey" ? "Xiao Mo is ready for you" : "Let Xiao Mo get to know you"}</small></h2>
-            <p>{step === "passkey" ? "输入老师给你的探索钥匙，我们就能一起翻开这卷华文旅程。" : "这些资料能帮助老师读懂你的学习足迹，也让旅程更贴近你。"}<small>{step === "passkey" ? "Enter the key from your teacher to begin your Mandarin journey." : "These details help your teacher understand your learning journey."}</small></p>
+            <h2>{step === "passkey" ? "小墨准备好啦" : "让小墨认识你"}</h2>
+            <p>{step === "passkey" ? "输入老师给你的钥匙，我们就一起翻开这一卷。" : "留下一点资料，老师就能更懂你的学习足迹。"}</p>
             <div className="mandarin-step-list" aria-label="开始步骤">
-              <StepLine done={step === "profile"} active={step === "passkey"} number="一" label="打开探索卷" englishLabel="Open your scroll" />
-              <StepLine done={false} active={step === "profile"} number="二" label="留下学习名片" englishLabel="Add learner details" />
-              <StepLine done={false} active={false} number="三" label="开始华文旅程" englishLabel="Begin the journey" />
+              <StepLine done={step === "profile"} active={step === "passkey"} number="一" label="打开探索卷" />
+              <StepLine done={false} active={step === "profile"} number="二" label="留下学习名片" />
+              <StepLine done={false} active={false} number="三" label="开始华文旅程" />
             </div>
           </div>
 
           <div className="mandarin-onboarding-main">
             {step === "passkey" ? (
               <>
-                <span className="mandarin-kicker"><CompassGlyph className="h-5 w-5" /><span>第一站<small>First stop</small></span></span>
+                <span className="mandarin-kicker"><CompassGlyph className="h-5 w-5" /><span>第一站</span></span>
                 <h1>请出示你的<span>探索钥匙</span></h1>
-                <p className="mandarin-heading-translation">Show us your exploration key</p>
-                <p className="mandarin-form-intro">不是考试编号，而是老师为你准备的专属入口。</p>
-                <p className="mandarin-english-subline">Enter the exploration key provided by your teacher.</p>
+                <p className="mandarin-form-intro">这不是考试编号，而是老师为你准备的专属入口。</p>
+                <p className="mandarin-english-subline">Enter the exploration key your teacher gave you.</p>
                 <form onSubmit={checkPasskey} className="mt-7 space-y-5">
-                  <label className="mandarin-key-label" htmlFor="mandarin-passkey">探索钥匙<small>Exploration key</small></label>
+                  <label className="mandarin-key-label" htmlFor="mandarin-passkey">探索钥匙</label>
                   <input
                     id="mandarin-passkey"
                     value={code}
@@ -124,19 +123,18 @@ export function MandarinPasskeyForm({
                     spellCheck={false}
                   />
                   {error && <p className="mandarin-form-error" role="alert">{error}</p>}
-                  <button type="submit" disabled={loading || !code.trim()} className="mandarin-primary-button w-full">
-                    {loading ? <><span className="mandarin-loader" aria-hidden /><span className="mandarin-bilingual-action"><strong>正在寻找你的探索卷…</strong><small>Finding your discovery scroll…</small></span></> : <><span className="mandarin-bilingual-action"><strong>翻开这一卷</strong><small>Open this discovery scroll</small></span><ArrowGlyph className="h-5 w-5" /></>}
+                  <button type="submit" disabled={loading || !code.trim()} className="mandarin-primary-button mandarin-cta-shine w-full">
+                    {loading ? <><span className="mandarin-loader" aria-hidden /><span>正在寻找你的探索卷…</span></> : <><span>翻开这一卷</span><ArrowGlyph className="h-5 w-5" /></>}
                   </button>
                 </form>
-                <p className="mandarin-privacy-note">探索钥匙只用于进入对应年级与老师的评估旅程。<small>The key only opens the journey assigned by your teacher.</small></p>
+                <p className="mandarin-privacy-note">这把钥匙只会打开老师为你安排的那一卷。</p>
               </>
             ) : test ? (
               <>
-                <span className="mandarin-kicker"><CheckGlyph className="h-5 w-5" /><span>探索卷已找到<small>Discovery scroll found</small></span></span>
+                <span className="mandarin-kicker"><CheckGlyph className="h-5 w-5" /><span>探索卷已找到</span></span>
                 <h1>写下你的<span>学习名片</span></h1>
-                <p className="mandarin-heading-translation">Complete your learner profile</p>
                 <p className="mandarin-form-intro">{test.title} · 约 {test.duration} 分钟</p>
-                <p className="mandarin-english-subline">Tell us a little about the learner before beginning.</p>
+                <p className="mandarin-english-subline">A few details about the learner before we begin.</p>
                 {levelUnit && <p className="mandarin-form-unit">{levelUnit}</p>}
                 <form onSubmit={submitForm} className="mandarin-profile-grid">
                   <MandarinInput label="你的名字" englishLabel="Student name" hint="我们会这样称呼你" value={form.name} onChange={(v) => setForm({ ...form, name: v })} required />
@@ -146,8 +144,8 @@ export function MandarinPasskeyForm({
                   <MandarinInput label="居住地区" englishLabel="Area" value={form.location} onChange={(v) => setForm({ ...form, location: v })} required />
                   <MandarinInput label="目前年级" englishLabel="Current standard" value={displayLevel} onChange={() => undefined} disabled />
                   {error && <p className="mandarin-form-error sm:col-span-2" role="alert">{error}</p>}
-                  <button type="submit" disabled={loading} className="mandarin-primary-button sm:col-span-2">
-                    {loading ? <><span className="mandarin-loader" aria-hidden /><span className="mandarin-bilingual-action"><strong>正在准备旅程…</strong><small>Preparing your journey…</small></span></> : <><span className="mandarin-bilingual-action"><strong>我的学习名片完成了</strong><small>My learner profile is ready</small></span><ArrowGlyph className="h-5 w-5" /></>}
+                  <button type="submit" disabled={loading} className="mandarin-primary-button mandarin-cta-shine sm:col-span-2">
+                    {loading ? <><span className="mandarin-loader" aria-hidden /><span>正在准备旅程…</span></> : <><span>名片写好了，出发！</span><ArrowGlyph className="h-5 w-5" /></>}
                   </button>
                 </form>
               </>
@@ -160,10 +158,10 @@ export function MandarinPasskeyForm({
   );
 }
 
-function StepLine({ done, active, number, label, englishLabel }: { done: boolean; active: boolean; number: string; label: string; englishLabel: string }) {
+function StepLine({ done, active, number, label }: { done: boolean; active: boolean; number: string; label: string }) {
   return (
     <div className={`mandarin-step-line ${active ? "active" : ""} ${done ? "done" : ""}`}>
-      <span>{done ? <CheckGlyph className="h-5 w-5" /> : number}</span><strong>{label}<small>{englishLabel}</small></strong>
+      <span>{done ? <CheckGlyph className="h-5 w-5" /> : number}</span><strong>{label}</strong>
     </div>
   );
 }

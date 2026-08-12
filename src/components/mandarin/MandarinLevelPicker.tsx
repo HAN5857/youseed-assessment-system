@@ -29,12 +29,12 @@ export function MandarinLevelPicker({ levels }: { levels: MandarinLevel[] }) {
         <div className="mandarin-portal-hero">
           <div className="mandarin-portal-copy">
             <div className="mandarin-eyebrow"><SealGlyph className="h-5 w-5" /> YouSeed 华文探索馆</div>
-            <h1>今天，想从哪一页<span>开始探索？</span></h1>
-            <p>这里没有冷冰冰的考卷。每一站都是一个小发现：听一听、看一看、动手排一排，再把心里的想法写下来。</p>
-            <p className="mandarin-english-subline">A joyful Chinese learning journey with gentle English guidance whenever it helps.</p>
+            <h1>今天，想翻开<span>哪一卷？</span></h1>
+            <p>这里没有冷冰冰的考卷，只有一站站小发现——听一听、看一看、动手排一排。</p>
+            <p className="mandarin-english-subline">A joyful Chinese journey, with gentle English hints whenever they help.</p>
             <div className="mandarin-hero-note">
               <BambooGlyph className="h-5 w-5" />
-              <span>选择目前就读年级，小墨会陪你完成整段华文旅程。</span>
+              <span>选好你现在就读的年级，小墨就陪你出发。</span>
             </div>
           </div>
           <MandarinCompanion className="mandarin-companion" />

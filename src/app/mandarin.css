@@ -276,11 +276,13 @@
 .mandarin-task-count small { display: block; margin-top: 1px; font-family: var(--font-fredoka), system-ui, sans-serif; font-size: 9px; font-weight: 500; opacity: .75; }
 .mandarin-briefing-columns,
 .mandarin-result-columns { display: grid; grid-template-columns: minmax(0,1.35fr) minmax(250px,.65fr); gap: 16px; margin-top: 16px; }
-.mandarin-reminder-list { display: grid; gap: 10px; counter-reset: reminder; }
-.mandarin-reminder-list li { display: grid; grid-template-columns: 112px 1fr; gap: 14px; align-items: start; border-bottom: 1px dashed #e6d9c0; padding-bottom: 11px; }
+.mandarin-reminder-list { display: grid; gap: 12px; }
+.mandarin-reminder-list li { display: flex; align-items: center; gap: 14px; border-bottom: 1px dashed #e6d9c0; padding-bottom: 12px; }
 .mandarin-reminder-list li:last-child { border-bottom: 0; padding-bottom: 0; }
-.mandarin-reminder-list b { color: var(--md-jade-700); font-size: 16px; line-height: 1.4; }
-.mandarin-reminder-list span { color: var(--md-muted); font-size: 15px; line-height: 1.55; }
+.mandarin-reminder-list li > div { display: flex; min-width: 0; flex-direction: column; gap: 2px; }
+.mandarin-reminder-seal { display: grid; width: 44px; height: 44px; flex: none; place-items: center; border-radius: 14px; background: linear-gradient(155deg, #eef7f0, var(--md-jade-100)); color: var(--md-jade-700); font-size: 20px; font-weight: 800; box-shadow: inset 0 -3px 5px rgba(23,78,61,.09), inset 0 2px 3px rgba(255,255,255,.85), 0 4px 10px rgba(36,111,84,.1); }
+.mandarin-reminder-list b { color: var(--md-jade-700); font-size: 16px; line-height: 1.35; }
+.mandarin-reminder-list span { color: var(--md-muted); font-size: 15px; line-height: 1.5; }
 .mandarin-reminder-list small,
 .mandarin-listening-note small { display: block; margin-top: 2px; font-family: var(--font-fredoka), system-ui, sans-serif; font-size: 10px; font-weight: 500; line-height: 1.45; opacity: .72; }
 .mandarin-listening-note { border-radius: 24px; background: linear-gradient(150deg, var(--md-jade-900), var(--md-jade-700)); padding: 26px; color: white; box-shadow: 0 14px 30px rgba(23,78,61,.18); }
@@ -739,7 +741,7 @@
   .mandarin-lower-primary .mandarin-passage-content h3 { font-size: 23px; }
   .mandarin-lower-primary .mandarin-reading-question > p { font-size: 20px; }
   .mandarin-lower-primary .mandarin-reading-option { font-size: 18px; }
-  .mandarin-lower-primary .mandarin-reminder-list li { grid-template-columns: 1fr; gap: 3px; }
+  .mandarin-lower-primary .mandarin-reminder-list li { gap: 12px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -749,4 +751,77 @@
     animation-iteration-count: 1 !important;
     transition-duration: .01ms !important;
   }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Claymorphism polish layer — pre-assessment surfaces.
+
+   Soft-3D depth (paired outer drop + inner highlight shadows), chunkier
+   friendly borders, toy-like seals and a springy press feel — layered on top
+   of the base Mandarin identity so the jade/red/gold culture stays intact
+   while the surfaces read warmer and more kid-friendly.
+
+   Deliberately VISUAL-ONLY: only touches border / radius / shadow / background
+   / transform. Never redeclares the grid-template-columns or padding that the
+   responsive media queries above own, so mobile layout is unaffected.
+   ───────────────────────────────────────────────────────────────────────── */
+
+/* Chunkier, softer level cards with double-shadow depth + spring press. */
+.mandarin-level-card {
+  border-width: 2px;
+  border-color: #efe0c0;
+  border-radius: 30px;
+  box-shadow: 0 18px 34px rgba(88,65,28,.10), inset 0 2px 2px rgba(255,255,255,.9), inset 0 -7px 15px rgba(120,88,36,.05);
+}
+.mandarin-level-card.is-ready:hover { transform: translateY(-6px) scale(1.012); border-color: var(--md-gold-400); box-shadow: 0 27px 48px rgba(88,65,28,.16), inset 0 2px 2px rgba(255,255,255,.9); }
+.mandarin-level-card.is-ready:active { transform: translateY(-2px) scale(.995); }
+.mandarin-level-mark { border-width: 2.5px; border-radius: 16px; background: rgba(255,255,255,.55); box-shadow: inset 0 -3px 6px rgba(0,0,0,.06), inset 0 2px 3px rgba(255,255,255,.85), 0 5px 12px rgba(120,88,36,.12); }
+
+/* Skill-map tiles: soft toy-like cards, seal gets warm clay depth. */
+.mandarin-skill-card {
+  border-width: 2px;
+  border-color: #efe2c6;
+  border-radius: 20px;
+  box-shadow: 0 10px 22px rgba(87,63,24,.07), inset 0 2px 2px rgba(255,255,255,.85);
+}
+.mandarin-skill-card:hover { transform: translateY(-3px) scale(1.012); border-color: var(--md-gold-400); box-shadow: 0 17px 32px rgba(87,63,24,.12), inset 0 2px 2px rgba(255,255,255,.85); }
+.mandarin-skill-seal {
+  width: 46px; height: 46px; border: 0; border-radius: 15px;
+  background: linear-gradient(155deg, #fff1ee, var(--md-red-100));
+  color: var(--md-red-700); font-size: 21px;
+  box-shadow: inset 0 -3px 6px rgba(157,48,45,.12), inset 0 2px 3px rgba(255,255,255,.85), 0 5px 12px rgba(201,71,63,.14);
+  transform: rotate(-3deg);
+}
+
+/* Stat chips + section icons: soft raised clay. */
+.mandarin-stat { border-width: 2px; border-color: #efe2c6; border-radius: 20px; box-shadow: 0 10px 22px rgba(87,63,24,.06), inset 0 2px 2px rgba(255,255,255,.85); }
+.mandarin-stat > span { border-radius: 15px; box-shadow: inset 0 -3px 5px rgba(23,78,61,.08), inset 0 2px 3px rgba(255,255,255,.8); }
+.mandarin-briefing-panel { border-width: 2px; border-color: #efe2c6; border-radius: 26px; box-shadow: 0 16px 40px rgba(87,63,24,.07), inset 0 2px 2px rgba(255,255,255,.7); }
+.mandarin-section-icon { border-radius: 16px; box-shadow: inset 0 -3px 6px rgba(157,48,45,.10), inset 0 2px 3px rgba(255,255,255,.7); }
+
+/* Onboarding card + key field: rounder, deeper. */
+.mandarin-onboarding-card { border-width: 2px; border-radius: 34px; }
+.mandarin-key-input { border-width: 2px; border-radius: 18px; box-shadow: inset 0 3px 7px rgba(120,88,36,.09); }
+.mandarin-field input { border-width: 2px; border-radius: 14px; }
+
+/* Chunkier, springier primary CTA with a gentle one-shot shine sweep. */
+.mandarin-primary-button { border-radius: 16px; padding: 14px 24px; box-shadow: 0 11px 22px rgba(157,48,45,.26), inset 0 2px rgba(255,255,255,.3), inset 0 -5px 9px rgba(120,20,18,.25); }
+.mandarin-primary-button > span { font-size: 16px; font-weight: 800; }
+.mandarin-primary-button:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 15px 28px rgba(157,48,45,.3), inset 0 2px rgba(255,255,255,.3); }
+.mandarin-primary-button:active { transform: translateY(-1px) scale(.98); }
+.mandarin-secondary-button { border-radius: 16px; border-width: 2px; }
+.mandarin-secondary-button > span { font-weight: 700; }
+
+.mandarin-cta-shine { position: relative; overflow: hidden; }
+.mandarin-cta-shine::before {
+  content: ""; position: absolute; top: 0; bottom: 0; left: -60%; width: 42%;
+  background: linear-gradient(100deg, transparent, rgba(255,255,255,.42), transparent);
+  transform: skewX(-18deg);
+  animation: mandarin-shine 3.6s ease-in-out 1.2s infinite;
+  pointer-events: none;
+}
+@keyframes mandarin-shine { 0% { left: -60%; } 24%, 100% { left: 135%; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .mandarin-cta-shine::before { display: none; animation: none; }
 }

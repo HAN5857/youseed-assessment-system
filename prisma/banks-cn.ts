@@ -488,29 +488,32 @@ export function chineseStandard2Questions(): QData[] {
       answer: { keys: ["C", "B"] } },
 
     // 看图造句 · 钓鱼
+    // 起笔小帮手 gives THINKING questions (谁/哪里/做什么) — never the model
+    // sentence itself. Revealing "爷爷在河边钓鱼。" would hand the child the
+    // answer; a sentence-frame of guiding questions scaffolds without答案.
     { type: "SHORT", dimension: "WRITING", score: 3,
-      prompt: "根据图意和提供的重点字，写一句完整的话。\n\n重点字：钓鱼",
+      prompt: "看图造句：先看看图，再用「钓鱼」写出完整的一句话。\n\n重点字：钓鱼",
       content: {
         minWords: 1,
         maxWords: 1000,
         countOnly: true,
         imageUrl: "/questions/chinese-standard-2/q19-fishing.svg",
-        template: "爷爷在河边钓鱼。",
+        template: "想一想：图里的人是谁？他在什么地方？把「钓鱼」放进你的句子里，写成通顺的一句话。",
         lang: "zh",
       },
-      answer: { rubric: "参考答案：爷爷在河边钓鱼。" } },
+      answer: { rubric: "评分方向：句子须用上「钓鱼」，语意通顺、有主语和动作即可（学生可自由发挥，不限定标准答案）。" } },
 
     // 看图造句 · 喜欢
     { type: "SHORT", dimension: "WRITING", score: 3,
-      prompt: "根据图意和提供的重点字，写一句完整的话。\n\n重点字：喜欢",
+      prompt: "看图造句：先看看图，再用「喜欢」写出完整的一句话。\n\n重点字：喜欢",
       content: {
         minWords: 1,
         maxWords: 1000,
         countOnly: true,
         imageUrl: "/questions/chinese-standard-2/q20-watermelon.svg",
-        template: "我喜欢吃西瓜。",
+        template: "想一想：你喜欢什么？为什么喜欢它？用「喜欢」写出通顺、完整的一句话。",
         lang: "zh",
       },
-      answer: { rubric: "参考答案：我喜欢吃西瓜。" } },
+      answer: { rubric: "评分方向：句子须用上「喜欢」，语意通顺、能表达喜好即可（学生可自由发挥，不限定标准答案）。" } },
   ];
 }
