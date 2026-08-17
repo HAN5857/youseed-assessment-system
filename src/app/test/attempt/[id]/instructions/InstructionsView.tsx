@@ -63,7 +63,7 @@ const COPY: Record<Lang, {
     sectionReminders: "Remember these",
     timeUnit: " min",
     remindersList: [
-      "🕐|Your timer starts when you click <b>Start Test</b>.",
+      "🕐|The timer is a guide. If it reaches <b>00:00</b>, you may continue and your answers will still be scored normally.",
       "💾|Answers save by themselves every 20 seconds — don't panic!",
       "🤔|Stuck on a question? Just guess — no marks lost for trying!",
       "🚫|Don't close the tab or switch to other apps — we'll know. 👀",
@@ -143,7 +143,7 @@ const COPY: Record<Lang, {
     sectionReminders: "温馨小提醒",
     timeUnit: "分钟",
     remindersList: [
-      "🕐|按下 <b>开始测验</b> 后，计时器就会立刻启动哦。",
+      "🕐|计时器只供参考。即使到达 <b>00:00</b>，你仍可继续作答，成绩也会正常计算。",
       "💾|你的答案每 20 秒会自动保存一次 —— 别紧张！",
       "🤔|不会做？勇敢猜一猜吧，答错也不会扣分！",
       "🚫|请不要关闭此页面或切换到其他应用 —— 系统会自动记录。👀",

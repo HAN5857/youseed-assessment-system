@@ -309,6 +309,7 @@
 .mandarin-language-toggle:focus-visible { outline: 3px solid rgba(214,164,59,.5); outline-offset: 2px; }
 .mandarin-time { display: inline-flex; min-height: 42px; align-items: center; gap: 7px; border: 1px solid var(--md-line); border-radius: 12px; background: var(--md-paper-warm); padding: 8px 11px; color: var(--md-jade-900); font-variant-numeric: tabular-nums; font-size: 15px; font-weight: 800; }
 .mandarin-time.is-low { border-color: #e4aaa5; background: #fff0ee; color: #9d302d; animation: mandarin-time-pulse 1.5s ease-in-out infinite; }
+.mandarin-time.is-overtime { border-color: #d8b35d; background: #fff6dc; color: #765618; animation: none; }
 .mandarin-progress-wrap { max-width: 1120px; margin: 0 auto; padding: 0 18px 11px; }
 .mandarin-progress-copy { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 7px; color: var(--md-muted); font-size: 12px; }
 .mandarin-progress-copy strong { color: var(--md-jade-700); }

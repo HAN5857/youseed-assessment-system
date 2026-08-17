@@ -11,7 +11,7 @@ const STATUS_OPTIONS = [
   { value: "", label: "Any status" },
   { value: "COMPLETED", label: "Completed" },
   { value: "IN_PROGRESS", label: "In progress" },
-  { value: "TIMEOUT", label: "Timed out" },
+  { value: "TIMEOUT", label: "Time exceeded · scored" },
   { value: "ABANDONED", label: "Abandoned" },
 ];
 const CONTACT_OPTIONS = [

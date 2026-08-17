@@ -2,12 +2,13 @@
 
 import { SoundToggle } from "@/components/kids/SoundToggle";
 import { BambooGlyph, CompassGlyph, ScrollGlyph } from "./MandarinGlyphs";
+import { AdvisoryTimeNotice } from "@/components/assessment/AdvisoryTimeNotice";
 
 export function MandarinJourneyHeader({
-  title, current, total, answered, minutes, seconds, timeLow, englishSupport, onToggleEnglish,
+  title, current, total, answered, minutes, seconds, timeLow, overtime, englishSupport, onToggleEnglish,
 }: {
   title: string; current: number; total: number; answered: Set<number>;
-  minutes: string; seconds: string; timeLow: boolean;
+  minutes: string; seconds: string; timeLow: boolean; overtime: boolean;
   englishSupport: boolean; onToggleEnglish: () => void;
 }) {
   const phase = journeyPhase(current, total);
@@ -19,7 +20,7 @@ export function MandarinJourneyHeader({
           <div><strong>{title}</strong><span><CompassGlyph className="h-3.5 w-3.5" /> {phase}</span></div>
         </div>
         <div className="mandarin-journey-tools">
-          <div className={`mandarin-time ${timeLow ? "is-low" : ""}`} aria-label="旅程剩余时间">
+          <div className={`mandarin-time ${overtime ? "is-overtime" : timeLow ? "is-low" : ""}`} aria-label={overtime ? "已超过建议时间" : "旅程剩余时间"}>
             <ScrollGlyph className="h-4 w-4" /><span>{minutes}:{seconds}</span>
           </div>
           <button
@@ -35,6 +36,12 @@ export function MandarinJourneyHeader({
           <SoundToggle showMusic />
         </div>
       </div>
+
+      {overtime && (
+        <div className="mx-auto max-w-[1120px] px-[18px] pb-2 max-[560px]:px-3">
+          <AdvisoryTimeNotice chinese />
+        </div>
+      )}
 
       <div className="mandarin-progress-wrap">
         <div className="mandarin-progress-copy">

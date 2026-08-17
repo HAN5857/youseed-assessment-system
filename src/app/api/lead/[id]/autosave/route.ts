@@ -17,14 +17,10 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
   const parsed = schema.safeParse(body);
   if (!parsed.success) return NextResponse.json({ ok: false, error: "BAD_REQUEST" }, { status: 400 });
 
-  const lead = await prisma.lead.findUnique({ where: { id } });
-  if (!lead) return NextResponse.json({ ok: false, error: "NOT_FOUND" }, { status: 404 });
-  if (lead.status !== "IN_PROGRESS") {
-    return NextResponse.json({ ok: false, error: "ALREADY_SUBMITTED" }, { status: 409 });
-  }
-
-  await prisma.lead.update({
-    where: { id },
+  // The status predicate makes autosave atomic with submission: a delayed
+  // autosave can never overwrite the scored question-by-question breakdown.
+  const updated = await prisma.lead.updateMany({
+    where: { id, status: "IN_PROGRESS" },
     data: {
       answers: JSON.stringify(parsed.data.responses),
       tabBlurCount:
@@ -33,6 +29,14 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
           : undefined,
     },
   });
+
+  if (updated.count === 0) {
+    const exists = await prisma.lead.count({ where: { id } });
+    return NextResponse.json(
+      { ok: false, error: exists ? "ALREADY_SUBMITTED" : "NOT_FOUND" },
+      { status: exists ? 409 : 404 },
+    );
+  }
 
   return NextResponse.json({ ok: true });
 }

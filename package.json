@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "next lint",
     "test:mandarin": "tsx scripts/verify-mandarin-banks.ts",
+    "test:timer": "tsx scripts/verify-advisory-timer.ts",
     "db:migrate": "prisma migrate dev",
     "db:seed": "tsx prisma/seed.ts",
     "db:seed:prod": "tsx prisma/seed.ts",

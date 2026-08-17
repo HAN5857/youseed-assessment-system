@@ -11,6 +11,7 @@ import { getStickerPool } from "@/lib/s1-stickers";
 import { EndOfQuestScene } from "@/components/edu-s1/EndOfQuestScene";
 import { StickerAlbum } from "@/components/edu-s1/StickerAlbum";
 import { MandarinResultView } from "@/components/mandarin/MandarinResultView";
+import { AdvisoryTimeNotice } from "@/components/assessment/AdvisoryTimeNotice";
 
 type LeadLite = {
   id: string;
@@ -142,6 +143,12 @@ function DefaultResultView({
               {mode === "student" ? <>🎉 Hi {lead.name}!</> : <>Result for {lead.name}</>}
             </h1>
           </div>
+
+          {lead.status === "TIMEOUT" && (
+            <div className="mt-5">
+              <AdvisoryTimeNotice completed />
+            </div>
+          )}
 
           {/* Level hero */}
           <div className="mt-8 flex flex-col items-center gap-4 rounded-3xl bg-gradient-to-br from-pink-500 via-violet-500 to-indigo-600 p-8 text-center text-white shadow-2xl sm:p-10">

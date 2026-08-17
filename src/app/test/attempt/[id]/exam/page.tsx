@@ -4,6 +4,7 @@ import { redirect, notFound } from "next/navigation";
 import { ExamRunner } from "./ExamRunner";
 import { CalmExamRunner } from "./CalmExamRunner";
 import { isS1Calm, levelTier } from "@/lib/s1-calm-flag";
+import { getAssessmentTiming } from "@/lib/assessment-timing";
 
 export default async function ExamPage({
   params,
@@ -48,10 +49,9 @@ export default async function ExamPage({
     };
   });
 
-  // Compute remaining seconds based on startedAt
-  const elapsedSec = Math.floor((Date.now() - new Date(lead.startedAt).getTime()) / 1000);
-  const totalSec = lead.test.duration * 60;
-  const remainingSec = Math.max(0, totalSec - elapsedSec);
+  // Duration is advisory. A lead that has reached 00:00 remains IN_PROGRESS
+  // until the student explicitly submits it.
+  const { remainingSec } = getAssessmentTiming(lead.startedAt, lead.test.duration);
 
   // Restore any prior autosaved responses (when status=IN_PROGRESS, lead.answers stores responses map)
   const savedResponses = lead.answers ? safeJson(lead.answers) : {};

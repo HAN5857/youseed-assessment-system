@@ -4,10 +4,10 @@ import { prisma } from "@/lib/db";
 import { readAttemptCookie } from "@/lib/attempt-guard";
 import { scoreAnswer } from "@/lib/question-types";
 import { getLevel } from "@/lib/level";
+import { assessmentCompletionStatus, getAssessmentTiming } from "@/lib/assessment-timing";
 
 const schema = z.object({
   responses: z.record(z.string(), z.any()),
-  timedOut: z.boolean().optional(),
 });
 
 export async function POST(req: Request, ctx: { params: Promise<{ id: string }> }) {
@@ -19,7 +19,10 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
   const parsed = schema.safeParse(body);
   if (!parsed.success) return NextResponse.json({ ok: false, error: "BAD_REQUEST" }, { status: 400 });
 
-  const lead = await prisma.lead.findUnique({ where: { id } });
+  const lead = await prisma.lead.findUnique({
+    where: { id },
+    include: { test: { select: { duration: true } } },
+  });
   if (!lead) return NextResponse.json({ ok: false, error: "NOT_FOUND" }, { status: 404 });
   if (lead.status !== "IN_PROGRESS") {
     // Idempotent: return existing result
@@ -78,11 +81,16 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
     dimScores[k] = Math.round(((dimTotal[k] ?? 0) / dimMax[k]) * 1000) / 10;
   }
 
+  const submittedAt = new Date();
+  const timing = getAssessmentTiming(lead.startedAt, lead.test.duration, submittedAt);
+
   await prisma.lead.update({
     where: { id },
     data: {
-      status: parsed.data.timedOut ? "TIMEOUT" : "COMPLETED",
-      submittedAt: new Date(),
+      // TIMEOUT is an informational badge only. Scoring above always uses
+      // every submitted response, regardless of elapsed time.
+      status: assessmentCompletionStatus(timing),
+      submittedAt,
       totalScore,
       maxScore,
       percentage,

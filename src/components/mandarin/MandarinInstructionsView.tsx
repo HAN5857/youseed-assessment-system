@@ -33,7 +33,7 @@ const SKILLS: Record<string, { mark: string; name: string; description: string }
 
 // Four gentle reminders — Chinese only, short and warm.
 const REMINDERS: { mark: string; title: string; line: string }[] = [
-  { mark: "慢", title: "慢慢来", line: "题目不赶时间，看清楚再选。" },
+  { mark: "时", title: "按自己的步调", line: "预计时间只供参考；计时归零后仍可继续作答，成绩照常计算。" },
   { mark: "试", title: "勇敢试", line: "不确定也可以先写，试一试就有收获。" },
   { mark: "回", title: "放心走", line: "答案会自动保存，可以回头检查。" },
   { mark: "静", title: "专心听", line: "遇到听力题，先让身边安静一点。" },

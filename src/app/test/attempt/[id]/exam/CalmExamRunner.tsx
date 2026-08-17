@@ -35,6 +35,7 @@ import { UiThemeProvider } from "@/lib/ui-theme";
 import { runnerCopy, isChineseSubject } from "@/lib/runner-i18n";
 import { ArrowGlyph } from "@/components/mandarin/MandarinGlyphs";
 import { MandarinEnglishGuide, MandarinJourneyFooterNote, MandarinJourneyHeader, MandarinQuestHeading } from "@/components/mandarin/MandarinJourneyChrome";
+import { AdvisoryTimeNotice } from "@/components/assessment/AdvisoryTimeNotice";
 
 type Q = {
   id: string; type: string; dimension: string; score: number;
@@ -147,17 +148,14 @@ export function CalmExamRunner({
   }, []);
 
   useEffect(() => {
-    const t = setInterval(() => {
-      setSecondsLeft((s) => {
-        if (s <= 1) {
-          clearInterval(t);
-          handleSubmit(true);
-          return 0;
-        }
-        return s - 1;
-      });
+    if (remainingSec <= 0) return;
+    const deadlineMs = Date.now() + remainingSec * 1_000;
+    const timer = setInterval(() => {
+      const next = Math.max(0, Math.ceil((deadlineMs - Date.now()) / 1_000));
+      setSecondsLeft(next);
+      if (next === 0) clearInterval(timer);
     }, 1000);
-    return () => clearInterval(t);
+    return () => clearInterval(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -200,18 +198,19 @@ export function CalmExamRunner({
     } catch { /* ignore */ }
   }
 
-  async function handleSubmit(timedOut = false) {
+  async function handleSubmit() {
     if (submittedRef.current) return;
     submittedRef.current = true;
     setSubmitting(true);
     sound().stopMusic();
     sound().play("finish");
     try {
-      await fetch(`/api/lead/${leadId}/submit`, {
+      const response = await fetch(`/api/lead/${leadId}/submit`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ responses, timedOut }),
+        body: JSON.stringify({ responses }),
       });
+      if (!response.ok) throw new Error(`Submission failed (${response.status})`);
       router.push(`/test/attempt/${leadId}/result`);
     } catch {
       submittedRef.current = false;
@@ -355,7 +354,8 @@ export function CalmExamRunner({
 
   const mm = Math.floor(secondsLeft / 60).toString().padStart(2, "0");
   const ss = (secondsLeft % 60).toString().padStart(2, "0");
-  const timeLow = secondsLeft < 60;
+  const overtime = secondsLeft <= 0;
+  const timeLow = secondsLeft > 0 && secondsLeft < 60;
 
   const seedyMessage = speechAnchor
     ? speedyCopy(speechAnchor, { name: studentName ?? "friend" })
@@ -439,6 +439,7 @@ export function CalmExamRunner({
             minutes={mm}
             seconds={ss}
             timeLow={timeLow}
+            overtime={overtime}
             englishSupport={englishSupport}
             onToggleEnglish={toggleEnglishSupport}
           />
@@ -459,7 +460,9 @@ export function CalmExamRunner({
               {upper ? (
                 <div
                   className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 font-mono text-base font-bold tabular-nums sm:text-lg ${
-                    timeLow
+                    overtime
+                      ? "border-amber-300 bg-amber-50 text-amber-900"
+                      : timeLow
                       ? "border-red-200 bg-red-50 text-red-700 kid-pulse"
                       : "border-[#DDEFE4] bg-[#EAF8F0] text-[#138a4a]"
                   }`}
@@ -474,7 +477,9 @@ export function CalmExamRunner({
                 </div>
               ) : (
                 <div className={`rounded-2xl border-2 px-3 py-1.5 font-mono text-base font-black tabular-nums shadow-sm sm:text-lg ${
-                  timeLow ? "border-red-300 bg-red-50 text-red-700 kid-pulse" : "border-emerald-200 bg-emerald-50 text-emerald-700"
+                  overtime
+                    ? "border-amber-300 bg-amber-50 text-amber-900"
+                    : timeLow ? "border-red-300 bg-red-50 text-red-700 kid-pulse" : "border-emerald-200 bg-emerald-50 text-emerald-700"
                 }`}>
                   ⏰ {mm}:{ss}
                 </div>
@@ -482,6 +487,11 @@ export function CalmExamRunner({
               <SoundToggle showMusic={true} />
             </div>
           </div>
+          {overtime && (
+            <div className="mx-auto max-w-5xl px-4 pb-3">
+              <AdvisoryTimeNotice />
+            </div>
+          )}
           <div className={`mx-auto max-w-5xl px-4 pb-3 ${edu.adventureMap ? "bg-gradient-to-r from-emerald-500/85 via-green-500/85 to-teal-500/85 -mx-0 rounded-b-2xl py-3 px-4" : ""}`}>
             {edu.adventureMap ? (
               <AdventureMap total={questions.length} answered={answeredSet} current={idx} />
@@ -746,7 +756,7 @@ export function CalmExamRunner({
           answered={answeredCount}
           total={questions.length}
           onCancel={() => setShowFinish(false)}
-          onConfirm={() => { setShowFinish(false); void handleSubmit(false); }}
+          onConfirm={() => { setShowFinish(false); void handleSubmit(); }}
         />
       </div>
     </UiThemeProvider>

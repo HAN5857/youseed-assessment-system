@@ -9,7 +9,7 @@ import type { Prisma } from "@prisma/client";
 const STATUS_LABEL: Record<string, string> = {
   IN_PROGRESS: "In progress",
   COMPLETED: "Completed",
-  TIMEOUT: "Timed out",
+  TIMEOUT: "Time exceeded · scored",
   ABANDONED: "Abandoned",
 };
 const STATUS_COLOR: Record<string, string> = {

@@ -6,10 +6,11 @@ import { motion, useReducedMotion } from "framer-motion";
 import { celebrate } from "@/components/kids/Confetti";
 import { sound } from "@/lib/sounds";
 import { ArrowGlyph, BambooGlyph, CheckGlyph, CompassGlyph, InkBrushGlyph, MandarinCompanion, ScrollGlyph } from "./MandarinGlyphs";
+import { AdvisoryTimeNotice } from "@/components/assessment/AdvisoryTimeNotice";
 
 type Lead = {
   name: string; totalScore: number | null; maxScore: number | null; percentage: number | null;
-  dimScores: string | null; submittedAt: Date | null; startedAt: Date;
+  dimScores: string | null; submittedAt: Date | null; startedAt: Date; status: string;
 };
 type Test = { title: string; duration: number; level?: string | null };
 
@@ -58,6 +59,12 @@ export function MandarinResultView({ lead, test }: { lead: Lead; test: Test }) {
           </div>
           <MandarinCompanion mood="celebrate" className="mandarin-result-mascot" />
         </motion.div>
+
+        {lead.status === "TIMEOUT" && (
+          <div className="mt-4">
+            <AdvisoryTimeNotice chinese completed />
+          </div>
+        )}
 
         <div className="mandarin-result-scroll">
           <div className="mandarin-result-seal" aria-label={`成长印记：${stage.title}`}>

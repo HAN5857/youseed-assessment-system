@@ -139,7 +139,7 @@ model Lead {
   // Attempt
   startedAt    DateTime  @default(now())
   submittedAt  DateTime?
-  status       String    @default("IN_PROGRESS") // IN_PROGRESS | COMPLETED | TIMEOUT | ABANDONED
+  status       String    @default("IN_PROGRESS") // IN_PROGRESS | COMPLETED | TIMEOUT (completed over advisory time) | ABANDONED
   totalScore   Float?
   maxScore     Int?
   percentage   Float?
