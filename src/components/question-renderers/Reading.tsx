@@ -3,7 +3,7 @@ import type { RendererProps } from "./index";
 import { sound } from "@/lib/sounds";
 import clsx from "clsx";
 import { PassageCard } from "@/components/kids/PassageCard";
-import { useUiTheme, useUiTier } from "@/lib/ui-theme";
+import { useUiTheme, useUiTier, useIsMalayTheme } from "@/lib/ui-theme";
 import { splitPrompt } from "@/lib/prompt-format";
 import { InstructionHint } from "@/components/kids/InstructionHint";
 import { QuestionBody } from "@/components/kids/QuestionBody";
@@ -36,8 +36,9 @@ export function ReadingRenderer({ prompt, content, value, onChange }: RendererPr
   const passage: string = content?.passage ?? "";
   const subs: Sub[] = content?.subs ?? [];
   const isCJK = hasCJK(prompt) || hasCJK(passage) || subs.some((s) => hasCJK(s.stem));
+  const malay = useIsMalayTheme();
   const { instruction, body } = (upper || isCJK) ? splitPrompt(prompt) : { instruction: undefined as string | undefined, body: prompt };
-  const qLabel = isCJK ? "题" : "Q";
+  const qLabel = isCJK ? "题" : malay ? "S" : "Q";
   const keys: string[] = value?.keys ?? Array(subs.length).fill("");
 
   const setKey = (idx: number, key: string) => {
@@ -101,9 +102,9 @@ export function ReadingRenderer({ prompt, content, value, onChange }: RendererPr
           (so the cards aren't squeezed into a narrow half-width column). */}
       <div className={twoColumn ? "space-y-5" : "grid gap-4 sm:grid-cols-2 lg:grid-cols-2"}>
         {subs.map((s, i) => (
-          <div key={i} className={isCJK ? "mandarin-reading-question" : "rounded-2xl border-2 border-slate-100 bg-white p-4 shadow-sm"}>
+          <div key={i} className={isCJK ? "mandarin-reading-question" : malay ? "malay-reading-question" : "rounded-2xl border-2 border-slate-100 bg-white p-4 shadow-sm"}>
             <p className="mb-3 flex items-start gap-2 text-base font-bold text-slate-800 sm:text-lg">
-              <span className={isCJK ? "mandarin-subquestion-badge" : qBadge} aria-hidden>
+              <span className={isCJK ? "mandarin-subquestion-badge" : malay ? "malay-subquestion-badge" : qBadge} aria-hidden>
                 {qLabel}{i + 1}
               </span>
               {!s.image && s.icon && (
@@ -137,12 +138,12 @@ export function ReadingRenderer({ prompt, content, value, onChange }: RendererPr
                     key={o.key}
                     type="button"
                     onClick={() => setKey(i, o.key)}
-                    className={isCJK ? clsx("mandarin-reading-option", sel && "is-selected") : clsx(
+                    className={isCJK ? clsx("mandarin-reading-option", sel && "is-selected") : malay ? clsx("malay-reading-option", sel && "is-selected") : clsx(
                       "flex w-full items-center gap-3 rounded-xl border-2 p-3 text-left text-sm font-semibold transition-all",
                       sel ? selectedOption : "bg-slate-50 border-slate-200 text-slate-700 hover:border-slate-300"
                     )}
                   >
-                    <span className={isCJK ? "mandarin-reading-option-badge" : `grid h-8 w-8 flex-none place-items-center rounded-lg text-sm font-black text-white ${badgeColors[oi % 4]}`}>
+                    <span className={isCJK ? "mandarin-reading-option-badge" : malay ? "malay-reading-option-badge" : `grid h-8 w-8 flex-none place-items-center rounded-lg text-sm font-black text-white ${badgeColors[oi % 4]}`}>
                       {o.key}
                     </span>
                     <span className="flex-1">{o.text}</span>

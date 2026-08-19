@@ -11,7 +11,7 @@
 import { sound } from "@/lib/sounds";
 import clsx from "clsx";
 import { useState } from "react";
-import { useIsChineseTheme, useUiTheme, useUiTier } from "@/lib/ui-theme";
+import { useIsChineseTheme, useIsMalayTheme, useUiTheme, useUiTier } from "@/lib/ui-theme";
 
 const COLORS_PLAYFUL = [
   { bg: "bg-pink-400",   hover: "hover:bg-pink-500",   ring: "ring-pink-300",   badge: "bg-pink-500",   spark: "#ec4899" },
@@ -49,6 +49,7 @@ export function OptionCard({
   const theme = useUiTheme();
   const tier = useUiTier();
   const chinese = useIsChineseTheme();
+  const malay = useIsMalayTheme();
   const upper = theme === "calm" && tier === "upper-primary";
   const palette = theme === "calm" ? COLORS_CALM : COLORS_PLAYFUL;
   const c = palette[index % palette.length];
@@ -56,9 +57,30 @@ export function OptionCard({
 
   const handleClick = () => {
     sound().play("select");
-    if (!upper && !chinese) setBurstKey((k) => k + 1);
+    if (!upper && !chinese && !malay) setBurstKey((k) => k + 1);
     onSelect();
   };
+
+  // Bahasa Melayu — songket/bunga-raya option card (its own identity, not the
+  // shared green calm card). Styled via .malay-option-* in bahasa-melayu.css.
+  if (malay) {
+    return (
+      <button
+        type="button"
+        onClick={handleClick}
+        className={clsx("malay-option-card", selected && "is-selected")}
+        aria-pressed={selected}
+      >
+        <span className="malay-option-badge">{badge}</span>
+        <span className="malay-option-text">{text}</span>
+        <span className="malay-option-state" aria-hidden>
+          {selected ? (
+            <svg viewBox="0 0 24 24" fill="none"><path d="m5 12.5 4.2 4.2L19 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          ) : <span />}
+        </span>
+      </button>
+    );
+  }
 
   if (chinese) {
     return (

@@ -234,6 +234,81 @@ export function dimensionThemeChinese(dimension: string): DimensionTheme {
   return THEMES_CHINESE[dimension] ?? FALLBACK_CHINESE;
 }
 
+// ─── Bahasa Melayu palette — songket gold + bunga-raya red + tropical teal ──
+// Malay labels + a warm Malaysian family, distinct from the calm green and
+// the Mandarin jade/red. Each dimension stays inside the red/gold/teal set.
+const THEMES_MALAY: Record<string, DimensionTheme> = {
+  VOCAB: {
+    emoji: "🔤", label: "Kosa Kata",
+    gradient: "from-red-500 to-rose-500",
+    accent: "text-red-700",
+    bg: "from-red-50 via-white to-rose-50",
+    sticker: "🌺",
+    entryAnim: "kid-slide-in",
+  },
+  GRAMMAR: {
+    emoji: "📝", label: "Tatabahasa",
+    gradient: "from-amber-500 to-yellow-500",
+    accent: "text-amber-700",
+    bg: "from-amber-50 via-white to-yellow-50",
+    sticker: "🪁",
+    entryAnim: "kid-pop-in",
+  },
+  READING: {
+    emoji: "📖", label: "Pemahaman",
+    gradient: "from-teal-500 to-emerald-600",
+    accent: "text-teal-700",
+    bg: "from-teal-50 via-white to-emerald-50",
+    sticker: "📖",
+    entryAnim: "kid-zoom-in",
+  },
+  LISTENING: {
+    emoji: "👂", label: "Mendengar",
+    gradient: "from-amber-500 to-orange-500",
+    accent: "text-orange-700",
+    bg: "from-amber-50 via-white to-orange-50",
+    sticker: "🎧",
+    entryAnim: "kid-slide-in",
+  },
+  PHONICS: {
+    emoji: "🔊", label: "Ejaan",
+    gradient: "from-rose-500 to-red-500",
+    accent: "text-rose-700",
+    bg: "from-rose-50 via-white to-red-50",
+    sticker: "🌴",
+    entryAnim: "kid-pop-in",
+  },
+  WRITING: {
+    emoji: "✍️", label: "Penulisan",
+    gradient: "from-emerald-500 to-teal-600",
+    accent: "text-emerald-700",
+    bg: "from-emerald-50 via-white to-teal-50",
+    sticker: "🖍",
+    entryAnim: "kid-pop-in",
+  },
+  SPEAKING: {
+    emoji: "🎤", label: "Lisan",
+    gradient: "from-orange-500 to-amber-500",
+    accent: "text-orange-700",
+    bg: "from-orange-50 via-white to-amber-50",
+    sticker: "💬",
+    entryAnim: "kid-bounce-in",
+  },
+};
+
+const FALLBACK_MALAY: DimensionTheme = {
+  emoji: "✨", label: "Soalan",
+  gradient: "from-red-500 to-amber-500",
+  accent: "text-red-700",
+  bg: "from-red-50 via-white to-amber-50",
+  sticker: "🌺",
+  entryAnim: "kid-slide-in",
+};
+
+export function dimensionThemeMalay(dimension: string): DimensionTheme {
+  return THEMES_MALAY[dimension] ?? FALLBACK_MALAY;
+}
+
 // Milestone messages keyed by the question NUMBER the student just finished.
 // Chinese variant is triggered when the caller passes locale = "zh".
 export function milestoneForProgress(

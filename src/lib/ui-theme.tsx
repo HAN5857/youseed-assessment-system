@@ -67,3 +67,9 @@ export function useIsChineseTheme(): boolean {
   const s = useContext(UiThemeContext).subject.toLowerCase();
   return s === "chinese" || s === "zh" || s === "zh-cn";
 }
+
+/** Convenience — true when the surrounding theme is on the Bahasa Melayu subject. */
+export function useIsMalayTheme(): boolean {
+  const s = useContext(UiThemeContext).subject.toLowerCase();
+  return s === "bahasa-melayu" || s === "malay" || s === "ms" || s === "ms-my";
+}

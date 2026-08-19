@@ -141,3 +141,63 @@
 @media (prefers-reduced-motion: reduce) {
   .malay-briefing *, .malay-mascot, .malay-wau, .malay-bunga { animation: none !important; transition-duration: .01ms !important; }
 }
+
+/* ═════════════════════════════════════════════════════════════════════════
+   IN-EXAM RUNNER — Bahasa Melayu skin (scoped to .malay-runner / .kid-bg-malay)
+   Batik-cream ground + songket-gold / bunga-raya-red / tropical-teal option
+   cards, replacing the shared calm-green chrome. Literal hex (these render
+   outside the .malay-briefing token scope).
+   ═════════════════════════════════════════════════════════════════════════ */
+.kid-bg-malay {
+  background:
+    radial-gradient(circle at 15% 10%, rgba(224, 169, 59, .30), transparent 45%),
+    radial-gradient(circle at 85% 15%, rgba(214, 58, 52, .15), transparent 50%),
+    radial-gradient(circle at 75% 85%, rgba(31, 138, 112, .18), transparent 55%),
+    radial-gradient(circle at 20% 90%, rgba(247, 235, 203, .55), transparent 50%),
+    linear-gradient(135deg, #FBF4E6 0%, #FFFCF4 50%, #F7EBCB 100%);
+  background-attachment: fixed;
+  position: relative; overflow: hidden;
+}
+.kid-bg-malay::before, .kid-bg-malay::after { content: ""; position: fixed; border-radius: 50%; filter: blur(44px); opacity: .45; pointer-events: none; z-index: 0; }
+.kid-bg-malay::before { width: 260px; height: 260px; top: -70px; left: -70px; background: #e6b25a; animation: kid-drift 15s ease-in-out infinite; }
+.kid-bg-malay::after { width: 320px; height: 320px; bottom: -90px; right: -90px; background: #e8897f; animation: kid-drift 19s ease-in-out infinite reverse; }
+
+/* Option cards (SINGLE / LISTENING / MULTI via OptionCard) */
+.malay-option-card {
+  position: relative; display: flex; width: 100%; min-height: 62px; align-items: center; gap: 13px;
+  border: 2px solid #ecd9a6; border-radius: 16px; background: #fff; padding: 13px 15px;
+  color: #33291B; text-align: left; cursor: pointer;
+  box-shadow: 0 5px 12px rgba(120, 84, 20, .06), inset 0 2px 2px rgba(255, 255, 255, .8);
+  transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease, background-color .18s ease;
+  font-family: var(--font-fredoka), system-ui, sans-serif;
+}
+.malay-option-card:hover { transform: translateY(-2px); border-color: #E0A93B; box-shadow: 0 12px 22px rgba(120, 84, 20, .12); }
+.malay-option-card:active { transform: translateY(0) scale(.99); }
+.malay-option-badge {
+  display: grid; width: 40px; height: 40px; flex: none; place-items: center; border-radius: 12px;
+  background: linear-gradient(150deg, #F7EBCB, #fff); color: #A82A26; font-size: 16px; font-weight: 800;
+  box-shadow: inset 0 -3px 6px rgba(201, 154, 46, .18), inset 0 2px 3px #fff;
+  transition: background .18s, color .18s, transform .18s;
+}
+.malay-option-text { flex: 1; font-size: 18px; font-weight: 650; line-height: 1.5; }
+.malay-option-state { display: grid; width: 28px; height: 28px; flex: none; place-items: center; border: 2px solid #ecd9a6; border-radius: 50%; color: transparent; transition: background .18s, border-color .18s, color .18s; }
+.malay-option-state svg { width: 18px; height: 18px; }
+.malay-option-card.is-selected { border-color: #D63A34; background: #FBE4E0; box-shadow: 0 10px 22px rgba(214, 58, 52, .16); }
+.malay-option-card.is-selected .malay-option-badge { background: linear-gradient(150deg, #D63A34, #A82A26); color: #fff; transform: scale(1.06) rotate(-2deg); }
+.malay-option-card.is-selected .malay-option-state { border-color: #D63A34; background: #D63A34; color: #fff; }
+.malay-option-card:focus-visible { outline: 3px solid rgba(201, 154, 46, .55); outline-offset: 3px; }
+
+/* READING sub-question cards + options */
+.malay-reading-question { border: 2px solid #ecd9a6; border-radius: 18px; background: #fff; padding: 15px; box-shadow: 0 6px 14px rgba(120, 84, 20, .05); }
+.malay-subquestion-badge { display: grid; min-width: 31px; height: 31px; flex: none; place-items: center; border-radius: 9px; background: linear-gradient(150deg, #D63A34, #A82A26); padding: 0 6px; color: #fff; font-size: 12px; font-weight: 800; }
+.malay-reading-option { display: flex; width: 100%; min-height: 52px; align-items: center; gap: 10px; border: 2px solid #ecd9a6; border-radius: 13px; background: #fffdf8; padding: 11px 13px; color: #33291B; font-size: 16px; font-weight: 600; line-height: 1.5; text-align: left; cursor: pointer; transition: transform .16s, border-color .16s, background .16s; font-family: var(--font-fredoka), system-ui, sans-serif; }
+.malay-reading-option:hover { transform: translateY(-1px); border-color: #E0A93B; }
+.malay-reading-option.is-selected { border-color: #1F8A70; background: #DDEFE7; color: #14705E; }
+.malay-reading-option-badge { display: grid; width: 30px; height: 30px; flex: none; place-items: center; border: 1px solid #d9c398; border-radius: 8px; background: #fff; color: #A82A26; font-weight: 800; }
+.malay-reading-option.is-selected .malay-reading-option-badge { background: #1F8A70; color: #fff; border-color: #1F8A70; }
+
+/* Retint the small green bits the shared calm chrome still emits inside the
+   runner (progress rail, question image frame) to the BM palette. Scoped to
+   .malay-runner so English/Chinese are untouched. */
+.malay-runner .border-emerald-200 { border-color: #ecd9a6 !important; }
+.malay-runner .bg-emerald-100 { background-color: #FBE4E0 !important; }

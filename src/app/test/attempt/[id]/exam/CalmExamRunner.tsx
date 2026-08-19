@@ -22,7 +22,7 @@ import { SoundToggle } from "@/components/kids/SoundToggle";
 import { StarProgress } from "@/components/kids/StarProgress";
 import { FinishDialog } from "@/components/kids/FinishDialog";
 import { StickerExplosion } from "@/components/kids/StickerExplosion";
-import { dimensionThemeCalm, dimensionThemeChinese, milestoneForProgress } from "@/lib/dimension-theme";
+import { dimensionThemeCalm, dimensionThemeChinese, dimensionThemeMalay, milestoneForProgress } from "@/lib/dimension-theme";
 import { useS1Edu } from "@/lib/s1-edu-flag";
 import { getStickerPool } from "@/lib/s1-stickers";
 import { speedyCopy, S1_MODULE_BOUNDARIES, type SeedyAnchor } from "@/lib/s1-edu-config";
@@ -32,7 +32,7 @@ import { MascotSpeechBubble } from "@/components/edu-s1/MascotSpeechBubble";
 import { PracticeRound } from "@/components/edu-s1/PracticeRound";
 import { ChapterInterstitial, type ChapterId } from "@/components/edu-s1/ChapterInterstitial";
 import { UiThemeProvider } from "@/lib/ui-theme";
-import { runnerCopy, isChineseSubject } from "@/lib/runner-i18n";
+import { runnerCopy, isChineseSubject, isMalaySubject } from "@/lib/runner-i18n";
 import { ArrowGlyph } from "@/components/mandarin/MandarinGlyphs";
 import { MandarinEnglishGuide, MandarinJourneyFooterNote, MandarinJourneyHeader, MandarinQuestHeading } from "@/components/mandarin/MandarinJourneyChrome";
 import { mandarinHref, useMandarinLocale } from "@/lib/mandarin-locale";
@@ -82,6 +82,7 @@ export function CalmExamRunner({
   const upper = tier === "upper-primary";
   const edu = useS1Edu({ test: { subject: subject ?? null, level: level ?? null } });
   const isChinese = isChineseSubject(subject);
+  const isMalay = isMalaySubject(subject);
   const { locale: mandarinLocale, isEnglish: mandarinUiEnglish } = useMandarinLocale();
   const t = useMemo(() => runnerCopy(isChinese && mandarinUiEnglish ? "english" : subject), [subject, isChinese, mandarinUiEnglish]);
   const stickerPool = useMemo(
@@ -258,6 +259,8 @@ export function CalmExamRunner({
   const Renderer = q ? getRenderer(q.type) ?? FallbackRenderer : FallbackRenderer;
   const theme = isChinese
     ? dimensionThemeChinese(q?.dimension ?? "")
+    : isMalay
+    ? dimensionThemeMalay(q?.dimension ?? "")
     : dimensionThemeCalm(q?.dimension ?? "");
 
   const answeredSet = useMemo(() => {
@@ -387,10 +390,11 @@ export function CalmExamRunner({
     <UiThemeProvider mode="calm" tier={tier} subject={subject ?? "english"}>
       <div
         {...(isChinese ? { lang: mandarinUiEnglish ? "en" : "zh-Hans", "data-locale": mandarinLocale } : {})}
+        {...(isMalay ? { lang: "ms" } : {})}
         className={[
           "calm-ui",
           upper ? "calm-ui-upper" : "",
-          isChinese ? `chinese-ui zh-cn kid-bg-chinese ${upper ? "" : "mandarin-lower-primary"}` : "kid-bg-green",
+          isChinese ? `chinese-ui zh-cn kid-bg-chinese ${upper ? "" : "mandarin-lower-primary"}` : isMalay ? "malay-runner kid-bg-malay" : "kid-bg-green",
           "relative flex min-h-screen flex-col",
         ].filter(Boolean).join(" ")}
         style={brand?.brandColor ? ({ ["--org-brand" as any]: brand.brandColor }) : undefined}
