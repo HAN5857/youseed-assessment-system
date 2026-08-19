@@ -291,6 +291,7 @@
 .mandarin-briefing-hero { display: grid; grid-template-columns: minmax(0,1fr) 180px; align-items: center; gap: 24px; padding: 24px 28px; }
 .mandarin-briefing-hero h1 { max-width: 720px; margin-top: 12px; font-size: clamp(32px,5.2vw,50px); font-weight: 800; line-height: 1.18; letter-spacing: -.035em; }
 .mandarin-briefing-hero h1 span { display: block; color: var(--md-red-500); }
+.mandarin-briefing-hero h1 .mandarin-nowrap-word { display: inline; color: inherit; white-space: nowrap; }
 .mandarin-briefing-hero p { max-width: 720px; margin-top: 14px; color: var(--md-muted); font-size: 16px; line-height: 1.8; }
 .mandarin-briefing-mascot { width: 180px; filter: drop-shadow(0 14px 20px rgba(37,100,73,.16)); }
 .mandarin-briefing-stats { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 13px; margin: 5px 0 20px; }

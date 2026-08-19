@@ -62,7 +62,18 @@ export function MandarinInstructionsView(props: Props) {
         <div className="mandarin-briefing-hero">
           <div>
             <span className="mandarin-kicker"><CompassGlyph className="h-5 w-5" /><span>{text("出发前的小提醒", "Before you begin")}</span></span>
-            <h1>{isEnglish ? `${firstName}, let’s discover ` : `${firstName}，一起去`}<span>{text("发现你的华文力量吧！", "your Mandarin strengths!")}</span></h1>
+            <h1>
+              {isEnglish ? (
+                <>
+                  {firstName},{" "}
+                  <span className="mandarin-nowrap-word">let&apos;s</span>{" "}
+                  discover{" "}
+                </>
+              ) : (
+                `${firstName}，一起去`
+              )}
+              <span>{text("发现你的华文力量吧！", "your Mandarin strengths!")}</span>
+            </h1>
             <p>{text("不用紧张，也不用背答案。慢慢看、慢慢想，把会的认真做，就很棒了。", "There is no need to feel nervous or memorise answers. Read carefully, think calmly and give each task your best attempt.")}</p>
           </div>
           <MandarinCompanion mood="ready" className="mandarin-briefing-mascot" label={text("小墨陪你准备华文评估", "Xiao Mo helps you prepare for the Mandarin assessment")} />
