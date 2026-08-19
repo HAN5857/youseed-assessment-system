@@ -215,10 +215,71 @@ const ZH: RunnerCopy = {
   matchingChoosePlaceholder: "— 请选择 —",
 };
 
+// ─── Bahasa Melayu (Malay) ────────────────────────────────────────────────
+// Tone: warm, encouraging, kid-friendly Standard-Malaysian BM. Festive
+// stickers pick from a Malaysian set (bunga raya 🌺, wau 🪁, harimau 🐯,
+// pokok palma 🌴) so the runner feels local, not a translated default.
+const BM: RunnerCopy = {
+  encouragements: [
+    "Bagus sekali!", "Teruskan!", "Hebat!", "Kamu memang pandai!", "Syabas!",
+    "Cemerlang!", "Terbaik!", "Jawapan yang bagus!", "Kamu boleh buat!", "Selangkah demi selangkah!",
+  ],
+  cornerStickers: ["🌺", "🪁", "🐯", "🌴", "⭐", "🏵️", "🥭", "🦋", "🌟", "✨"],
+  milestoneStickers: ["🌺", "🪁", "🐯", "🌴", "⭐", "🏵️", "🥭", "🦋", "🌟", "🏆", "🎉", "✨"],
+
+  questionOf: (idx, total, answered) => `Soalan ${idx + 1} daripada ${total} · ${answered} dijawab`,
+  timeRemaining: "Masa berbaki",
+  pointsChip: (n) => `${n} markah`,
+  back: "← Sebelum",
+  next: "Seterusnya →",
+  finish: "Selesai 🏁",
+  finishReady: "Selesai 🎉",
+  submitting: "Menghantar…",
+  submittingReady: "Menghantar… 🎉",
+  toastPrefix: "🌺 ",
+  toastSuffix: "",
+
+  finishTitleDone: "Sedia untuk hantar? 🎉",
+  finishTitleUnfinished: "Hampir siap! 💪",
+  finishBodyDone: "Kamu telah menjawab semua soalan — syabas!",
+  finishBodyUnfinished: (n) => `Masih ada ${n} soalan belum dijawab. Mahu semak semula?`,
+  finishAnsweredLabel: "Dijawab",
+  finishCompleteLabel: "Selesai",
+  finishSecondary: "Biar saya semak semula",
+  finishSecondaryUnfinished: "Teruskan mencuba 💪",
+  finishPrimary: "Ya, hantar! 🏁",
+  finishPrimaryUnfinished: "Hantar juga 🏁",
+
+  soundOn: "Buka bunyi",
+  soundOff: "Tutup bunyi",
+  musicOn: "Main muzik",
+  musicOff: "Jeda muzik",
+  voiceOn: "Buka suara Seedy",
+  voiceOff: "Tutup suara Seedy",
+  voiceIsOn: "Seedy sedang bercakap 🌱",
+  voiceIsOff: "Seedy sedang senyap",
+
+  starProgressLabel: (i, a) => `Soalan ${i + 1} ${a ? "dijawab" : "belum dijawab"}`,
+  passageHint: "📚 Baca perlahan-lahan — baca dua kali!",
+  passageHintUpper: "Baca dengan teliti — kamu boleh tatal semula ke petikan pada bila-bila masa.",
+
+  dim: {
+    vocab: "Kosa Kata", grammar: "Tatabahasa", reading: "Pemahaman", listening: "Mendengar",
+    phonics: "Ejaan", writing: "Penulisan", speaking: "Lisan", question: "Soalan",
+  },
+  milestone25: "🌱 Permulaan yang baik! 25% selesai.",
+  milestone50: "🔥 Separuh jalan — teruskan!",
+  milestone75: "🚀 Hampir sampai! Sedikit lagi.",
+  milestone90: "⭐ Tinggal satu lagi!",
+
+  matchingChoosePlaceholder: "— pilih —",
+};
+
 // ─── Selector ────────────────────────────────────────────────────────────
 export function runnerCopy(subject?: string | null): RunnerCopy {
   const s = String(subject ?? "").toLowerCase();
   if (s === "chinese" || s === "zh" || s === "zh-cn") return ZH;
+  if (s === "bahasa-melayu" || s === "malay" || s === "ms" || s === "ms-my") return BM;
   return EN;
 }
 
@@ -226,4 +287,10 @@ export function runnerCopy(subject?: string | null): RunnerCopy {
 export function isChineseSubject(subject?: string | null): boolean {
   const s = String(subject ?? "").toLowerCase();
   return s === "chinese" || s === "zh" || s === "zh-cn";
+}
+
+/** Handy check for downstream conditionals that need to know we're Malay. */
+export function isMalaySubject(subject?: string | null): boolean {
+  const s = String(subject ?? "").toLowerCase();
+  return s === "bahasa-melayu" || s === "malay" || s === "ms" || s === "ms-my";
 }

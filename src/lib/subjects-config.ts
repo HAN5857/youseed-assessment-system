@@ -60,11 +60,18 @@ export const SUBJECTS: SubjectDef[] = [
   {
     id: "bahasa-melayu",
     name: "Bahasa Melayu",
-    tagline: "Perbendaharaan, tatabahasa, pemahaman",
+    tagline: "Ejaan, tatabahasa, pemahaman & penulisan · KSSR Semakan",
     emoji: "🌺",
-    bgGradient: "from-emerald-400 via-teal-400 to-cyan-400",
-    enabled: false,
-    levels: STANDARD_LEVELS.map((l) => ({ ...l, unit: "Coming soon", enabled: false })),
+    bgGradient: "from-amber-400 via-teal-500 to-emerald-500",
+    enabled: true,
+    levels: [
+      { ...STANDARD_LEVELS[0], unit: "BM Tahun 1 · KSSR Semakan",       ageHint: "Tahun 1 · Umur 7",  enabled: true },
+      { ...STANDARD_LEVELS[1], unit: "BM Tahun 2 · KSSR Semakan",       ageHint: "Tahun 2 · Umur 8",  enabled: true },
+      { ...STANDARD_LEVELS[2], unit: "BM Tahun 3 · KSSR Semakan",       ageHint: "Tahun 3 · Umur 9",  enabled: true },
+      { ...STANDARD_LEVELS[3], unit: "BM Tahun 4 · Format UASA",        ageHint: "Tahun 4 · Umur 10", enabled: true },
+      { ...STANDARD_LEVELS[4], unit: "BM Tahun 5 · Format UASA",        ageHint: "Tahun 5 · Umur 11", enabled: true },
+      { ...STANDARD_LEVELS[5], unit: "BM Tahun 6 · Format UASA",        ageHint: "Tahun 6 · Umur 12", enabled: true },
+    ],
   },
   {
     id: "chinese",

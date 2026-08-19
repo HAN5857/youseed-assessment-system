@@ -40,7 +40,7 @@ export type LevelTier = "primary" | "upper-primary";
 // Subjects that use the calm green + white theme. Adding a subject here
 // automatically extends every calm-tier UI decision (renderers, theming,
 // nav copy) to that subject's levels.
-const CALM_SUBJECTS = new Set(["english", "chinese"]);
+const CALM_SUBJECTS = new Set(["english", "chinese", "bahasa-melayu"]);
 
 export function isS1Calm(
   subject?: string | null,
