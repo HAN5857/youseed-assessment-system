@@ -14,6 +14,7 @@ export function FinishDialog({
   onConfirm,
   onCancel,
   variant = "playful",
+  language,
 }: {
   open: boolean;
   answered: number;
@@ -21,6 +22,7 @@ export function FinishDialog({
   onConfirm: () => void;
   onCancel: () => void;
   variant?: "playful" | "calm";
+  language?: "zh" | "en";
 }) {
   useEffect(() => {
     if (open) sound().play("click");
@@ -40,6 +42,7 @@ export function FinishDialog({
       pct={pct}
       onCancel={onCancel}
       onConfirm={onConfirm}
+      language={language}
     />;
   }
 
@@ -128,7 +131,7 @@ export function FinishDialog({
 
 // ─── Calm finish dialog (split out so it can read the tier from context) ──
 function CalmFinishDialog({
-  answered, total, allAnswered, pct, onCancel, onConfirm,
+  answered, total, allAnswered, pct, onCancel, onConfirm, language,
 }: {
   open: boolean;
   answered: number;
@@ -137,31 +140,32 @@ function CalmFinishDialog({
   pct: number;
   onCancel: () => void;
   onConfirm: () => void;
+  language?: "zh" | "en";
 }) {
   const tier = useUiTier();
   const upper = tier === "upper-primary";
   const subject = useUiSubject();
   const t = runnerCopy(subject);
   const chinese = ["chinese", "zh", "zh-cn"].includes(String(subject).toLowerCase());
+  const englishChineseUi = chinese && language === "en";
 
   if (chinese) {
     return (
       <div className="mandarin-finish-layer" role="dialog" aria-modal="true" aria-labelledby="mandarin-finish-title">
-        <button className="mandarin-finish-backdrop" onClick={onCancel} aria-label="返回检查" />
+        <button className="mandarin-finish-backdrop" onClick={onCancel} aria-label={englishChineseUi ? "Return to review" : "返回检查"} />
         <div className="mandarin-finish-dialog">
-          <MandarinCompanion mood={allAnswered ? "celebrate" : "ready"} className="mandarin-finish-mascot" />
-          <span className="mandarin-kicker"><CheckGlyph className="h-5 w-5" /><span>旅程来到最后一页<small>The final page of your journey</small></span></span>
-          <h2 id="mandarin-finish-title">{allAnswered ? "每一站都留下足迹了" : "还有几站没有留下答案"}</h2>
-          <small className="mandarin-finish-title-en">{allAnswered ? "Every stop now holds your answer" : "A few stops still need an answer"}</small>
-          <p>{allAnswered ? "可以完成这段旅程，也可以回头读一读刚才的想法。" : `还有 ${total - answered} 个小任务未完成。你可以继续探索，也可以保留现在的足迹。`}<small>{allAnswered ? "You can finish now or look back through your ideas once more." : `${total - answered} mini tasks are unanswered. You may keep exploring or finish with your current progress.`}</small></p>
+          <MandarinCompanion mood={allAnswered ? "celebrate" : "ready"} className="mandarin-finish-mascot" label={englishChineseUi ? "Xiao Mo celebrates your progress" : "小墨陪你完成华文评估"} />
+          <span className="mandarin-kicker"><CheckGlyph className="h-5 w-5" /><span>{englishChineseUi ? "The final page of your journey" : "旅程来到最后一页"}</span></span>
+          <h2 id="mandarin-finish-title">{englishChineseUi ? (allAnswered ? "Every task now has an answer" : "A few tasks are still unanswered") : (allAnswered ? "每一站都留下足迹了" : "还有几站没有留下答案")}</h2>
+          <p>{englishChineseUi ? (allAnswered ? "You can finish now or review your answers once more." : `${total - answered} tasks are unanswered. You may keep working or finish with your current progress.`) : (allAnswered ? "可以完成这段旅程，也可以回头读一读刚才的想法。" : `还有 ${total - answered} 个小任务未完成。你可以继续探索，也可以保留现在的足迹。`)}</p>
           <div className="mandarin-finish-progress">
-            <div><span>已点亮<small>Answered</small></span><strong>{answered}<small> / {total}</small></strong></div>
-            <div><span>旅程进度<small>Journey progress</small></span><strong>{pct}<small>%</small></strong></div>
+            <div><span>{englishChineseUi ? "Answered" : "已作答"}</span><strong>{answered}<small> / {total}</small></strong></div>
+            <div><span>{englishChineseUi ? "Progress" : "完成进度"}</span><strong>{pct}<small>%</small></strong></div>
             <div className="mandarin-finish-track"><i style={{ width: `${Math.max(4, pct)}%` }} /></div>
           </div>
           <div className="mandarin-finish-actions">
-            <button type="button" className="mandarin-secondary-button" onClick={() => { sound().play("click"); onCancel(); }}><span className="mandarin-bilingual-action"><strong>回去看一看</strong><small>Review my answers</small></span></button>
-            <button type="button" className="mandarin-primary-button" onClick={() => { sound().play("click"); onConfirm(); }}><span className="mandarin-bilingual-action"><strong>完成华文旅程</strong><small>Complete my journey</small></span></button>
+            <button type="button" className="mandarin-secondary-button" onClick={() => { sound().play("click"); onCancel(); }}><strong>{englishChineseUi ? "Review my answers" : "回去看一看"}</strong></button>
+            <button type="button" className="mandarin-primary-button" onClick={() => { sound().play("click"); onConfirm(); }}><strong>{englishChineseUi ? "Complete my journey" : "完成华文旅程"}</strong></button>
           </div>
         </div>
       </div>

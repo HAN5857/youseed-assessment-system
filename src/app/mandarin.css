@@ -154,6 +154,53 @@
 .mandarin-sound-button.is-active { border-color: #b7d4c1; background: var(--md-jade-100); color: var(--md-jade-700); }
 .mandarin-sound-button:focus-visible { outline: 3px solid rgba(214,164,59,.5); outline-offset: 2px; }
 
+/* One persistent interface-language control across the Mandarin journey. */
+.mandarin-floating-tools {
+  position: fixed;
+  z-index: 30;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.mandarin-locale-switch {
+  display: inline-grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 44px;
+  padding: 3px;
+  border: 1px solid var(--md-line, #e6d2ac);
+  border-radius: 999px;
+  background: rgba(255,253,247,.96);
+  box-shadow: 0 6px 18px rgba(77,56,20,.1);
+  font-family: var(--font-fredoka), var(--font-noto-sc), system-ui, sans-serif;
+}
+.mandarin-locale-switch button {
+  min-width: 52px;
+  min-height: 44px;
+  border-radius: 999px;
+  color: #625d54;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  transition: color .2s ease, background-color .2s ease, box-shadow .2s ease;
+  touch-action: manipulation;
+}
+.mandarin-locale-switch button[aria-pressed="true"] {
+  background: var(--md-jade-700, #246f54);
+  color: #fffdf7;
+  box-shadow: 0 3px 9px rgba(23,78,61,.22);
+}
+.mandarin-locale-switch button:hover:not([aria-pressed="true"]) { background: var(--md-jade-100, #e7f2eb); color: var(--md-jade-900, #174e3d); }
+.mandarin-locale-switch button:focus-visible { outline: 3px solid rgba(214,164,59,.58); outline-offset: 2px; }
+.mandarin-journey-tools .mandarin-locale-switch { box-shadow: none; }
+
+@media (max-width: 560px) {
+  .mandarin-floating-tools { top: 10px; right: 10px; gap: 6px; }
+  .mandarin-locale-switch button { min-width: 47px; }
+}
+
 /* Level picker */
 .mandarin-portal-hero {
   display: grid;
@@ -301,12 +348,6 @@
 .mandarin-journey-brand strong { display: block; max-width: min(50vw,500px); overflow: hidden; color: var(--md-ink); font-size: 14px; font-weight: 800; text-overflow: ellipsis; white-space: nowrap; }
 .mandarin-journey-brand div > span { display: flex; align-items: center; gap: 4px; margin-top: 2px; color: var(--md-jade-700); font-size: 10px; font-weight: 600; }
 .mandarin-journey-tools { display: flex; align-items: center; gap: 8px; }
-.mandarin-language-toggle { display: grid; min-width: 48px; min-height: 42px; place-content: center; border: 1px solid var(--md-line); border-radius: 12px; background: var(--md-paper); padding: 5px 8px; color: var(--md-muted); line-height: 1; cursor: pointer; transition: transform .18s ease, border-color .18s ease, background-color .18s ease, color .18s ease; }
-.mandarin-language-toggle strong { font-family: var(--font-fredoka), system-ui, sans-serif; font-size: 13px; font-weight: 800; }
-.mandarin-language-toggle span { margin-top: 3px; font-size: 9px; font-weight: 700; }
-.mandarin-language-toggle:hover { transform: translateY(-1px); border-color: var(--md-gold-400); }
-.mandarin-language-toggle.is-active { border-color: #9fc9ae; background: var(--md-jade-100); color: var(--md-jade-700); }
-.mandarin-language-toggle:focus-visible { outline: 3px solid rgba(214,164,59,.5); outline-offset: 2px; }
 .mandarin-time { display: inline-flex; min-height: 42px; align-items: center; gap: 7px; border: 1px solid var(--md-line); border-radius: 12px; background: var(--md-paper-warm); padding: 8px 11px; color: var(--md-jade-900); font-variant-numeric: tabular-nums; font-size: 15px; font-weight: 800; }
 .mandarin-time.is-low { border-color: #e4aaa5; background: #fff0ee; color: #9d302d; animation: mandarin-time-pulse 1.5s ease-in-out infinite; }
 .mandarin-time.is-overtime { border-color: #d8b35d; background: #fff6dc; color: #765618; animation: none; }

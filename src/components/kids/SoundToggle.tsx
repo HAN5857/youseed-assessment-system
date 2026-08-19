@@ -6,6 +6,7 @@ import { s1EduPrefs } from "@/lib/s1-edu-flag";
 import { seedyVoice } from "@/lib/seedy-voice";
 import { useIsChineseTheme, useUiSubject } from "@/lib/ui-theme";
 import { runnerCopy } from "@/lib/runner-i18n";
+import { useMandarinLocale } from "@/lib/mandarin-locale";
 
 export function SoundToggle({
   showMusic = true,
@@ -19,7 +20,8 @@ export function SoundToggle({
   const [voice, setVoice] = useState(true); // default ON (locked decision)
   const subject = useUiSubject();
   const chinese = useIsChineseTheme();
-  const t = runnerCopy(subject);
+  const { isEnglish: mandarinUiEnglish } = useMandarinLocale();
+  const t = runnerCopy(chinese && mandarinUiEnglish ? "english" : subject);
 
   useEffect(() => {
     // Persist across the session. Music defaults to ON (only off if explicitly opted out).
@@ -69,7 +71,7 @@ export function SoundToggle({
 
   if (chinese) {
     return (
-      <div className="mandarin-sound-controls" aria-label="声音控制">
+      <div className="mandarin-sound-controls" aria-label={mandarinUiEnglish ? "Sound controls" : "声音控制"}>
         <button onClick={toggleMute} aria-label={muted ? t.soundOn : t.soundOff} className={`mandarin-sound-button ${!muted ? "is-active" : ""}`}>
           <SpeakerIcon muted={muted} />
         </button>

@@ -7,6 +7,7 @@ import { celebrate } from "@/components/kids/Confetti";
 import { sound } from "@/lib/sounds";
 import { ArrowGlyph, BambooGlyph, CheckGlyph, CompassGlyph, InkBrushGlyph, MandarinCompanion, ScrollGlyph } from "./MandarinGlyphs";
 import { AdvisoryTimeNotice } from "@/components/assessment/AdvisoryTimeNotice";
+import { MandarinLanguageSwitch, mandarinHref, useMandarinLocale } from "@/lib/mandarin-locale";
 
 type Lead = {
   name: string; totalScore: number | null; maxScore: number | null; percentage: number | null;
@@ -26,6 +27,7 @@ const DIMENSIONS: Record<string, { mark: string; name: string; englishName: stri
 
 export function MandarinResultView({ lead, test }: { lead: Lead; test: Test }) {
   const reduceMotion = useReducedMotion();
+  const { locale, isEnglish, text } = useMandarinLocale();
   const percentage = Math.round(lead.percentage ?? 0);
   const stage = stageFor(percentage);
   const firstName = lead.name.trim().split(/\s+/)[0] || lead.name;
@@ -41,7 +43,8 @@ export function MandarinResultView({ lead, test }: { lead: Lead; test: Test }) {
   }, []);
 
   return (
-    <main className={`mandarin-result min-h-dvh px-4 py-8 sm:py-12 ${lowerPrimary ? "mandarin-lower-primary" : ""}`} lang="zh-Hans">
+    <main className={`mandarin-result min-h-dvh px-4 py-8 sm:py-12 ${lowerPrimary ? "mandarin-lower-primary" : ""}`} lang={isEnglish ? "en" : "zh-Hans"} data-locale={locale}>
+      <div className="mandarin-floating-tools"><MandarinLanguageSwitch /></div>
       <div className="mandarin-cloud cloud-one" aria-hidden />
       <div className="mandarin-cloud cloud-two" aria-hidden />
       <section className="relative z-10 mx-auto max-w-5xl">
@@ -52,32 +55,31 @@ export function MandarinResultView({ lead, test }: { lead: Lead; test: Test }) {
           transition={{ duration: reduceMotion ? 0 : .4, ease: "easeOut" }}
         >
           <div className="mandarin-result-copy">
-            <span className="mandarin-kicker light"><CheckGlyph className="h-5 w-5" /> 华文探索旅程 · 已完成</span>
-            <h1>{firstName}，你留下了一份<span>独一无二的学习足迹</span></h1>
-            <p>这不是一张只看分数的成绩单，而是一幅帮助老师与家长看见优势、理解需要、规划下一步的华文成长地图。</p>
-            <p className="mandarin-english-subline light">A clear Mandarin learning profile for parents, tutors and the learner’s next step.</p>
+            <span className="mandarin-kicker light"><CheckGlyph className="h-5 w-5" /> {text("华文探索旅程 · 已完成", "Mandarin journey · Complete")}</span>
+            <h1>{isEnglish ? `${firstName}, you created ` : `${firstName}，你留下了一份`}<span>{text("独一无二的学习足迹", "your own learning profile")}</span></h1>
+            <p>{text("这不只是一张成绩单，而是一幅帮助老师与家长看见优势、理解需要、规划下一步的华文成长地图。", "This is more than a score. It helps parents and tutors understand strengths, learning needs and the most helpful next step in Mandarin.")}</p>
           </div>
-          <MandarinCompanion mood="celebrate" className="mandarin-result-mascot" />
+          <MandarinCompanion mood="celebrate" className="mandarin-result-mascot" label={text("小墨为你庆祝", "Xiao Mo celebrates your progress")} />
         </motion.div>
 
         {lead.status === "TIMEOUT" && (
           <div className="mt-4">
-            <AdvisoryTimeNotice chinese completed />
+            <AdvisoryTimeNotice chinese={!isEnglish} completed />
           </div>
         )}
 
         <div className="mandarin-result-scroll">
-          <div className="mandarin-result-seal" aria-label={`成长印记：${stage.title}`}>
-            <span>{stage.mark}</span><small>成长印记</small>
+          <div className="mandarin-result-seal" aria-label={text(`成长印记：${stage.title}`, `Learning stage: ${stage.englishTitle}`)}>
+            <span>{stage.mark}</span><small>{text("成长印记", "Learning stage")}</small>
           </div>
           <div className="mandarin-result-stage">
-            <span>本次发现<small>This journey reveals</small></span>
-            <h2>{stage.title}<small>{stage.englishTitle}</small></h2>
-            <p>{stage.message}<small>{stage.englishMessage}</small></p>
+            <span>{text("本次发现", "This journey reveals")}</span>
+            <h2>{isEnglish ? stage.englishTitle : stage.title}</h2>
+            <p>{isEnglish ? stage.englishMessage : stage.message}</p>
           </div>
           <div className="mandarin-result-score">
             <strong>{percentage}<small>%</small></strong>
-            <span>{lead.totalScore ?? 0} / {lead.maxScore ?? 0} 成长点<small>Growth points</small></span>
+            <span>{lead.totalScore ?? 0} / {lead.maxScore ?? 0} {text("成长点", "points")}</span>
           </div>
         </div>
 
@@ -85,9 +87,9 @@ export function MandarinResultView({ lead, test }: { lead: Lead; test: Test }) {
           <section className="mandarin-result-panel">
             <div className="mandarin-section-heading">
               <div className="mandarin-section-icon"><CompassGlyph className="h-6 w-6" /></div>
-              <div><span>家长也看得懂<small>A clear view for parents</small></span><h2>华文能力成长快照<small>Mandarin learning snapshot</small></h2></div>
+              <div><span>{text("家长也看得懂", "A clear view for parents")}</span><h2>{text("华文能力成长快照", "Mandarin learning snapshot")}</h2></div>
             </div>
-            <p className="mandarin-result-intro">每一项分数都是学习线索，不是标签。老师会结合孩子的作答过程，判断最适合的学习起点。<small>Each score is a learning clue, not a label. The tutor will review how your child approached every task.</small></p>
+            <p className="mandarin-result-intro">{text("每一项分数都是学习线索，不是标签。老师会结合孩子的作答过程，判断最适合的学习起点。", "Each score is a learning clue, not a label. The tutor will review how your child approached every task to identify the right learning starting point.")}</p>
             <div className="mandarin-result-dimensions">
               {Object.entries(dimensions).map(([key, score], index) => {
                 const info = DIMENSIONS[key] ?? { mark: "探", name: key, englishName: "Learning discovery", insight: "这一项能力的学习表现", englishInsight: "Performance in this learning area." };
@@ -99,7 +101,7 @@ export function MandarinResultView({ lead, test }: { lead: Lead; test: Test }) {
                     transition={{ duration: reduceMotion ? 0 : .28, delay: reduceMotion ? 0 : index * .05 }}
                   >
                     <span className="mandarin-dimension-mark">{info.mark}</span>
-                    <div className="mandarin-dimension-copy"><h3>{info.name}<small>{info.englishName}</small></h3><p>{info.insight}<small>{info.englishInsight}</small></p></div>
+                    <div className="mandarin-dimension-copy"><h3>{isEnglish ? info.englishName : info.name}</h3><p>{isEnglish ? info.englishInsight : info.insight}</p></div>
                     <div className="mandarin-dimension-score"><strong>{Math.round(score)}%</strong><span><i style={{ width: `${Math.max(4, Math.min(100, score))}%` }} /></span></div>
                   </motion.article>
                 );
@@ -112,26 +114,26 @@ export function MandarinResultView({ lead, test }: { lead: Lead; test: Test }) {
           <section className="mandarin-result-panel next-step">
             <div className="mandarin-section-heading small">
               <div className="mandarin-section-icon"><BambooGlyph className="h-6 w-6" /></div>
-              <div><span>下一步不是多做一张卷<small>More than another worksheet</small></span><h2>让学习真正接得上<small>Connect learning to the right next step</small></h2></div>
+              <div><span>{text("下一步不只是多做一张卷", "More than another worksheet")}</span><h2>{text("让学习真正接得上", "Connect learning to the right next step")}</h2></div>
             </div>
-            <p>负责老师会进一步查看孩子的答题记录、阅读理解与写作表达，再与家长确认一次免费的面对面评估与学习回顾。<small>Your tutor will review the answers, reading and writing before arranging a free face-to-face assessment and learning review.</small></p>
+            <p>{text("负责老师会进一步查看孩子的答题记录、阅读理解与写作表达，再与家长确认一次免费的面对面评估与学习回顾。", "Your tutor will review the answers, reading comprehension and writing before arranging a free face-to-face assessment and learning review.")}</p>
             <ul>
-              <li><CheckGlyph className="h-5 w-5" /><span>看见孩子已经具备的能力<small>Recognise current strengths</small></span></li>
-              <li><CheckGlyph className="h-5 w-5" /><span>找出最值得优先补强的环节<small>Identify the most useful areas to strengthen</small></span></li>
-              <li><CheckGlyph className="h-5 w-5" /><span>规划清楚、可实行的华文学习路线<small>Plan a clear and practical Mandarin pathway</small></span></li>
+              <li><CheckGlyph className="h-5 w-5" /><span>{text("看见孩子已经具备的能力", "Recognise current strengths")}</span></li>
+              <li><CheckGlyph className="h-5 w-5" /><span>{text("找出最值得优先补强的环节", "Identify the most useful areas to strengthen")}</span></li>
+              <li><CheckGlyph className="h-5 w-5" /><span>{text("规划清楚、可实行的华文学习路线", "Plan a clear and practical Mandarin pathway")}</span></li>
             </ul>
           </section>
           <aside className="mandarin-result-contact">
             <InkBrushGlyph className="h-8 w-8" />
-            <span>接下来<small>What happens next</small></span>
-            <h2>负责老师会主动联系您<small>Your tutor will contact you</small></h2>
-            <p>我们会配合家长方便的时间，确认免费面对面语言评估与学习回顾。没有压力，也不会强迫报名。<small>We will arrange the free face-to-face language assessment and learning review at a convenient time—without pressure or a hard sell.</small></p>
+            <span>{text("接下来", "What happens next")}</span>
+            <h2>{text("负责老师会主动联系您", "Your tutor will contact you")}</h2>
+            <p>{text("我们会配合家长方便的时间，确认免费面对面语言评估与学习回顾。没有压力，也不会强迫报名。", "We will arrange the free face-to-face language assessment and learning review at a convenient time—without pressure or a hard sell.")}</p>
           </aside>
         </div>
 
         <footer className="mandarin-result-footer">
-          <div><ScrollGlyph className="h-5 w-5" /><span>{test.title}<small>Mandarin placement journey</small></span><b>{minutesUsed ? `${minutesUsed} 分钟完成` : "已完成"}<small>{minutesUsed ? `Completed in ${minutesUsed} min` : "Completed"}</small></b></div>
-          <Link href="/test/chinese" className="mandarin-secondary-button"><span className="mandarin-bilingual-action"><strong>返回华文探索馆</strong><small>Return to Mandarin discovery</small></span><ArrowGlyph className="h-5 w-5" /></Link>
+          <div><ScrollGlyph className="h-5 w-5" /><span>{isEnglish ? "Mandarin placement assessment" : test.title}</span><b>{minutesUsed ? text(`${minutesUsed} 分钟完成`, `Completed in ${minutesUsed} min`) : text("已完成", "Completed")}</b></div>
+          <Link href={mandarinHref("/test/chinese", locale)} className="mandarin-secondary-button"><strong>{text("返回华文探索馆", "Return to Mandarin discovery")}</strong><ArrowGlyph className="h-5 w-5" /></Link>
         </footer>
       </section>
     </main>

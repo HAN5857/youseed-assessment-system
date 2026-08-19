@@ -84,9 +84,9 @@ export function ArrowGlyph({ direction = "right", ...props }: IconProps & { dire
   );
 }
 
-export function MandarinCompanion({ mood = "welcome", className = "" }: { mood?: "welcome" | "ready" | "celebrate"; className?: string }) {
+export function MandarinCompanion({ mood = "welcome", className = "", label }: { mood?: "welcome" | "ready" | "celebrate"; className?: string; label?: string }) {
   return (
-    <svg className={className} viewBox="0 0 150 126" role="img" aria-label={mood === "celebrate" ? "小墨为你庆祝" : "小墨陪你探索华文"}>
+    <svg className={className} viewBox="0 0 150 126" role="img" aria-label={label ?? (mood === "celebrate" ? "小墨为你庆祝" : "小墨陪你探索华文")}>
       <defs>
         <linearGradient id="mo-body" x1="0" y1="0" x2="1" y2="1">
           <stop offset="0" stopColor="#2F8F68" />

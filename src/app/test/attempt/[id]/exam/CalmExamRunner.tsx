@@ -35,6 +35,7 @@ import { UiThemeProvider } from "@/lib/ui-theme";
 import { runnerCopy, isChineseSubject } from "@/lib/runner-i18n";
 import { ArrowGlyph } from "@/components/mandarin/MandarinGlyphs";
 import { MandarinEnglishGuide, MandarinJourneyFooterNote, MandarinJourneyHeader, MandarinQuestHeading } from "@/components/mandarin/MandarinJourneyChrome";
+import { mandarinHref, useMandarinLocale } from "@/lib/mandarin-locale";
 import { AdvisoryTimeNotice } from "@/components/assessment/AdvisoryTimeNotice";
 
 type Q = {
@@ -81,7 +82,8 @@ export function CalmExamRunner({
   const upper = tier === "upper-primary";
   const edu = useS1Edu({ test: { subject: subject ?? null, level: level ?? null } });
   const isChinese = isChineseSubject(subject);
-  const t = useMemo(() => runnerCopy(subject), [subject]);
+  const { locale: mandarinLocale, isEnglish: mandarinUiEnglish } = useMandarinLocale();
+  const t = useMemo(() => runnerCopy(isChinese && mandarinUiEnglish ? "english" : subject), [subject, isChinese, mandarinUiEnglish]);
   const stickerPool = useMemo(
     () => (isChinese ? t.milestoneStickers : getStickerPool(subject, level)),
     [subject, level, isChinese, t.milestoneStickers],
@@ -95,7 +97,6 @@ export function CalmExamRunner({
   const [toast, setToast] = useState<string | null>(null);
   const [milestone, setMilestone] = useState<string | null>(null);
   const [showFinish, setShowFinish] = useState(false);
-  const [englishSupport, setEnglishSupport] = useState(true);
 
   const [mascotReaction, setMascotReaction] = useState<Reaction>("idle");
   const [mascotPulse, setMascotPulse] = useState(0);
@@ -118,20 +119,6 @@ export function CalmExamRunner({
   const submittedRef = useRef(false);
   const prevAnsweredRef = useRef(0);
   const prevResponseSerialRef = useRef<string>("");
-
-  useEffect(() => {
-    if (!isChinese || typeof window === "undefined") return;
-    setEnglishSupport(localStorage.getItem("mandarin_english_support") !== "0");
-  }, [isChinese]);
-
-  function toggleEnglishSupport() {
-    setEnglishSupport((current) => {
-      const next = !current;
-      localStorage.setItem("mandarin_english_support", next ? "1" : "0");
-      sound().play("click");
-      return next;
-    });
-  }
 
   useEffect(() => {
     (async () => {
@@ -211,7 +198,7 @@ export function CalmExamRunner({
         body: JSON.stringify({ responses }),
       });
       if (!response.ok) throw new Error(`Submission failed (${response.status})`);
-      router.push(`/test/attempt/${leadId}/result`);
+      router.push(isChinese ? mandarinHref(`/test/attempt/${leadId}/result`, mandarinLocale) : `/test/attempt/${leadId}/result`);
     } catch {
       submittedRef.current = false;
       setSubmitting(false);
@@ -223,7 +210,7 @@ export function CalmExamRunner({
     if (idx < questions.length - 1) {
       sound().play("next");
       const list = upper
-        ? (isChinese ? ENCOURAGE_UPPER_ZH : ENCOURAGE_UPPER)
+        ? (isChinese && !mandarinUiEnglish ? ENCOURAGE_UPPER_ZH : ENCOURAGE_UPPER)
         : t.encouragements;
       showToast(list[Math.floor(Math.random() * list.length)]);
       setDirection(1);
@@ -282,7 +269,7 @@ export function CalmExamRunner({
 
   useEffect(() => {
     if (answeredCount > prevAnsweredRef.current) {
-      const raw = milestoneForProgress(answeredCount, questions.length, isChinese ? "zh" : "en");
+      const raw = milestoneForProgress(answeredCount, questions.length, isChinese && !mandarinUiEnglish ? "zh" : "en");
       // Upper-primary: strip the leading emoji + soften copy.
       const m = raw && upper
         ? raw.replace(/^\W+\s*/u, "")     // drop leading emoji + whitespace
@@ -306,7 +293,7 @@ export function CalmExamRunner({
       }
     }
     prevAnsweredRef.current = answeredCount;
-  }, [answeredCount, questions.length, upper, isChinese]);
+  }, [answeredCount, questions.length, upper, isChinese, mandarinUiEnglish]);
 
   useEffect(() => {
     if (!edu.mascotSpeech || !practiceComplete || greetedRef.current) return;
@@ -399,7 +386,7 @@ export function CalmExamRunner({
   return (
     <UiThemeProvider mode="calm" tier={tier} subject={subject ?? "english"}>
       <div
-        {...(isChinese ? { lang: "zh-Hans" } : {})}
+        {...(isChinese ? { lang: mandarinUiEnglish ? "en" : "zh-Hans", "data-locale": mandarinLocale } : {})}
         className={[
           "calm-ui",
           upper ? "calm-ui-upper" : "",
@@ -440,8 +427,6 @@ export function CalmExamRunner({
             seconds={ss}
             timeLow={timeLow}
             overtime={overtime}
-            englishSupport={englishSupport}
-            onToggleEnglish={toggleEnglishSupport}
           />
         ) : <header className={`sticky top-0 z-10 backdrop-blur ${upper ? "border-b border-[#DDEFE4] bg-white/90" : "border-b-4 border-white/60 bg-white/80"}`}>
           <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-3">
@@ -576,7 +561,7 @@ export function CalmExamRunner({
                       score={q.score}
                     />
                     <AnimatePresence initial={false}>
-                      {englishSupport && (
+                      {mandarinUiEnglish && (
                         <motion.div
                           key="english-guide"
                           initial={{ opacity: 0, y: -6 }}
@@ -641,12 +626,12 @@ export function CalmExamRunner({
                   : "rounded-full border-2 border-slate-300 bg-white px-5 py-3 text-sm font-bold text-slate-600 shadow hover:bg-slate-50 disabled:opacity-40"
               }
             >
-              {isChinese ? <><ArrowGlyph direction="left" className="h-5 w-5" /><span className="mandarin-action-label">上一站<small>Back</small></span></> : t.back}
+              {isChinese ? <><ArrowGlyph direction="left" className="h-5 w-5" /><span className="mandarin-action-label">{mandarinUiEnglish ? "Back" : "上一题"}</span></> : t.back}
             </button>
             {idx < questions.length - 1 ? (
               isChinese ? (
                 <button onClick={goNext} className="mandarin-primary-button">
-                  <span className="mandarin-action-label">继续探索<small>Continue</small></span> <ArrowGlyph className="h-5 w-5" />
+                  <span className="mandarin-action-label">{mandarinUiEnglish ? "Continue" : "继续作答"}</span> <ArrowGlyph className="h-5 w-5" />
                 </button>
               ) : upper ? (
                 <button
@@ -668,7 +653,7 @@ export function CalmExamRunner({
                   disabled={submitting}
                   className="mandarin-primary-button"
                 >
-                  {submitting ? t.submitting : <><span className="mandarin-action-label">完成这段旅程<small>Finish journey</small></span> <ArrowGlyph className="h-5 w-5" /></>}
+                  {submitting ? t.submitting : <><span className="mandarin-action-label">{mandarinUiEnglish ? "Finish assessment" : "完成评估"}</span> <ArrowGlyph className="h-5 w-5" /></>}
                 </button>
               ) : upper ? (
                 <button
@@ -757,6 +742,7 @@ export function CalmExamRunner({
           total={questions.length}
           onCancel={() => setShowFinish(false)}
           onConfirm={() => { setShowFinish(false); void handleSubmit(); }}
+          language={isChinese ? mandarinLocale : undefined}
         />
       </div>
     </UiThemeProvider>

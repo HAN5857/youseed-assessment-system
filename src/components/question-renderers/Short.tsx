@@ -16,6 +16,7 @@ import { useUiTheme, useUiTier } from "@/lib/ui-theme";
 import { PassageCard } from "@/components/kids/PassageCard";
 import { hasCJK, countWordsSmart } from "@/lib/cjk";
 import Image from "next/image";
+import { useMandarinLocale } from "@/lib/mandarin-locale";
 
 // Reserve only as much writing space as the answer actually needs, so a
 // single-sentence 造句 doesn't present an essay-sized empty box — which can
@@ -36,6 +37,7 @@ function writingBoxHeights(minWords: number, countOnly: boolean, cjk: boolean): 
 }
 
 export function ShortRenderer({ prompt, content, value, onChange }: RendererProps) {
+  const { isEnglish: mandarinUiEnglish } = useMandarinLocale();
   const theme = useUiTheme();
   const tier = useUiTier();
   const calm = theme === "calm";
@@ -87,14 +89,14 @@ export function ShortRenderer({ prompt, content, value, onChange }: RendererProp
   if (isCJK) {
     const imageUrl: string | undefined = content?.imageUrl;
     const progressLabel = wordCount === 0
-      ? "等待起笔"
+      ? (mandarinUiEnglish ? "Ready when you are" : "等待起笔")
       : countOnly
-        ? "字数已记录"
+        ? (mandarinUiEnglish ? "Characters counted" : "字数已记录")
         : wordCount < minWords
-          ? "灵感正在成形"
+          ? (mandarinUiEnglish ? "Your ideas are taking shape" : "想法正在成形")
           : minimumOnly || wordCount <= maxWords
-            ? "表达完整"
-            : "可以稍微精简";
+            ? (mandarinUiEnglish ? "Target reached" : "表达完整")
+            : (mandarinUiEnglish ? "Consider making it more concise" : "可以稍微精简");
     return (
       <div className="mandarin-writing-studio">
         {passage && (
@@ -104,8 +106,8 @@ export function ShortRenderer({ prompt, content, value, onChange }: RendererProp
         )}
         {imageUrl && (
           <figure className="mandarin-writing-image">
-            <Image src={imageUrl} alt="写作题的观察图片" width={900} height={600} sizes="(max-width: 640px) 100vw, 620px" />
-            <figcaption>先观察细节，再把看见的变成句子。</figcaption>
+            <Image src={imageUrl} alt={mandarinUiEnglish ? "Visual prompt for the writing task" : "写作题的观察图片"} width={900} height={600} sizes="(max-width: 640px) 100vw, 620px" />
+            <figcaption>{mandarinUiEnglish ? "Observe the details before expressing your ideas in Mandarin." : "先观察细节，再把看见的变成句子。"}</figcaption>
           </figure>
         )}
 
@@ -120,27 +122,27 @@ export function ShortRenderer({ prompt, content, value, onChange }: RendererProp
         )}
 
         <div className="mandarin-writing-toolbar">
-          <div><span>写作足迹</span><strong>{progressLabel}</strong></div>
+          <div><span>{mandarinUiEnglish ? "Writing progress" : "写作进度"}</span><strong>{progressLabel}</strong></div>
           <div className={`mandarin-character-count state-${state}`} aria-live="polite">
-            <b>{wordCount}</b><span>字</span>
-            <small>{countOnly ? "实时字数" : minimumOnly ? `至少 ${minWords} 字` : `目标 ${minWords}–${maxWords} 字`}</small>
+            <b>{wordCount}</b><span>{mandarinUiEnglish ? "characters" : "字"}</span>
+            <small>{countOnly ? (mandarinUiEnglish ? "Live character count" : "实时字数") : minimumOnly ? (mandarinUiEnglish ? `At least ${minWords} characters` : `至少 ${minWords} 字`) : (mandarinUiEnglish ? `Target: ${minWords}–${maxWords} characters` : `目标 ${minWords}–${maxWords} 字`)}</small>
           </div>
         </div>
 
         {!countOnly && <WordProgress wordCount={wordCount} minWords={minWords} maxWords={maxWords} state={state} cjk minimumOnly={minimumOnly} />}
 
-        {template && <div className="mandarin-writing-starter"><span>起笔小帮手</span><p>{template}</p></div>}
+        {template && <div className="mandarin-writing-starter"><span>{mandarinUiEnglish ? "Sentence starter" : "起笔提示"}</span><p>{template}</p></div>}
         <AutoGrowTextarea
           value={text}
           onChange={(v) => onChange({ ...(value ?? {}), text: v })}
           className="mandarin-writing-textarea"
-          placeholder="把你的观察和想法写在这里…"
+          placeholder={mandarinUiEnglish ? "Write your answer in Mandarin here…" : "把你的观察和想法写在这里…"}
           minHeight={box.min}
           maxHeight={box.max}
         />
         <div className="mandarin-writing-tips">
-          <span>一</span><p>先写完整的一句，再补上人物、地点、动作或原因。</p>
-          <span>二</span><p>每一个汉字都会即时计数，标点不算在字数里。</p>
+          <span>一</span><p>{mandarinUiEnglish ? "Write one complete Mandarin sentence, then add details such as who, where, what happened or why." : "先写完整的一句，再补上人物、地点、动作或原因。"}</p>
+          <span>二</span><p>{mandarinUiEnglish ? "Each Chinese character is counted immediately. Punctuation is not included." : "每一个汉字都会即时计数，标点不算在字数里。"}</p>
         </div>
       </div>
     );
