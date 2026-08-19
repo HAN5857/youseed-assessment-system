@@ -60,13 +60,10 @@ export default async function ExamPage({
   const Runner = isCalm ? CalmExamRunner : ExamRunner;
   const tier = isCalm ? levelTier(lead.test.level) : "primary";
 
-  // Per-org branding — only when the org is active + actually has a logo or
-  // colour set. Otherwise the shared YouSeed look is used.
-  const org = lead.tutor?.org;
-  const brand =
-    org && org.active && (org.logoUrl || org.brandColor)
-      ? { name: org.name, logoUrl: org.logoUrl ?? null, brandColor: org.brandColor ?? null }
-      : null;
+  // No organisation branding is shown to students. The platform is
+  // multi-tenant and the student-facing exam must stay org-neutral — no org
+  // logo, name, or accent colour ever reaches the runner.
+  const brand = null;
 
   return (
     <Runner

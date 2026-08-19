@@ -5,6 +5,7 @@ import Link from "next/link";
 import { sound } from "@/lib/sounds";
 import { SoundToggle } from "@/components/kids/SoundToggle";
 import { MandarinInstructionsView } from "@/components/mandarin/MandarinInstructionsView";
+import { MalayInstructionsView } from "@/components/malay/MalayInstructionsView";
 
 type Lang = "en" | "bm" | "zh";
 
@@ -202,6 +203,21 @@ export function InstructionsView({
     );
   }
 
+  if (defaultLang === "bm") {
+    return (
+      <MalayInstructionsView
+        leadId={leadId}
+        studentName={studentName}
+        testTitle={testTitle}
+        testLevel={testLevel}
+        duration={duration}
+        passingScore={passingScore}
+        totalQuestions={totalQuestions}
+        dimensionCounts={dimensionCounts}
+      />
+    );
+  }
+
   return (
     <div className="rules-ui" lang={lang === "zh" ? "zh" : lang === "bm" ? "ms" : "en"}>
       {/* Floating doodles */}
@@ -216,9 +232,9 @@ export function InstructionsView({
 
       <div className="ab-wrap">
         <div className="ab-card">
-          {/* Header: brand tag + language switcher */}
-          <div className="ab-header">
-            <span className="brand-tag">{t.brand}</span>
+          {/* Header: language switcher only. No organisation identity is shown
+              to students — the platform is multi-tenant and must stay neutral. */}
+          <div className="ab-header ab-header-neutral">
             <div className="lang-switch" role="tablist" aria-label="Choose language">
               {(["en", "bm", "zh"] as Lang[]).map((l) => (
                 <button

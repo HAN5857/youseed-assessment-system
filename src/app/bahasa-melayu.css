@@ -1,0 +1,143 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   Bahasa Melayu assessment identity — scoped to .malay-* roots only.
+
+   A deliberately Malaysian look, distinct from the English (green calm) and
+   Mandarin (jade/red seal) chrome: songket gold + bunga-raya red + tropical
+   teal on a warm batik-cream ground, with Sang Kancil as the guide. Kid-
+   friendly and lively, yet tidy enough to reassure a parent.
+   ───────────────────────────────────────────────────────────────────────── */
+.malay-briefing {
+  --bm-cream: #FBF4E6;
+  --bm-cream-2: #FFFCF4;
+  --bm-ink: #33291B;
+  --bm-ink-soft: #6B5C47;
+  --bm-ink-faint: #97876E;
+  --bm-red: #D63A34;
+  --bm-red-deep: #A82A26;
+  --bm-red-tint: #FBE4E0;
+  --bm-gold: #C99A2E;
+  --bm-gold-2: #E0A93B;
+  --bm-gold-tint: #F7EBCB;
+  --bm-teal: #1F8A70;
+  --bm-teal-deep: #14705E;
+  --bm-teal-tint: #DDEFE7;
+  --bm-line: #E7D6AC;
+  --bm-shadow: 0 24px 60px rgba(120, 84, 20, .12), 0 4px 14px rgba(80, 55, 15, .06);
+  color: var(--bm-ink);
+  font-family: var(--font-fredoka), "Segoe UI", system-ui, sans-serif;
+  position: relative;
+  min-height: 100dvh;
+  overflow-x: hidden;
+  padding: 34px 16px 80px;
+  background:
+    radial-gradient(1100px 520px at 88% -8%, rgba(214, 58, 52, .08), transparent 60%),
+    radial-gradient(900px 480px at -6% 12%, rgba(31, 138, 112, .09), transparent 58%),
+    var(--bm-cream);
+}
+/* faint woven-songket diagonal weave */
+.malay-briefing::before {
+  content: ""; position: fixed; inset: 0; pointer-events: none; opacity: .5;
+  background-image:
+    repeating-linear-gradient(45deg, rgba(201, 154, 46, .05) 0 2px, transparent 2px 16px),
+    repeating-linear-gradient(-45deg, rgba(201, 154, 46, .045) 0 2px, transparent 2px 16px);
+}
+
+/* ambient motifs */
+.malay-wau, .malay-bunga { position: fixed; pointer-events: none; opacity: .5; }
+.malay-wau-1 { width: 120px; right: -18px; top: 16%; animation: bm-sway 7s ease-in-out infinite; }
+.malay-bunga-1 { width: 74px; left: -14px; top: 30%; opacity: .35; animation: bm-spin 26s linear infinite; }
+.malay-bunga-2 { width: 54px; right: 6%; bottom: 8%; opacity: .3; animation: bm-spin 34s linear infinite reverse; }
+
+.malay-shell {
+  position: relative; z-index: 1;
+  max-width: 940px; margin: 0 auto;
+  border: 1px solid var(--bm-line); border-radius: 28px;
+  background: var(--bm-cream-2);
+  box-shadow: var(--bm-shadow);
+  overflow: hidden;
+  padding: 0 clamp(18px, 4vw, 40px) clamp(22px, 4vw, 34px);
+}
+/* songket header ribbon */
+.malay-songket-top {
+  height: 12px; margin: 0 clamp(-18px, -4vw, -40px) 8px;
+  background:
+    repeating-linear-gradient(90deg, var(--bm-red) 0 14px, var(--bm-gold-2) 14px 22px, var(--bm-teal) 22px 36px, var(--bm-gold-2) 36px 44px);
+  opacity: .92;
+}
+
+/* Hero */
+.malay-hero { display: grid; grid-template-columns: minmax(0, 1fr) 190px; align-items: center; gap: 20px; padding: 18px 4px 6px; }
+.malay-kicker { display: inline-flex; align-items: center; gap: 8px; color: var(--bm-red-deep); font-size: 12.5px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+.malay-kicker .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--bm-gold-2); box-shadow: 0 0 0 3px var(--bm-gold-tint); }
+.malay-hero h1 { margin-top: 12px; font-size: clamp(28px, 4.6vw, 44px); font-weight: 700; line-height: 1.12; letter-spacing: -.02em; color: var(--bm-ink); }
+.malay-greet { margin-top: 12px; font-size: 20px; font-weight: 700; color: var(--bm-teal-deep); }
+.malay-greet .wave { display: inline-block; animation: bm-wave 2.4s ease-in-out infinite; transform-origin: 70% 70%; }
+.malay-intro { margin-top: 8px; max-width: 560px; color: var(--bm-ink-soft); font-size: 16px; line-height: 1.75; font-weight: 500; }
+.malay-mascot { justify-self: center; width: 190px; filter: drop-shadow(0 16px 22px rgba(120, 84, 20, .18)); animation: bm-float 5s ease-in-out infinite; }
+.malay-mascot svg { width: 100%; height: auto; }
+
+/* Stats */
+.malay-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 13px; margin: 16px 0 8px; }
+.malay-stat { border: 2px solid var(--bm-line); border-radius: 20px; background: #fff; padding: 16px 18px; box-shadow: 0 10px 22px rgba(120, 84, 20, .06), inset 0 2px 2px rgba(255, 255, 255, .8); }
+.malay-stat strong { display: block; font-size: 30px; font-weight: 800; line-height: 1; color: var(--bm-ink); }
+.malay-stat strong i { margin-left: 4px; font-size: 13px; font-style: normal; font-weight: 700; color: var(--bm-ink-faint); }
+.malay-stat span { display: block; margin-top: 6px; font-size: 12.5px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--bm-ink-soft); }
+.malay-stat.s-red { border-color: #eec4bf; background: var(--bm-red-tint); }
+.malay-stat.s-red strong { color: var(--bm-red-deep); }
+.malay-stat.s-teal { border-color: #bfe0d3; background: var(--bm-teal-tint); }
+.malay-stat.s-teal strong { color: var(--bm-teal-deep); }
+.malay-stat.s-gold { border-color: #ecd9a6; background: var(--bm-gold-tint); }
+.malay-stat.s-gold strong { color: var(--bm-gold); }
+
+/* Panels */
+.malay-panel { margin-top: 18px; border: 2px solid var(--bm-line); border-radius: 24px; background: #fff; padding: 22px; box-shadow: 0 12px 30px rgba(120, 84, 20, .05); }
+.malay-panel-head { display: flex; align-items: center; gap: 13px; margin-bottom: 18px; }
+.malay-seal { display: grid; width: 44px; height: 44px; flex: none; place-items: center; border-radius: 13px; background: linear-gradient(150deg, var(--bm-red), var(--bm-red-deep)); color: #fff; font-size: 20px; box-shadow: inset 0 -3px 6px rgba(0, 0, 0, .18), 0 6px 14px rgba(168, 42, 38, .22); transform: rotate(-4deg); }
+.malay-seal.alt { background: linear-gradient(150deg, var(--bm-teal), var(--bm-teal-deep)); box-shadow: inset 0 -3px 6px rgba(0, 0, 0, .18), 0 6px 14px rgba(20, 112, 94, .22); }
+.malay-panel-head small { display: block; color: var(--bm-red-deep); font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.malay-panel-head h2 { margin-top: 2px; font-size: 22px; font-weight: 700; color: var(--bm-ink); }
+
+.malay-skill-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.malay-skill { display: flex; align-items: flex-start; gap: 13px; border: 2px solid var(--bm-line); border-radius: 18px; background: var(--bm-cream-2); padding: 15px; transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease; }
+.malay-skill:hover { transform: translateY(-3px) scale(1.01); border-color: var(--bm-gold-2); box-shadow: 0 14px 26px rgba(120, 84, 20, .1); }
+.malay-skill-mark { display: grid; width: 46px; height: 46px; flex: none; place-items: center; border-radius: 14px; background: linear-gradient(150deg, var(--bm-gold-tint), #fff); color: var(--bm-red-deep); font-size: 20px; font-weight: 800; box-shadow: inset 0 -3px 6px rgba(201, 154, 46, .16), inset 0 2px 3px #fff, 0 5px 12px rgba(201, 154, 46, .14); transform: rotate(-3deg); }
+.malay-skill h3 { font-size: 17px; font-weight: 700; color: var(--bm-ink); }
+.malay-skill p { margin-top: 3px; color: var(--bm-ink-soft); font-size: 14px; line-height: 1.5; font-weight: 500; }
+.malay-skill-count { display: inline-block; margin-top: 8px; color: var(--bm-teal-deep); font-size: 13px; font-weight: 700; }
+
+.malay-reminders { display: grid; gap: 12px; }
+.malay-reminders li { display: flex; align-items: center; gap: 14px; border-bottom: 1px dashed var(--bm-line); padding-bottom: 12px; }
+.malay-reminders li:last-child { border-bottom: 0; padding-bottom: 0; }
+.malay-reminders li > div { display: flex; min-width: 0; flex-direction: column; gap: 2px; }
+.malay-rmark { display: grid; width: 40px; height: 40px; flex: none; place-items: center; border-radius: 50%; background: var(--bm-teal-tint); color: var(--bm-teal-deep); font-size: 17px; font-weight: 800; box-shadow: inset 0 -2px 4px rgba(20, 112, 94, .12); }
+.malay-reminders b { color: var(--bm-teal-deep); font-size: 16px; }
+.malay-reminders span { color: var(--bm-ink-soft); font-size: 15px; line-height: 1.5; }
+
+/* Actions */
+.malay-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 22px; }
+.malay-btn { min-height: 52px; display: inline-flex; align-items: center; justify-content: center; gap: 9px; border-radius: 16px; padding: 13px 22px; font-size: 16px; font-weight: 800; text-decoration: none; cursor: pointer; transition: transform .18s ease, box-shadow .18s ease, background-color .18s ease; touch-action: manipulation; }
+.malay-btn.primary { border: 1px solid var(--bm-red-deep); background: linear-gradient(135deg, var(--bm-red), var(--bm-red-deep)); color: #fff; box-shadow: 0 11px 22px rgba(168, 42, 38, .26), inset 0 2px rgba(255, 255, 255, .28), inset 0 -5px 9px rgba(120, 20, 18, .25); }
+.malay-btn.primary:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 16px 28px rgba(168, 42, 38, .3); }
+.malay-btn.primary:active { transform: translateY(-1px) scale(.98); }
+.malay-btn.ghost { border: 2px solid var(--bm-line); background: #fff; color: var(--bm-ink-soft); }
+.malay-btn.ghost:hover { border-color: var(--bm-teal); color: var(--bm-teal-deep); transform: translateY(-1px); }
+.malay-briefing a:focus-visible, .malay-btn:focus-visible { outline: 3px solid rgba(201, 154, 46, .55); outline-offset: 3px; }
+
+@keyframes bm-float { 0%, 100% { transform: translateY(0) rotate(-1deg); } 50% { transform: translateY(-8px) rotate(1deg); } }
+@keyframes bm-sway { 0%, 100% { transform: translateY(0) rotate(-3deg); } 50% { transform: translateY(-10px) rotate(3deg); } }
+@keyframes bm-spin { to { transform: rotate(360deg); } }
+@keyframes bm-wave { 0%, 60%, 100% { transform: rotate(0deg); } 20% { transform: rotate(16deg); } 40% { transform: rotate(-8deg); } }
+
+@media (max-width: 720px) {
+  .malay-hero { grid-template-columns: 1fr; text-align: left; }
+  .malay-mascot { width: 150px; justify-self: start; order: -1; }
+  .malay-stats { grid-template-columns: 1fr; }
+  .malay-skill-grid { grid-template-columns: 1fr; }
+  .malay-actions { flex-direction: column-reverse; }
+  .malay-btn { width: 100%; }
+  .malay-wau-1 { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .malay-briefing *, .malay-mascot, .malay-wau, .malay-bunga { animation: none !important; transition-duration: .01ms !important; }
+}
