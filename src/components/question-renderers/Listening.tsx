@@ -3,11 +3,16 @@ import type { RendererProps } from "./index";
 import { useState, useRef } from "react";
 import { OptionCard } from "@/components/kids/OptionCard";
 import { sound } from "@/lib/sounds";
+import { useIsMalayTheme } from "@/lib/ui-theme";
+import Image from "next/image";
 
 export function ListeningRenderer({ prompt, mediaUrl, content, value, onChange }: RendererProps) {
+  const malay = useIsMalayTheme();
   const options: { key: string; text: string }[] = content?.options ?? [];
   const selected = value?.key as string | undefined;
   const maxPlays: number = content?.maxPlays ?? 2;
+  const imageUrl: string | undefined = content?.imageUrl;
+  const imageAlt: string = content?.imageAlt ?? "Gambar petunjuk untuk soalan audio";
   const [plays, setPlays] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -28,6 +33,17 @@ export function ListeningRenderer({ prompt, mediaUrl, content, value, onChange }
       <p className="mb-4 whitespace-pre-wrap text-2xl font-bold leading-snug text-slate-800 sm:text-3xl">
         {prompt}
       </p>
+      {imageUrl && (
+        <figure className="malay-supporting-visual mb-5">
+          <Image
+            src={imageUrl}
+            alt={imageAlt}
+            width={640}
+            height={640}
+            sizes="(max-width: 640px) 88vw, 360px"
+          />
+        </figure>
+      )}
       <div className="mb-6 flex flex-col items-center gap-3 rounded-3xl border-4 border-violet-200 bg-violet-50 p-6 sm:flex-row">
         <button
           type="button"
@@ -36,11 +52,13 @@ export function ListeningRenderer({ prompt, mediaUrl, content, value, onChange }
           className={`kid-btn kid-btn-blue text-2xl ${isPlaying ? "kid-pulse" : ""}`}
         >
           <span className="mr-2 text-2xl">🎧</span>
-          {plays === 0 ? "Play audio" : "Play again"}
+          {plays === 0 ? (malay ? "Mainkan audio" : "Play audio") : (malay ? "Mainkan lagi" : "Play again")}
         </button>
         <div className="flex-1 text-center sm:text-left">
-          <div className="text-sm font-semibold text-violet-700">You can listen</div>
-          <div className="text-lg font-black text-violet-900">{maxPlays - plays} times</div>
+          <div className="text-sm font-semibold text-violet-700">{malay ? "Boleh dengar" : "You can listen"}</div>
+          <div className="text-lg font-black text-violet-900">
+            {maxPlays - plays} {malay ? "kali lagi" : "times"}
+          </div>
         </div>
         {mediaUrl && (
           <audio

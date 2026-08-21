@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "next lint",
     "test:mandarin": "tsx scripts/verify-mandarin-banks.ts",
+    "test:bm:visuals": "tsx scripts/verify-bm-visuals.ts",
     "test:timer": "tsx scripts/verify-advisory-timer.ts",
     "db:migrate": "prisma migrate dev",
     "db:seed": "tsx prisma/seed.ts",
@@ -16,6 +17,7 @@
     "db:seed:prod:s4-s6": "tsx prisma/seed-prod-s4-s6.ts",
     "db:seed:prod:chinese:s3-s6": "tsx prisma/seed-prod-chinese-s3-s6.ts",
     "db:sync:prod:chinese:feedback": "tsx prisma/sync-prod-chinese-feedback.ts",
+    "db:sync:prod:bm:visuals": "tsx prisma/sync-prod-bm-visuals.ts",
     "db:reset": "prisma migrate reset --force",
     "db:studio": "prisma studio",
     "postinstall": "prisma generate"

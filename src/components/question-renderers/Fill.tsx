@@ -7,12 +7,15 @@ import { InstructionHint } from "@/components/kids/InstructionHint";
 import { QuestionBody } from "@/components/kids/QuestionBody";
 import { PassageCard } from "@/components/kids/PassageCard";
 import { hasCJK } from "@/lib/cjk";
+import Image from "next/image";
 
 export function FillRenderer({ prompt, content, value, onChange }: RendererProps) {
   const theme = useUiTheme();
   const tier = useUiTier();
   const upper = theme === "calm" && tier === "upper-primary";
   const passage: string | undefined = content?.passage;
+  const imageUrl: string | undefined = content?.imageUrl;
+  const imageAlt: string = content?.imageAlt ?? "Gambar sokongan untuk soalan";
   const isCJK = hasCJK(prompt) || hasCJK(value?.text);
   const T = {
     hint: isCJK ? "提示" : "Hint",
@@ -33,6 +36,11 @@ export function FillRenderer({ prompt, content, value, onChange }: RendererProps
           <div className="mb-5">
             <PassageCard text={passage} />
           </div>
+        )}
+        {imageUrl && (
+          <figure className="malay-supporting-visual mb-5">
+            <Image src={imageUrl} alt={imageAlt} width={640} height={640} sizes="(max-width: 640px) 88vw, 360px" />
+          </figure>
         )}
         {instruction && <InstructionHint text={instruction} />}
         <div className="mb-5">
@@ -64,6 +72,11 @@ export function FillRenderer({ prompt, content, value, onChange }: RendererProps
       <p className="mb-6 whitespace-pre-wrap text-2xl font-bold leading-snug text-slate-800 sm:text-3xl">
         {prompt}
       </p>
+      {imageUrl && (
+        <figure className="malay-supporting-visual mb-5">
+          <Image src={imageUrl} alt={imageAlt} width={640} height={640} sizes="(max-width: 640px) 88vw, 360px" />
+        </figure>
+      )}
       <div className="relative">
         <input
           type="text"

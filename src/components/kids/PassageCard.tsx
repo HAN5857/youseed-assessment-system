@@ -88,6 +88,7 @@ export function PassageCard({
         <div className="relative overflow-hidden rounded-xl border border-[#DDEFE4] bg-white p-6 shadow-[0_2px_8px_rgba(15,23,42,0.04)] sm:p-7">
           {/* Slim left accent — green wash, no spiral binding */}
           <div className="pointer-events-none absolute bottom-0 left-0 top-0 w-1 bg-[#18A65B]" aria-hidden />
+          <PassageVisual imageUrl={imageUrl} imageAlt={imageAlt} />
           <SmartPassage text={text} />
         </div>
         {resolvedHint && (
@@ -131,6 +132,8 @@ export function PassageCard({
           <span className="pointer-events-none absolute right-3 top-3 text-2xl opacity-70" aria-hidden>
             ✏️
           </span>
+
+          <PassageVisual imageUrl={imageUrl} imageAlt={imageAlt} />
 
           {/* Passage text */}
           <p
@@ -189,6 +192,8 @@ export function PassageCard({
           ✏️
         </span>
 
+        <PassageVisual imageUrl={imageUrl} imageAlt={imageAlt} />
+
         {/* Passage text */}
         <p
           className="relative whitespace-pre-wrap text-[17px] font-medium leading-[34px] tracking-wide text-slate-800 sm:text-lg sm:leading-[36px]"
@@ -211,6 +216,22 @@ export function PassageCard({
         </div>
       )}
     </div>
+  );
+}
+
+function PassageVisual({ imageUrl, imageAlt }: { imageUrl?: string; imageAlt?: string }) {
+  if (!imageUrl) return null;
+  return (
+    <figure className="mb-5 overflow-hidden rounded-2xl border-2 border-white bg-white p-1.5 shadow-[0_10px_24px_rgba(15,23,42,0.12)]">
+      <Image
+        src={imageUrl}
+        alt={imageAlt ?? "Gambar sokongan untuk petikan bacaan"}
+        width={900}
+        height={600}
+        sizes="(max-width: 1024px) 92vw, 520px"
+        className="mx-auto max-h-72 w-full rounded-xl object-cover"
+      />
+    </figure>
   );
 }
 

@@ -3,8 +3,9 @@ import type { RendererProps } from "./index";
 import { useMemo } from "react";
 import { sound } from "@/lib/sounds";
 import { OrderingDndRenderer } from "./OrderingDnd";
-import { useUiTheme } from "@/lib/ui-theme";
+import { useIsMalayTheme, useUiTheme } from "@/lib/ui-theme";
 import { hasCJK } from "@/lib/cjk";
+import Image from "next/image";
 
 const RANK_COLORS_PLAYFUL = ["bg-yellow-400", "bg-pink-400", "bg-sky-400", "bg-emerald-400", "bg-violet-400", "bg-orange-400"];
 const RANK_COLORS_CALM = ["bg-emerald-400", "bg-teal-400", "bg-lime-400", "bg-green-400", "bg-emerald-500", "bg-teal-500"];
@@ -23,9 +24,11 @@ export function OrderingRenderer(props: RendererProps) {
 
 function OrderingLegacyRenderer({ prompt, content, value, onChange }: RendererProps) {
   const theme = useUiTheme();
+  const malay = useIsMalayTheme();
   const calm = theme === "calm";
   const rankColors = calm ? RANK_COLORS_CALM : RANK_COLORS_PLAYFUL;
-  const items: string[] = content?.items ?? [];
+  const items: string[] = useMemo(() => content?.items ?? [], [content?.items]);
+  const imageUrl: string | undefined = content?.imageUrl;
   const order: number[] = useMemo(
     () => value?.order ?? items.map((_, i) => i),
     [value?.order, items]
@@ -53,8 +56,21 @@ function OrderingLegacyRenderer({ prompt, content, value, onChange }: RendererPr
       <p className={`mb-4 text-sm font-semibold ${hintColor}`}>
         {hasCJK(prompt) || items.some((t) => hasCJK(t))
           ? "👆 用箭头把每一句上下排一排。"
-          : "👆 Use the arrows to move items up or down."}
+          : malay
+            ? "👆 Gunakan anak panah untuk menyusun perkataan dengan betul."
+            : "👆 Use the arrows to move items up or down."}
       </p>
+      {imageUrl && (
+        <figure className="malay-supporting-visual mb-5">
+          <Image
+            src={imageUrl}
+            alt={content?.imageAlt ?? "Gambar yang membantu membina ayat"}
+            width={640}
+            height={640}
+            sizes="(max-width: 640px) 88vw, 360px"
+          />
+        </figure>
+      )}
       <ol className="space-y-3">
         {order.map((itemIdx, pos) => (
           <li key={pos} className="flex items-center gap-3 rounded-2xl border-4 border-slate-100 bg-white p-4 shadow-sm">

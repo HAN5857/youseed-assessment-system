@@ -54,7 +54,7 @@ export function SingleRenderer({ prompt, mediaUrl, content, value, onChange }: R
         <div className="mb-5 flex justify-center">
           <Image
             src={imageUrl}
-            alt=""
+            alt={content?.imageAlt ?? ""}
             width={900}
             height={600}
             sizes="(max-width: 640px) 92vw, 640px"

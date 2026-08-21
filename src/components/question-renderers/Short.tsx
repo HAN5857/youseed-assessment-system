@@ -12,7 +12,7 @@
 
 import { useEffect, useRef } from "react";
 import type { RendererProps } from "./index";
-import { useUiTheme, useUiTier } from "@/lib/ui-theme";
+import { useIsMalayTheme, useUiTheme, useUiTier } from "@/lib/ui-theme";
 import { PassageCard } from "@/components/kids/PassageCard";
 import { hasCJK, countWordsSmart } from "@/lib/cjk";
 import Image from "next/image";
@@ -42,6 +42,7 @@ export function ShortRenderer({ prompt, content, value, onChange }: RendererProp
   const tier = useUiTier();
   const calm = theme === "calm";
   const upper = calm && tier === "upper-primary";
+  const malay = useIsMalayTheme();
   const minWords: number = content?.minWords ?? 30;
   const maxWords: number = content?.maxWords ?? 50;
   const countOnly = content?.countOnly === true;
@@ -50,6 +51,8 @@ export function ShortRenderer({ prompt, content, value, onChange }: RendererProp
   const passage: string | undefined = content?.passage;
   const passageImage: string | undefined = content?.passageImage;
   const passageImageAlt: string | undefined = content?.passageImageAlt;
+  const imageUrl: string | undefined = content?.imageUrl;
+  const imageAlt: string = content?.imageAlt ?? "Gambar rangsangan untuk tugasan penulisan";
   const writingChoices: Array<{ key: string; title: string; description?: string; icon?: string; genre?: string }> = content?.writingChoices ?? [];
 
   const text: string = value?.text ?? "";
@@ -87,7 +90,6 @@ export function ShortRenderer({ prompt, content, value, onChange }: RendererProp
     : "w-full rounded-2xl border-4 border-violet-200 bg-white px-5 py-4 text-base font-medium leading-relaxed text-slate-800 outline-none focus:border-violet-500 focus:ring-4 focus:ring-violet-100 sm:text-[17px]";
 
   if (isCJK) {
-    const imageUrl: string | undefined = content?.imageUrl;
     const progressLabel = wordCount === 0
       ? (mandarinUiEnglish ? "Ready when you are" : "等待起笔")
       : countOnly
@@ -110,7 +112,6 @@ export function ShortRenderer({ prompt, content, value, onChange }: RendererProp
             <figcaption>{mandarinUiEnglish ? "Observe the details before expressing your ideas in Mandarin." : "先观察细节，再把看见的变成句子。"}</figcaption>
           </figure>
         )}
-
         <StructuredPrompt prompt={prompt} />
 
         {writingChoices.length > 0 && (
@@ -161,6 +162,11 @@ export function ShortRenderer({ prompt, content, value, onChange }: RendererProp
           <div className="mb-5">
             <PassageCard text={passage} imageUrl={passageImage} imageAlt={passageImageAlt} table={content?.passageTable} />
           </div>
+        )}
+        {imageUrl && (
+          <figure className={malay ? "malay-writing-image mb-5" : "mb-5 flex justify-center"}>
+            <Image src={imageUrl} alt={imageAlt} width={900} height={600} sizes="(max-width: 640px) 92vw, 620px" />
+          </figure>
         )}
 
         <StructuredPrompt prompt={prompt} />
@@ -222,6 +228,11 @@ export function ShortRenderer({ prompt, content, value, onChange }: RendererProp
         <div className="mb-5">
           <PassageCard text={passage} imageUrl={passageImage} imageAlt={passageImageAlt} table={content?.passageTable} />
         </div>
+      )}
+      {imageUrl && (
+        <figure className={malay ? "malay-writing-image mb-5" : "mb-5 flex justify-center"}>
+          <Image src={imageUrl} alt={imageAlt} width={900} height={600} sizes="(max-width: 640px) 92vw, 620px" />
+        </figure>
       )}
 
       <p className="mb-4 whitespace-pre-wrap text-xl font-bold leading-snug text-slate-800 sm:text-2xl">
